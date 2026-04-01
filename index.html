@@ -2073,17 +2073,37 @@ async function generateAI() {
   if (impBtn) impBtn.style.display='none';
   if (genBtn) genBtn.disabled=true;
 
-  const prompt = `Tạo ${count} câu hỏi trắc nghiệm môn ${subject}, chủ đề: ${topic}, độ khó: ${diff}. Mỗi câu 4 đáp án A/B/C/D. Chỉ trả về JSON thuần (không markdown): [{"text":"...","opts":["A. ...","B. ...","C. ...","D. ..."],"correct":0,"explanation":"lời giải ngắn"}]`;
+  // Prompt yêu cầu format chuẩn với LaTeX
+  const prompt = `Tạo ${count} câu hỏi trắc nghiệm môn ${subject}, chủ đề: ${topic}, độ khó: ${diff}.
+
+YÊU CẦU FORMAT:
+- Nội dung câu hỏi: phải dùng LaTeX cho công thức toán, ví dụ: $\\sin(2x) = \\frac{\\sqrt{3}}{2}$
+- Đáp án: chỉ viết nội dung, KHÔNG viết "A. " ở đầu, chỉ viết nội dung đáp án thuần, ví dụ: "$\\frac{\\pi}{3}$"
+- Đáp án đúng: chỉ số index (0,1,2,3) tương ứng A,B,C,D
+- Lời giải: viết bằng tiếng Việt, có thể dùng LaTeX
+
+Trả về JSON thuần (không markdown, không backtick) đúng cấu trúc:
+[
+  {
+    "text": "Câu hỏi... $\\sin(2x) = \\frac{\\sqrt{3}}{2}$ ...",
+    "opts": ["$\\\\frac{\\\\pi}{3}$", "$\\\\frac{2\\\\pi}{3}$", "$\\\\frac{5\\\\pi}{3}$", "$\\\\frac{4\\\\pi}{3}$"],
+    "correct": 0,
+    "explanation": "Lời giải chi tiết..."
+  }
+]`;
 
   try {
     const raw    = await callAI(prompt, 2000);
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    // Làm sạch response
+    let clean = raw.trim().replace(/```json\s*/g, '').replace(/```\s*$/g, '');
+    const parsed = JSON.parse(clean);
     if (!Array.isArray(parsed)) throw new Error('Kết quả không hợp lệ');
     aiQuestions = parsed;
     consumeTokens(DB.session?.id, cost);
     _displayAIResult(aiQuestions, subject, diff);
     toast('✅', `Đã tạo ${parsed.length} câu hỏi (−${cost} token)`);
   } catch(err) {
+    console.error('AI error:', err);
     toast('❌','Lỗi AI: '+err.message);
     if (loadEl) loadEl.style.display='none';
   } finally {
@@ -2104,15 +2124,36 @@ function _displayAIResult(qs, subject, diff) {
   const cntEl = document.getElementById('ai-result-count');
   if (cntEl) cntEl.textContent=`✅ Đã tạo ${qs.length} câu — ${subject}`;
 
-  const letters=['A','B','C','D'];
+  const letters=['A','B','C','D','E','F'];
   const listEl=document.getElementById('ai-result-list');
-  if (listEl) listEl.innerHTML = qs.map((q,i)=>`
-    <div class="ai-q-preview">
-      <div style="font-size:10.5px;color:var(--pur);font-weight:600">Câu ${i+1}</div>
-      <div class="ai-q-text">${q.text}</div>
-      ${q.opts.map((o,j)=>`<div class="ai-q-opt${j===q.correct?' correct':''}">${letters[j]}. ${o}${j===q.correct?' ✓':''}</div>`).join('')}
-      ${q.explanation?`<div style="font-size:11px;margin-top:6px">💡 ${q.explanation}</div>`:''}
-    </div>`).join('');
+  if (listEl) {
+    listEl.innerHTML = qs.map((q,i)=>`
+      <div class="ai-q-preview">
+        <div style="font-size:10.5px;color:var(--pur);font-weight:600">Câu ${i+1}</div>
+        <div class="ai-q-text" id="ai-q-text-${i}"></div>
+        ${q.opts.map((o,j)=>`<div class="ai-q-opt${j===q.correct?' correct':''}" id="ai-q-opt-${i}-${j}">${letters[j]}. </div>`).join('')}
+        ${q.explanation?`<div style="font-size:11px;margin-top:6px" id="ai-q-exp-${i}">💡 </div>`:''}
+      </div>`).join('');
+    
+    // Render LaTeX cho từng câu
+    qs.forEach((q, i) => {
+      const qEl = document.getElementById(`ai-q-text-${i}`);
+      if (qEl) renderMarkdownAndLatex(qEl, q.text);
+      
+      q.opts.forEach((opt, j) => {
+        const optEl = document.getElementById(`ai-q-opt-${i}-${j}`);
+        if (optEl) {
+          const letter = letters[j];
+          renderMarkdownAndLatex(optEl, `${letter}. ${opt}`);
+        }
+      });
+      
+      if (q.explanation) {
+        const expEl = document.getElementById(`ai-q-exp-${i}`);
+        if (expEl) renderMarkdownAndLatex(expEl, `💡 ${q.explanation}`);
+      }
+    });
+  }
 }
 
 function importAIQuestions() {
@@ -3838,6 +3879,11 @@ function recoverFullscreen() {
 }
 
 async function requestFullscreenWithPrompt(examId) {
+  if (isMobileDevice()) {
+      startExamAfterFullscreen(examId);
+      return;
+  }
+
   const modal = document.getElementById('m-fullscreen');
   if (!modal) return;
   pendingExamId = examId;
