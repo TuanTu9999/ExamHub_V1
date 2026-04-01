@@ -2655,3 +2655,21 @@ body.dark {
   height: auto !important;
   display: inline !important;
 }
+
+@media (max-width: 768px) {
+    #trial-banner {
+        font-size: 10px !important;
+        padding: 5px 12px !important;
+        top: 0 !important;
+        position: sticky !important;
+        z-index: 99;
+    }
+    
+    #view-exam .ema {
+        margin-top: 0 !important;
+    }
+    
+    #view-exam .etopbar {
+        position: sticky !important;
+    }
+}
