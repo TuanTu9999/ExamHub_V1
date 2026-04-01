@@ -367,7 +367,6 @@
         </div>
       </div>
     </aside>
-    
     <div class="main">
       <div class="topbar">
         <div class="tbc"><span>ExamHub</span><span class="sep">›</span><span class="cur">Trang chủ</span></div>
@@ -376,58 +375,15 @@
           <div class="tbtn">🔔</div>
         </div>
       </div>
-      
-      <!-- CHỈ MỘT .ca DUY NHẤT -->
       <div class="ca">
-        <!-- LEFT COLUMN: .cm -->
         <div class="cm">
-          <div class="ph fi">
-            <div class="ph-title" id="dash-greeting">Chào buổi sáng 👋</div>
-          </div>
-          
+          <div class="ph fi"><div class="ph-title" id="dash-greeting">Chào buổi sáng 👋</div><div class="ph-sub">Bạn có 3 đề thi chưa hoàn thành. Hãy tiếp tục học nhé!</div></div>
           <div class="stats fi">
             <div class="stat"><div class="stat-lbl">📝 Đề đã làm</div><div class="stat-val c-acc" id="ds-done">47</div><div style="font-size:10.5px;color:var(--txt3);margin-top:3px">+5 tuần này</div></div>
             <div class="stat"><div class="stat-lbl">🏆 Điểm TB</div><div class="stat-val c-gld">8.4</div><div style="font-size:10.5px;color:var(--txt3);margin-top:3px">↑ 0.3 so với tháng trước</div></div>
             <div class="stat"><div class="stat-lbl">✅ Tỷ lệ đúng</div><div class="stat-val c-grn">92%</div><div style="font-size:10.5px;color:var(--txt3);margin-top:3px">Tổng hợp</div></div>
             <div class="stat"><div class="stat-lbl">⏱ Giờ học</div><div class="stat-val c-org">38h</div><div style="font-size:10.5px;color:var(--txt3);margin-top:3px">Tháng này</div></div>
           </div>
-
-          <!-- CARD CÁ NHÂN HÓA -->
-          <div class="card" style="margin-bottom: 20px; background: linear-gradient(135deg, var(--pur-s), var(--bg3)); border: 1px solid var(--bdr);">
-            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 20px;">🎯</span> Đề thi cá nhân hóa theo điểm yếu
-            </div>
-            <div class="fg-row">
-              <div class="fg">
-                <label>Chọn môn học</label>
-                <select id="personal-subject">
-                  <option value="math">📐 Toán</option>
-                  <option value="physics">⚛️ Vật lý</option>
-                  <option value="chemistry">🧪 Hóa học</option>
-                  <option value="english">🌐 Tiếng Anh</option>
-                </select>
-              </div>
-              <div class="fg">
-                <label>Số lượng câu hỏi</label>
-                <input id="personal-questions" type="number" value="10" min="5" max="50" step="1">
-              </div>
-              <div class="fg">
-                <label>Chọn model AI</label>
-                <select id="personal-model">
-                  <option value="deepseek">DeepSeek v3 (tiết kiệm)</option>
-                  <option value="gpt4o-mini">GPT-4o-mini (nhanh)</option>
-                </select>
-              </div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-              <div id="personal-cost" style="font-size: 12px; color: var(--txt3);">💰 Ước tính token: --</div>
-              <button class="btn btn-p" onclick="createPersonalizedExam()">✨ Tạo đề riêng cho bạn</button>
-            </div>
-            <div id="personal-note" style="font-size: 11px; color: var(--txt3); margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--bdr);">
-              ⚡ Dựa trên lịch sử làm bài, AI sẽ phân tích điểm yếu và tạo đề tập trung vào các chủ đề bạn cần cải thiện.
-            </div>
-          </div>
-
           <div class="chips">
             <div class="chip on" onclick="chipClick(this)">Tất cả</div>
             <div class="chip" onclick="chipClick(this)">Đang mở</div>
@@ -435,26 +391,15 @@
             <div class="chip" onclick="chipClick(this)">Đã hoàn thành</div>
             <div class="chip" onclick="chipClick(this)">Premium</div>
           </div>
-          
           <div class="sec-title">🚪 Phòng thi nổi bật</div>
           <div class="rg" id="rooms-grid"></div>
-          <!-- ===== DANH SÁCH ĐỀ CÁ NHÂN HÓA ===== -->
-          <div class="sec-title" style="margin-top: 32px;">
-            <span>🎯 Đề cá nhân hóa của bạn</span>
-            <span style="font-size: 11px; color: var(--txt3);">(được tạo riêng dựa trên điểm yếu)</span>
-          </div>
-          <div id="personalized-exams-list" class="el">
-            <div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">Chưa có đề cá nhân hóa nào. Hãy tạo đề đầu tiên!</div></div>
-          </div>
         </div>
-        
-        <!-- RIGHT PANEL - CHỈ MỘT -->
         <div class="rp">
           <div class="pc">
             <div class="uct">
               <div class="av-lg" id="rp-ava" style="background:linear-gradient(135deg,#4f8ef7,#7c3aed)">NT</div>
               <div class="un-lg" id="rp-name">Nguyễn Văn Thành</div>
-              <div class="ue-lg" id="rp-email">student@exam.vn</div>
+              <div class="ue-lg" id="rp-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86f5f2f3e2e3e8f2c6e3fee7eba8f0e8">[email&#160;protected]</a></div>
               <div class="prem">⭐ Premium · Còn 45 ngày</div>
             </div>
             <div class="usg">
@@ -480,7 +425,6 @@
           </div>
         </div>
       </div>
-      <!-- KẾT THÚC .ca -->
     </div>
   </div>
 </div>
@@ -1276,25 +1220,6 @@
 
 // ===== constants.js =====
 
-
-const subjectMap = {
-  math: 'Toán học THPT',
-  physics: 'Vật lý 12',
-  chemistry: 'Hóa học 12',
-  english: 'Tiếng Anh THPT',
-  history: 'Lịch sử Việt Nam',
-  biology: 'Sinh học 12'
-};
-
-const reverseSubjectMap = {
-  'Toán học THPT': 'math',
-  'Vật lý 12': 'physics',
-  'Hóa học 12': 'chemistry',
-  'Tiếng Anh THPT': 'english',
-  'Lịch sử Việt Nam': 'history',
-  'Sinh học 12': 'biology'
-};
-
 // Hằng số và cấu hình toàn cục
 const API_STORAGE_KEY = 'examhub_api_keys';
 const API_ACTIVE_PROVIDER_KEY = 'examhub_active_provider';
@@ -1672,9 +1597,6 @@ function renderDashboard() {
     else greet = 'Chào buổi tối';
     const dashGreet = document.getElementById('dash-greeting');
     if (dashGreet) dashGreet.textContent = `${greet} ${user.name.split(' ').slice(-1)[0]} 👋`;
-  }
-  if (typeof renderPersonalizedExamsList === 'function') {
-    renderPersonalizedExamsList();
   }
   updateStats();
   buildRoomsGrid();
@@ -2203,102 +2125,24 @@ function sanitizeLatex(str) {
 // 2. TRÍCH XUẤT JSON SIÊU CHỊU LỖI (ĐÃ TỐI ƯU)
 // =============================================
 function extractAndParseJSON(rawStr) {
-  if (!rawStr || typeof rawStr !== 'string') {
-    throw new Error('Input không phải chuỗi');
-  }
-  
-  let clean = rawStr;
-  
-  // 1. Xóa các block code markdown
-  clean = clean.replace(/```json\s*/gi, '');
-  clean = clean.replace(/```\s*$/g, '');
-  clean = clean.replace(/```/g, '');
-  
-  // 2. Tìm vị trí của mảng JSON
+  let clean = rawStr.replace(/```json/gi, '').replace(/```/g, '');
+
   const startIdx = clean.indexOf('[');
   const endIdx = clean.lastIndexOf(']');
-  
-  if (startIdx === -1 || endIdx === -1 || endIdx <= startIdx) {
-    // Thử tìm object riêng lẻ
-    const objStart = clean.indexOf('{');
-    const objEnd = clean.lastIndexOf('}');
-    if (objStart !== -1 && objEnd !== -1 && objEnd > objStart) {
-      clean = '[' + clean.substring(objStart, objEnd + 1) + ']';
-    } else {
-      throw new Error("Không tìm thấy mảng JSON hợp lệ từ AI");
-    }
-  } else {
-    clean = clean.substring(startIdx, endIdx + 1);
+  if (startIdx === -1 || endIdx === -1) {
+    throw new Error("Không tìm thấy mảng JSON hợp lệ từ AI");
   }
-  
-  // 3. Xóa dấu phẩy thừa
+
+  clean = clean.substring(startIdx, endIdx + 1);
+
+  // Xóa dấu phẩy thừa cuối mảng/object
   clean = clean.replace(/,\s*([\]}])/g, '$1');
-  
-  // 4. Xóa ký tự điều khiển
-  clean = clean.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
-  
-  // 5. Sửa lỗi LaTeX
-  clean = clean.replace(/\\?\\?frac/g, '\\frac');
-  clean = clean.replace(/\\?\\?sqrt/g, '\\sqrt');
-  clean = clean.replace(/\\?\\?sin/g, '\\sin');
-  clean = clean.replace(/\\?\\?cos/g, '\\cos');
-  clean = clean.replace(/\\?\\?tan/g, '\\tan');
-  clean = clean.replace(//g, '\\');
-  clean = clean.replace(/\\rac/g, '\\frac');
-  
-  // 6. Escape các dấu gạch chéo ngược trong chuỗi JSON
-  // Chỉ escape những \ chưa được escape đúng cách
-  clean = clean.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
-  
-  // 7. Sửa các lỗi phổ biến
-  clean = clean.replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3'); // Thêm quotes cho key
-  clean = clean.replace(/:\s*'([^']*)'/g, ':"$1"'); // Đổi ' thành " cho value
-  
-  console.log('Cleaned JSON (first 300 chars):', clean.substring(0, 300));
-  
-  try {
-    return JSON.parse(clean);
-  } catch (firstError) {
-    console.warn('First parse failed:', firstError.message);
-    
-    // Thử lại với xử lý bổ sung
-    let retryClean = clean;
-    
-    // Thử xóa các ký tự đặc biệt còn sót
-    retryClean = retryClean.replace(/[^\x20-\x7E]/g, function(match) {
-      return match === '\\' ? '\\\\' : '';
-    });
-    
-    // Thử thay thế các lệnh LaTeX chưa được escape
-    retryClean = retryClean.replace(/\\([a-zA-Z]+)/g, '\\\\$1');
-    
-    try {
-      return JSON.parse(retryClean);
-    } catch (secondError) {
-      console.error('Second parse failed:', secondError.message);
-      console.error('Raw problematic JSON:', clean.substring(0, 500));
-      
-      // Fallback: thử trích xuất từng object riêng lẻ
-      const objectMatches = clean.match(/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g);
-      if (objectMatches && objectMatches.length) {
-        const objects = [];
-        for (const objStr of objectMatches) {
-          try {
-            // Thử sửa từng object
-            let fixedObj = objStr;
-            fixedObj = fixedObj.replace(/\\?\\?frac/g, '\\frac');
-            fixedObj = fixedObj.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
-            objects.push(JSON.parse(fixedObj));
-          } catch (e) {
-            console.warn('Could not parse object:', objStr.substring(0, 100));
-          }
-        }
-        if (objects.length) return objects;
-      }
-      
-      throw new Error(`Không thể parse JSON: ${firstError.message}`);
-    }
-  }
+
+  // ESCAPE THÔNG MINH (thứ tự rất quan trọng)
+  clean = clean.replace(/\\(?![/"\\bfnrtu])/g, '\\\\');   // escape các \ mồ côi trước
+  clean = clean.replace(/\\\\frac/g, '\\\\frac');          // đảm bảo \frac luôn đúng trong JSON
+
+  return JSON.parse(clean);
 }
 
 // =============================================
@@ -2616,358 +2460,6 @@ function importAIQuestions() {
 
   aiQuestions = [];
   if (typeof window.renderAdminQuestions === 'function') window.renderAdminQuestions();
-}
-
-// =============================================
-// MODULE: Personalized Exam Generator
-// =============================================
-
-// Phân tích chủ đề yếu của học sinh
-function analyzeWeakTopics(userId, subject) {
-  console.log('Analyzing weak topics for user:', userId, 'subject:', subject);
-  
-  // Lấy tất cả submissions của user
-  const userSubmissions = DB.submissions.filter(sub => sub.userId === userId);
-  console.log('Total submissions:', userSubmissions.length);
-  
-  if (!userSubmissions.length) {
-    console.log('No submissions found');
-    return null;
-  }
-
-  // Tạo map subject từ tiếng Việt sang tiếng Anh
-  const subjectToCode = {
-    'Toán học THPT': 'math',
-    'Vật lý 12': 'physics',
-    'Hóa học 12': 'chemistry',
-    'Tiếng Anh THPT': 'english',
-    'Lịch sử Việt Nam': 'history',
-    'Sinh học 12': 'biology'
-  };
-  
-  const targetSubjectCode = subjectToCode[subject] || subject.toLowerCase();
-  console.log('Target subject code:', targetSubjectCode);
-  
-  // Lọc theo môn học
-  const filteredSubmissions = userSubmissions.filter(sub => {
-    // Nếu submission có trường subject
-    if (sub.subject) {
-      const subSubjectLower = sub.subject.toLowerCase();
-      if (subSubjectLower === targetSubjectCode) return true;
-      if (subSubjectLower.includes(targetSubjectCode)) return true;
-    }
-    
-    // Nếu không, tìm exam để lấy subject
-    const exam = DB.exams.find(e => e.id === sub.examId);
-    if (exam && exam.subject) {
-      const examSubjectLower = exam.subject.toLowerCase();
-      if (examSubjectLower === targetSubjectCode) return true;
-      if (examSubjectLower.includes(targetSubjectCode)) return true;
-    }
-    
-    return false;
-  });
-  
-  console.log('Filtered submissions by subject:', filteredSubmissions.length);
-  
-  if (!filteredSubmissions.length) {
-    // Log chi tiết để debug
-    console.log('Available submissions by subject:');
-    userSubmissions.forEach(sub => {
-      const exam = DB.exams.find(e => e.id === sub.examId);
-      console.log(`  - subject: ${sub.subject}, exam subject: ${exam?.subject}, exam name: ${exam?.name}`);
-    });
-    return null;
-  }
-
-  const topicStats = {};
-
-  filteredSubmissions.forEach(sub => {
-    // Lấy danh sách câu hỏi từ submission
-    let questions = [];
-    if (sub.questions && sub.questions.length) {
-      questions = sub.questions.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
-    } else {
-      // Fallback: tìm từ exam
-      const exam = DB.exams.find(e => e.id === sub.examId);
-      if (exam && exam.questionIds) {
-        questions = exam.questionIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
-      }
-    }
-    
-    // Duyệt từng câu hỏi
-    questions.forEach((q, idx) => {
-      if (!q) return;
-      
-      // Lấy chủ đề (ưu tiên qtype_label, sau đó subject, cuối cùng là mặc định)
-      let topicKey = q.qtype_label || q.topic || 'Chung';
-      
-      // Nếu không có topic, lấy từ text (lấy 3-4 từ đầu)
-      if (topicKey === 'Chung' && q.text) {
-        const firstWords = q.text.replace(/\$.*?\$/g, '').trim().split(' ').slice(0, 3).join(' ');
-        topicKey = firstWords.length > 10 ? firstWords.substring(0, 30) : firstWords;
-      }
-      
-      if (!topicStats[topicKey]) {
-        topicStats[topicKey] = { total: 0, correct: 0, questions: [] };
-      }
-      topicStats[topicKey].total++;
-      topicStats[topicKey].questions.push(q);
-      
-      // Kiểm tra đáp án đúng
-      const userAnswer = sub.answers ? sub.answers[idx + 1] : null;
-      if (userAnswer !== undefined && userAnswer !== null) {
-        const isCorrect = gradeQuestion(q, userAnswer);
-        if (isCorrect) topicStats[topicKey].correct++;
-      }
-    });
-  });
-
-  // Tính tỷ lệ và lọc ra chủ đề yếu (dưới 60%)
-  const weakTopics = [];
-  for (const [topic, stats] of Object.entries(topicStats)) {
-    if (stats.total === 0) continue;
-    const ratio = stats.correct / stats.total;
-    if (ratio < 0.6 && stats.total >= 2) { // Chỉ xét chủ đề có ít nhất 2 câu
-      weakTopics.push({ 
-        topic, 
-        ratio: Math.round(ratio * 100), 
-        total: stats.total,
-        correct: stats.correct
-      });
-    }
-  }
-  
-  // Sắp xếp theo tỷ lệ tăng dần (yếu nhất lên đầu)
-  weakTopics.sort((a, b) => a.ratio - b.ratio);
-  
-  console.log('Weak topics found:', weakTopics);
-  
-  return weakTopics.length ? weakTopics : null;
-}
-
-
-// Ước lượng token cho đề cá nhân (tính cả lời 50%)
-function estimateTokenCost(subject, numQuestions, modelType = 'deepseek') {
-  const costPerQuestion = { deepseek: 200, gpt4o_mini: 150 };
-  const baseCost = (costPerQuestion[modelType] || 200) * numQuestions;
-  return Math.ceil(baseCost * 1.5); // lời 50%
-}
-
-// Sinh đề cá nhân hóa
-async function generatePersonalizedExam(userId, subject, numQuestions = 10, modelType = 'deepseek', weakTopics) {
-  if (!weakTopics || weakTopics.length === 0) {
-    throw new Error('Không xác định được điểm yếu. Hãy làm thêm bài tập.');
-  }
-
-  // Phân bố số câu theo tỷ lệ
-  const totalWeak = weakTopics.reduce((sum, t) => sum + t.total, 0);
-  let allocations = weakTopics.map(topic => ({
-    topic: topic.topic,
-    count: Math.max(1, Math.floor(numQuestions * (topic.total / totalWeak)))
-  }));
-  
-  let totalAllocated = allocations.reduce((sum, a) => sum + a.count, 0);
-  if (totalAllocated < numQuestions && allocations.length > 0) {
-    allocations[0].count += numQuestions - totalAllocated;
-  }
-
-  const questions = [];
-  
-  for (const alloc of allocations) {
-    let retryCount = 0;
-    let success = false;
-    
-    while (!success && retryCount < 3) {
-      try {
-        // Prompt yêu cầu giải thích chi tiết
-        const prompt = `Generate ${alloc.count} multiple-choice questions on the topic "${alloc.topic}" for ${subject}, difficulty level: medium.
-
-REQUIREMENTS:
-- Each question must have a DETAILED explanation (3-5 sentences) with step-by-step reasoning
-- Use proper LaTeX: \\frac, \\sqrt, \\sin, \\cos
-- Options: 4 answers, no "A. " prefix
-- Correct answer index: 0-3
-
-FORMAT (JSON array):
-[
-  {
-    "text": "question content with $LaTeX$",
-    "opts": ["answer1", "answer2", "answer3", "answer4"],
-    "correct": 0,
-    "explanation": "Detailed step-by-step solution:\n1. First step...\n2. Second step...\n3. Conclusion..."
-  }
-]
-
-Return ONLY valid JSON array.`;
-
-        const raw = await callAI(prompt, 8000);
-        const parsed = extractAndParseJSON(raw);
-        
-        if (parsed && Array.isArray(parsed) && parsed.length > 0) {
-          parsed.forEach(q => {
-            // Đảm bảo explanation có độ dài hợp lý
-            if (!q.explanation || q.explanation.length < 50) {
-              q.explanation = generateDetailedExplanation(q, subject, alloc.topic);
-            }
-            q.qtype_label = alloc.topic;
-            questions.push(q);
-          });
-          success = true;
-          console.log(`✅ Generated ${parsed.length} questions for topic ${alloc.topic}`);
-        } else {
-          throw new Error('No valid questions generated');
-        }
-      } catch (err) {
-        retryCount++;
-        console.error(`Attempt ${retryCount} failed for topic ${alloc.topic}:`, err.message);
-        if (retryCount === 3) {
-          // Fallback với câu hỏi mẫu có giải thích chi tiết
-          const fallbackQuestions = getDetailedFallbackQuestions(alloc.topic, alloc.count, subject);
-          questions.push(...fallbackQuestions);
-          success = true;
-        }
-      }
-    }
-  }
-
-  if (questions.length === 0) {
-    throw new Error('Không thể tạo câu hỏi từ AI. Vui lòng thử lại.');
-  }
-
-  // Lưu câu hỏi vào DB
-  const questionIds = [];
-  for (const q of questions) {
-    const newId = DB.nextIds.question++;
-    DB.questions.push({
-      id: newId,
-      text: q.text,
-      subject: reverseSubjectMap[subject] || 'math',
-      diff: 'medium',
-      opts: q.opts,
-      correct: q.correct,
-      source: 'ai_personal',
-      qtype: 'single',
-      qtype_label: q.qtype_label,
-      sol_text: q.explanation  // Lưu giải thích chi tiết
-    });
-    questionIds.push(newId);
-  }
-
-  // Tạo đề thi
-  const examId = DB.nextIds.exam++;
-  const examName = `🎯 Đề cá nhân - ${subject} - ${new Date().toLocaleDateString('vi-VN')}`;
-  
-  DB.exams.push({
-    id: examId,
-    name: examName,
-    subject: subject,
-    roomId: null,
-    isPersonal: true,
-    userId: userId,
-    questions: questionIds.length,
-    questionIds: questionIds,
-    duration: Math.ceil(numQuestions * 1.5),
-    type: 'personalized',
-    created: new Date().toISOString(),
-    weakTopics: weakTopics.map(t => t.topic),
-    hasDetailedExplanations: true
-  });
-  
-  persistDB();
-  return { examId, questions, examName };
-}
-
-// Hàm tạo giải thích chi tiết cho fallback
-function generateDetailedExplanation(q, subject, topic) {
-  const correctOpt = q.opts[q.correct];
-  return `📌 **Giải thích chi tiết:**\n\n` +
-         `1️⃣ **Phân tích đề bài:** ${q.text.substring(0, 100)}...\n\n` +
-         `2️⃣ **Các bước giải:**\n` +
-         `   - Xác định yêu cầu của bài toán\n` +
-         `   - Áp dụng công thức phù hợp\n` +
-         `   - Thực hiện tính toán\n\n` +
-         `3️⃣ **Đáp án đúng:** ${correctOpt}\n\n` +
-         `4️⃣ **Vì sao đúng:** Đáp án ${String.fromCharCode(65 + q.correct)} là chính xác vì thỏa mãn tất cả điều kiện đề bài.\n\n` +
-         `💡 **Mẹo:** Hãy ôn lại chủ đề "${topic}" để nắm vững kiến thức.`;
-}
-
-// Fallback câu hỏi có giải thích chi tiết
-function getDetailedFallbackQuestions(topic, count, subject) {
-  const fallbacks = [];
-  for (let i = 0; i < count; i++) {
-    fallbacks.push({
-      text: `Câu hỏi về ${topic} (câu ${i+1}): Hãy xác định kết quả đúng.`,
-      opts: ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
-      correct: 0,
-      qtype_label: topic,
-      explanation: `📌 **Giải thích chi tiết:**\n\n` +
-                   `1️⃣ **Phân tích:** Đây là câu hỏi thuộc chủ đề "${topic}" trong môn ${subject}.\n\n` +
-                   `2️⃣ **Phương pháp giải:** Cần áp dụng kiến thức cơ bản về ${topic}.\n\n` +
-                   `3️⃣ **Kết luận:** Đáp án A là chính xác.\n\n` +
-                   `4️⃣ **Lưu ý:** Hãy xem lại lý thuyết về ${topic} để hiểu rõ hơn.`
-    });
-  }
-  return fallbacks;
-}
-
-
-// Hàm gọi từ UI
-async function createPersonalizedExam() {
-  const subjectCode = document.getElementById('personal-subject').value;
-  const codeToName = {
-    math: 'Toán học THPT',
-    physics: 'Vật lý 12',
-    chemistry: 'Hóa học 12',
-    english: 'Tiếng Anh THPT'
-  };
-  const subject = codeToName[subjectCode] || subjectCode;
-  const numQuestions = parseInt(document.getElementById('personal-questions').value);
-  const model = document.getElementById('personal-model').value;
-  const userId = DB.session.id;
-
-  const weakTopics = analyzeWeakTopics(userId, subject);
-  
-  if (!weakTopics || weakTopics.length === 0) {
-    const userSubmissions = DB.submissions.filter(s => s.userId === userId);
-    if (userSubmissions.length === 0) {
-      toast('⚠️', 'Bạn chưa có bài thi nào. Hãy làm một số bài thi trước khi dùng tính năng này.');
-    } else {
-      toast('⚠️', `Chưa có dữ liệu cho môn ${subject}. Hãy làm thêm bài tập môn này.`);
-    }
-    return;
-  }
-
-  const userTokens = getTokens(userId);
-  const costMap = { deepseek: 200, 'gpt4o-mini': 150 };
-  const baseCost = (costMap[model] || 200) * numQuestions;
-  const userCost = Math.ceil(baseCost * 1.5);
-  
-  if (userTokens < userCost) {
-    toast('❌', `Bạn cần ${userCost} token, hiện có ${userTokens}. Vui lòng nạp thêm.`);
-    return;
-  }
-
-  showLoading('Đang phân tích điểm yếu và tạo đề...');
-  try {
-    const result = await generatePersonalizedExam(userId, subject, numQuestions, model, weakTopics);
-    consumeTokens(userId, userCost);
-    
-    // Refresh danh sách đề cá nhân hóa
-    renderPersonalizedExamsList();
-    
-    toast('✅', `Đã tạo đề "${result.examName}"! Tiêu tốn ${userCost} token.`);
-    
-    // Hỏi có muốn làm ngay không
-    if (confirm('Đề đã được tạo. Bạn có muốn làm ngay không?')) {
-      startExam(result.examId);
-    }
-  } catch (err) {
-    console.error('Error creating exam:', err);
-    toast('❌', 'Lỗi tạo đề: ' + err.message);
-  } finally {
-    hideLoading();
-  }
 }
 
 // ===== questionEditor.js =====
@@ -4456,189 +3948,71 @@ window.showResultQuestion = function(n) {
   if (window.innerWidth < 900) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-
-// ===== RESULT.JS - HIỂN THỊ KẾT QUẢ =====
 function buildResultFromExam(exam, userAnswers, isTrial = false) {
   if (!exam) return;
-  
+  const letters = ['A','B','C','D','E','F','G','H'];
   let correct = 0;
+  const totalQ = exam.questions || exam.questionIds?.length || 50;
+
   let questions = [];
-  
   if (exam.questionIds?.length) {
-    questions = exam.questionIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
+      questions = exam.questionIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
+      totalQ = questions.length; // cập nhật lại totalQ
   } else {
-    // Fallback nếu không có questionIds
-    const totalQ = exam.questions || 50;
-    for (let i = 0; i < totalQ; i++) {
-      questions.push(DB.questions[i % DB.questions.length]);
-    }
+      for (let i = 0; i < totalQ; i++) questions.push(DB.questions[i % DB.questions.length]);
   }
-  
-  const totalQ = questions.length;
+
   const correctArr = [];
-  
   for (let i = 1; i <= totalQ; i++) {
     const q = questions[i - 1];
     const isRight = q ? gradeQuestion(q, userAnswers[i]) : false;
     if (isRight) correct++;
     correctArr.push(isRight);
   }
-  
+
   const score = totalQ > 0 ? (correct / totalQ * 10).toFixed(1) : '0.0';
-  const timeStr = formatTime(getTimerSec());
-  
-  // Lưu kết quả vào submission (trừ khi là chế độ thử)
+  const timerSecNow = getTimerSec();
+  const timeTaken = Math.floor((exam.duration * 60) - timerSecNow);
+  const mm = Math.floor(Math.max(0, timeTaken) / 60);
+  const ss = Math.abs(timeTaken % 60);
+  const timeStr = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+
   if (!isTrial && exam) {
-    const submissionId = DB.nextIds.submission || (DB.submissions.length + 1);
     DB.submissions.push({
-      id: submissionId,
+      id: DB.nextIds.submission++,
       userId: DB.session?.id || 1,
       examId: exam.id,
-      examName: exam.name,
       score: parseFloat(score),
-      correct: correct,
+      correct,
       total: totalQ,
       time: timeStr,
       date: new Date().toLocaleDateString('vi-VN'),
       answers: { ...userAnswers },
-      questions: questions.map(q => q.id),
-      isPersonalized: exam.isPersonal || false
+      questions: questions.map(q => q.id)
     });
-    DB.nextIds.submission = submissionId + 1;
     persistDB();
   }
-  
-  // Hiển thị kết quả
+
+  _resultTotalQ = totalQ;
+  _resultUserAnswers = { ...userAnswers };
+  _resultExam = exam;
+  _resultQuestions = questions;
+  _resultCorrectArr = correctArr;
+
   renderResultUI(score, correct, totalQ, timeStr, isTrial, exam);
-  
-  // Nếu là đề cá nhân hóa, hiển thị thêm phân tích
-  if (exam.isPersonal && exam.weakTopics) {
-    const analysisHtml = `
-      <div class="card" style="margin-top: 16px; background: var(--pur-s);">
-        <div class="card-title">📊 Phân tích đề cá nhân hóa</div>
-        <div>Đề được tạo dựa trên điểm yếu của bạn ở các chủ đề: 
-          <strong>${exam.weakTopics.join(', ')}</strong>
-        </div>
-        <div style="margin-top: 8px; font-size: 12px; color: var(--txt2);">
-          ${score >= 7 ? '🎉 Bạn đã cải thiện đáng kể! Hãy tiếp tục luyện tập.' : '💪 Cố gắng thêm! Ôn lại các chủ đề trên và thử lại.'}
-        </div>
-      </div>
-    `;
-    const heroDiv = document.getElementById('res-hero');
-    if (heroDiv) {
-      heroDiv.insertAdjacentHTML('afterend', analysisHtml);
-    }
-  }
-  
-  // Lưu questions và answers để dùng cho showResultQuestion
-  window._resultQuestions = questions;
-  window._resultUserAnswers = userAnswers;
-  window._resultCorrectArr = correctArr;
-  window._resultTotalQ = totalQ;
-  window._resultExam = exam;
-  
-  // Hiển thị đáp án chi tiết với nút hỏi AI
+  buildScoreDistribution(getFirstSubmissionsForExam(exam.id), parseFloat(score));
   buildResultQGrid(totalQ, correctArr, userAnswers);
-  buildDetailedAnswers(questions, userAnswers, correctArr);
   setTimeout(() => window.showResultQuestion(1), 80);
-  
+  const suggestEl = document.getElementById('res-suggest');
+  if (suggestEl) {
+    const isGood = parseFloat(score) >= 7;
+    suggestEl.innerHTML = isGood
+      ? `Kết quả tốt! Bạn làm tốt phần đầu. Ôn thêm phần cuối để tăng điểm.<br><br><button class="btn btn-o btn-full" onclick="goTo('room')">📚 Làm thêm đề</button>`
+      : `Cần ôn tập thêm. Tập trung vào các dạng bài bạn hay sai.<br><br><button class="btn btn-p btn-full" onclick="startExam(${exam.id})">🔄 Làm lại ngay</button>`;
+  }
+
   goTo('result');
 }
-
-// Hàm xây dựng đáp án chi tiết với nút hỏi AI
-function buildDetailedAnswers(questions, userAnswers, correctArr) {
-  const container = document.getElementById('res-q-detail');
-  if (!container) return;
-  
-  const AI_EXPLAIN_COST = 5;
-  const letters = ['A', 'B', 'C', 'D'];
-  
-  let html = '';
-  for (let i = 1; i <= questions.length; i++) {
-    const q = questions[i - 1];
-    if (!q) continue;
-    
-    const isRight = correctArr[i - 1];
-    const userAnswer = userAnswers[i];
-    const userAnswerLetter = userAnswer ? (userAnswer.length === 1 ? userAnswer : letters[parseInt(userAnswer)] || '?') : '?';
-    const correctLetter = letters[q.correct];
-    
-    // Tạo HTML cho từng câu
-    html += `
-      <div class="rev-q" id="rev-q-${i}" style="margin-bottom: 20px; border-left: 4px solid ${isRight ? 'var(--grn)' : 'var(--red)'}">
-        <div class="rev-qh" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-          <div>
-            <span class="badge ${isRight ? 'b-grn' : 'b-red'}">Câu ${i}</span>
-            <span style="margin-left: 8px; font-size: 12px;">
-              Đáp án của bạn: <strong>${userAnswerLetter}</strong> 
-              ${isRight ? '✓' : '✗'} 
-              (Đáp án đúng: ${correctLetter})
-            </span>
-          </div>
-          <button class="btn btn-pur btn-sm" onclick="askAIExplainMore(${q.id}, ${i}, this)" style="font-size: 11px; padding: 4px 12px;">
-            🤖 Hỏi AI giải thích thêm (${AI_EXPLAIN_COST} token)
-          </button>
-        </div>
-        <div class="rev-qt" id="rev-qt-${i}" style="font-size: 14px; font-weight: 500; margin-bottom: 12px;"></div>
-        <div id="rev-opts-${i}" style="margin-bottom: 12px;"></div>
-        <div class="rev-o ca" style="background: var(--acc-s); padding: 12px; border-radius: 8px; margin-top: 8px;">
-          <strong>💡 Lời giải chi tiết:</strong>
-          <div id="rev-exp-${i}" style="margin-top: 8px; line-height: 1.6;"></div>
-        </div>
-        <div id="ai-extra-exp-${i}" style="display: none; margin-top: 12px; padding: 12px; background: var(--pur-s); border-radius: 8px;"></div>
-      </div>
-    `;
-  }
-  
-  container.innerHTML = html;
-  
-  // Render nội dung cho từng câu
-  for (let i = 1; i <= questions.length; i++) {
-    const q = questions[i - 1];
-    if (!q) continue;
-    
-    // Render câu hỏi
-    const qEl = document.getElementById(`rev-qt-${i}`);
-    if (qEl) renderMarkdownAndLatex(qEl, q.text);
-    
-    // Render đáp án
-    const optsEl = document.getElementById(`rev-opts-${i}`);
-    if (optsEl && q.opts) {
-      optsEl.innerHTML = q.opts.map((opt, j) => {
-        const isCorrect = j === q.correct;
-        const isUserSelected = userAnswers[i] === letters[j] || userAnswers[i] === j;
-        let bgColor = '';
-        if (isCorrect) bgColor = 'var(--grn-s)';
-        else if (isUserSelected && !isCorrect) bgColor = 'var(--red-s)';
-        else bgColor = 'var(--bg3)';
-        
-        return `
-          <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 6px; background: ${bgColor}; border-radius: 6px;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bgh); display: flex; align-items: center; justify-content: center; font-weight: bold;">${letters[j]}</div>
-            <div style="flex: 1;" id="rev-opt-${i}-${j}"></div>
-            ${isCorrect ? '<span style="color: var(--grn);">✓ Đáp án đúng</span>' : ''}
-            ${isUserSelected && !isCorrect ? '<span style="color: var(--red);">✗ Bạn chọn</span>' : ''}
-          </div>
-        `;
-      }).join('');
-      
-      // Render nội dung từng đáp án
-      q.opts.forEach((opt, j) => {
-        const optEl = document.getElementById(`rev-opt-${i}-${j}`);
-        if (optEl) renderMarkdownAndLatex(optEl, opt);
-      });
-    }
-    
-    // Render lời giải
-    const expEl = document.getElementById(`rev-exp-${i}`);
-    if (expEl && q.sol_text) {
-      renderMarkdownAndLatex(expEl, q.sol_text);
-    } else if (expEl) {
-      expEl.innerHTML = '<em>Chưa có lời giải chi tiết. Hãy bấm "Hỏi AI giải thích thêm" để được hỗ trợ.</em>';
-    }
-  }
-}
-
 
 function buildResultFromSubmission(submission) {
   if (!submission) return;
@@ -5805,480 +5179,6 @@ if (qtypeSelect && shortUnitDiv) {
     shortUnitDiv.style.display = this.value === 'short' ? 'block' : 'none';
   });
 }
-
-// Đảm bảo sidebar hiển thị mặc định
-setTimeout(() => {
-  const sidebar = document.querySelector('#view-dashboard .sidebar');
-  const rp = document.querySelector('#view-dashboard .rp');
-  
-  // Reset sidebar
-  if (sidebar) {
-    sidebar.classList.remove('panel-hidden');
-    sidebar.classList.remove('open');
-  }
-  
-  // Reset right panel
-  if (rp) {
-    rp.classList.remove('panel-hidden');
-    rp.classList.remove('open');
-  }
-  
-  // Cập nhật lại tab toggle
-  if (typeof window.resetPanelState === 'function') {
-    window.resetPanelState();
-  }
-  
-  console.log('Đã reset sidebar và right panel');
-}, 200);
-
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-}
-
-
-function renderPersonalizedExamsList() {
-  const userId = DB.session?.id;
-  if (!userId) return;
-  
-  const exams = DB.exams.filter(e => e.isPersonal === true && e.userId === userId)
-    .sort((a, b) => new Date(b.created) - new Date(a.created));
-  
-  const container = document.getElementById('personalized-exams-list');
-  if (!container) return;
-  
-  if (exams.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">Chưa có đề cá nhân hóa nào. Hãy tạo đề đầu tiên!</div></div>';
-    return;
-  }
-  
-  container.innerHTML = exams.map(exam => `
-    <div class="ei" onclick="startExam(${exam.id})">
-      <div class="enum">🎯</div>
-      <div class="einfo">
-        <div class="etitle">${exam.name}</div>
-        <div class="emr">
-          <span>⏱ ${exam.duration} phút</span>
-          <span>❓ ${exam.questions} câu</span>
-          <span>📅 ${new Date(exam.created).toLocaleDateString('vi-VN')}</span>
-        </div>
-      </div>
-      <div class="esa">
-        <button class="btn btn-p btn-sm" onclick="event.stopPropagation(); startExam(${exam.id})">📝 Làm bài</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-
-
-
-// ===== AI EXPLAIN MORE =====
-const AI_EXPLAIN_COST = 5;
-
-async function askAIExplainMore(questionId, questionNumber, btnElement) {
-  const userId = DB.session?.id;
-  if (!userId) {
-    toast('⚠️', 'Vui lòng đăng nhập lại');
-    return;
-  }
-  
-  // Kiểm tra token
-  const userTokens = getTokens(userId);
-  if (userTokens < AI_EXPLAIN_COST) {
-    toast('❌', `Bạn cần ${AI_EXPLAIN_COST} token để dùng tính năng này. Hiện có ${userTokens} token.`);
-    return;
-  }
-  
-  // Tìm câu hỏi
-  const question = DB.questions.find(q => q.id === questionId);
-  if (!question) {
-    toast('⚠️', 'Không tìm thấy câu hỏi');
-    return;
-  }
-  
-  // Disable button
-  if (btnElement) {
-    btnElement.disabled = true;
-    btnElement.textContent = '⏳ AI đang suy nghĩ...';
-  }
-  
-  const container = document.getElementById(`ai-extra-exp-${questionNumber}`);
-  if (container) {
-    container.style.display = 'block';
-    container.innerHTML = '<div class="ai-loading"><span class="spin">⚙️</span> AI đang phân tích...</div>';
-  }
-  
-  try {
-    const correctAnswer = question.opts[question.correct];
-    const letters = ['A', 'B', 'C', 'D'];
-    
-    const prompt = `Bạn là gia sư Toán. Hãy giải thích câu hỏi sau một cách chi tiết, dễ hiểu cho học sinh.
-
-CÂU HỎI:
-${question.text}
-
-CÁC ĐÁP ÁN:
-A. ${question.opts[0]}
-B. ${question.opts[1]}
-C. ${question.opts[2]}
-D. ${question.opts[3]}
-
-ĐÁP ÁN ĐÚNG: ${letters[question.correct]}. ${correctAnswer}
-
-LỜI GIẢI CÓ SẴN:
-${question.sol_text || 'Chưa có lời giải chi tiết'}
-
-YÊU CẦU:
-- Giải thích từng bước một, rõ ràng
-- Nếu có công thức toán, dùng LaTeX với dấu $
-- Tập trung vào phần học sinh dễ hiểu sai
-- Kết thúc bằng lời khuyên học tập
-
-Trả về dạng text thuần, không markdown, không JSON.`;
-
-    const raw = await callAI(prompt, 1000);
-    const explanation = raw.trim();
-    
-    // Trừ token
-    consumeTokens(userId, AI_EXPLAIN_COST);
-    
-    // Hiển thị kết quả
-    if (container) {
-      container.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-          <span style="font-size: 18px;">🤖</span>
-          <strong>AI giải thích thêm:</strong>
-          <span style="font-size: 11px; color: var(--txt3); margin-left: auto;">−${AI_EXPLAIN_COST} token</span>
-        </div>
-        <div id="ai-exp-content-${questionNumber}" style="line-height: 1.6; font-size: 13px;"></div>
-      `;
-      const contentDiv = document.getElementById(`ai-exp-content-${questionNumber}`);
-      if (contentDiv) {
-        renderMarkdownAndLatex(contentDiv, explanation);
-      }
-    }
-    
-    toast('✅', `Đã giải thích thêm! Tiêu tốn ${AI_EXPLAIN_COST} token`);
-    
-  } catch (err) {
-    console.error('AI explain error:', err);
-    if (container) {
-      container.innerHTML = `
-        <div style="color: var(--red); padding: 8px;">
-          ❌ Lỗi: ${err.message}<br>
-          Vui lòng thử lại sau.
-        </div>
-      `;
-    }
-    toast('❌', 'Không thể giải thích. Vui lòng thử lại.');
-  } finally {
-    if (btnElement) {
-      btnElement.disabled = false;
-      btnElement.textContent = `🤖 Hỏi AI giải thích thêm (${AI_EXPLAIN_COST} token)`;
-    }
-  }
-}
-
-// Gắn vào window
-window.askAIExplainMore = askAIExplainMore;
-
-
-
-
-
-
-
-
-
-
-// data testing
-// ===== DATA TEST CHO TÍNH NĂNG CÁ NHÂN HÓA =====
-function initTestDataForPersonalization() {
-  const student = DB.users.find(u => u.email === 'student@exam.vn');
-  if (!student) return;
-  
-  // Kiểm tra nếu đã có dữ liệu test thì bỏ qua
-  const existingTestData = DB.submissions.some(s => s.userId === student.id && s.isTestData);
-  if (existingTestData) return;
-  
-  console.log('Đang tạo dữ liệu test cho cá nhân hóa...');
-  
-  // Danh sách câu hỏi mẫu theo các chủ đề
-  const questionsByTopic = {
-    math: {
-      'Hàm số': [
-        { id: 101, text: 'Tìm tập xác định của hàm số $y = \\frac{1}{x-2}$', correct: 2 },
-        { id: 102, text: 'Tính đạo hàm của $y = x^3 - 2x^2 + 5$', correct: 0 },
-        { id: 103, text: 'Tìm cực trị của hàm số $y = x^3 - 3x^2 + 2$', correct: 1 },
-        { id: 104, text: 'Hàm số $y = x^3 - 3x$ đồng biến trên khoảng nào?', correct: 0 },
-        { id: 105, text: 'Giá trị lớn nhất của $y = -x^2 + 4x - 3$ trên $[0,3]$ là?', correct: 2 }
-      ],
-      'Phương trình': [
-        { id: 201, text: 'Giải phương trình $x^2 - 4x + 3 = 0$', correct: 0 },
-        { id: 202, text: 'Nghiệm của phương trình $\\sin x = \\frac{1}{2}$ là?', correct: 1 },
-        { id: 203, text: 'Phương trình $\\log_2(x+1) = 3$ có nghiệm là?', correct: 2 },
-        { id: 204, text: 'Giải phương trình $2^{x} = 8$', correct: 1 },
-        { id: 205, text: 'Phương trình $\\cos x = 0$ có nghiệm là?', correct: 3 }
-      ],
-      'Tích phân': [
-        { id: 301, text: 'Tính $\\int_0^1 x^2 dx$', correct: 0 },
-        { id: 302, text: 'Tính $\\int_0^{\\pi} \\sin x dx$', correct: 1 },
-        { id: 303, text: 'Tính diện tích hình phẳng giới hạn bởi $y=x^2$ và $y=4$', correct: 2 },
-        { id: 304, text: 'Tính $\\int_0^2 (2x+1) dx$', correct: 3 },
-        { id: 305, text: 'Tính $\\int_1^e \\frac{1}{x} dx$', correct: 0 }
-      ]
-    },
-    physics: {
-      'Cơ học': [
-        { id: 401, text: 'Một vật rơi tự do từ độ cao 20m, lấy $g=10m/s^2$. Thời gian rơi là?', correct: 1 },
-        { id: 402, text: 'Vận tốc của vật khi chạm đất ở câu trên là?', correct: 2 },
-        { id: 403, text: 'Công thức tính động năng là?', correct: 0 },
-        { id: 404, text: 'Một vật khối lượng 2kg có động năng 100J, vận tốc là?', correct: 1 },
-        { id: 405, text: 'Thế năng trọng trường phụ thuộc vào yếu tố nào?', correct: 3 }
-      ],
-      'Điện học': [
-        { id: 501, text: 'Định luật Ôm cho đoạn mạch: $I = U/R$. Khi R tăng thì I?', correct: 0 },
-        { id: 502, text: 'Điện trở tương đương của 2 điện trở mắc nối tiếp là?', correct: 2 },
-        { id: 503, text: 'Công suất tiêu thụ của điện trở R có dòng điện I là?', correct: 1 },
-        { id: 504, text: 'Đơn vị của điện trở là?', correct: 3 },
-        { id: 505, text: 'Dòng điện xoay chiều có tần số 50Hz, chu kỳ là?', correct: 0 }
-      ]
-    },
-    chemistry: {
-      'Hóa vô cơ': [
-        { id: 601, text: 'Nguyên tử khối của Oxi là?', correct: 2 },
-        { id: 602, text: 'Công thức hóa học của nước là?', correct: 0 },
-        { id: 603, text: 'Kim loại nào sau đây tác dụng với nước ở nhiệt độ thường?', correct: 1 },
-        { id: 604, text: 'pH của dung dịch HCl 0.01M là?', correct: 2 },
-        { id: 605, text: 'Chất nào sau đây là axit mạnh?', correct: 3 }
-      ],
-      'Hóa hữu cơ': [
-        { id: 701, text: 'Công thức tổng quát của ankan là?', correct: 0 },
-        { id: 702, text: 'Số đồng phân của $C_4H_{10}$ là?', correct: 1 },
-        { id: 703, text: 'Phản ứng đặc trưng của anken là?', correct: 2 },
-        { id: 704, text: 'Rượu etylic có công thức là?', correct: 3 },
-        { id: 705, text: 'Chất nào sau đây làm quỳ tím hóa đỏ?', correct: 0 }
-      ]
-    },
-    english: {
-      'Ngữ pháp': [
-        { id: 801, text: 'She _____ to school every day.', correct: 1, opts: ['go', 'goes', 'going', 'went'] },
-        { id: 802, text: 'I _____ a letter yesterday.', correct: 0, opts: ['wrote', 'write', 'written', 'writing'] },
-        { id: 803, text: 'They _____ playing football now.', correct: 2, opts: ['is', 'am', 'are', 'be'] },
-        { id: 804, text: 'If I _____ you, I would study harder.', correct: 0, opts: ['were', 'was', 'am', 'is'] },
-        { id: 805, text: 'She has _____ to Paris.', correct: 1, opts: ['go', 'gone', 'went', 'going'] }
-      ],
-      'Từ vựng': [
-        { id: 901, text: 'What is the synonym of "happy"?', correct: 2, opts: ['sad', 'angry', 'joyful', 'tired'] },
-        { id: 902, text: 'The opposite of "big" is _____?', correct: 3, opts: ['large', 'huge', 'enormous', 'small'] },
-        { id: 903, text: 'Which word means "fast"?', correct: 0, opts: ['quick', 'slow', 'heavy', 'light'] },
-        { id: 904, text: 'What is the meaning of "beautiful"?', correct: 1, opts: ['ugly', 'pretty', 'plain', 'dull'] },
-        { id: 905, text: 'Which word is a color?', correct: 2, opts: ['dog', 'cat', 'blue', 'run'] }
-      ]
-    }
-  };
-  
-  // Thêm câu hỏi vào DB nếu chưa có
-  for (const subject in questionsByTopic) {
-    for (const topic in questionsByTopic[subject]) {
-      questionsByTopic[subject][topic].forEach(q => {
-        if (!DB.questions.find(existing => existing.id === q.id)) {
-          DB.questions.push({
-            id: q.id,
-            text: q.text,
-            subject: subject,
-            diff: 'medium',
-            opts: q.opts || ['A', 'B', 'C', 'D'],
-            correct: q.correct,
-            source: 'test_data',
-            qtype: 'single',
-            qtype_label: topic,
-            sol_text: `Lời giải chi tiết cho câu hỏi này.`
-          });
-        }
-      });
-    }
-  }
-  
-  // Cập nhật nextIds nếu cần
-  if (DB.nextIds.question < 1000) DB.nextIds.question = 1000;
-  
-  // Tạo các bài thi đã làm (giả lập điểm yếu)
-  const submissions = [];
-  let subId = (DB.nextIds.submission || 1);
-  
-  // MÔN TOÁN: Yếu phần Tích phân (chỉ đúng 1/5 câu)
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9991,
-    examName: 'Đề kiểm tra Toán - Hàm số',
-    subject: 'math',
-    score: 8.0,
-    correct: 4,
-    total: 5,
-    time: '25:30',
-    date: '2026-03-20',
-    answers: { 1: 2, 2: 0, 3: 1, 4: 0, 5: 2 },
-    questions: [101, 102, 103, 104, 105],
-    isTestData: true
-  });
-  
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9992,
-    examName: 'Đề kiểm tra Toán - Phương trình',
-    subject: 'math',
-    score: 6.0,
-    correct: 3,
-    total: 5,
-    time: '28:15',
-    date: '2026-03-18',
-    answers: { 1: 0, 2: 1, 3: 2, 4: 1, 5: 3 },
-    questions: [201, 202, 203, 204, 205],
-    isTestData: true
-  });
-  
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9993,
-    examName: 'Đề kiểm tra Toán - Tích phân (YẾU)',
-    subject: 'math',
-    score: 2.0,
-    correct: 1,
-    total: 5,
-    time: '30:45',
-    date: '2026-03-15',
-    answers: { 1: 2, 2: 3, 3: 1, 4: 0, 5: 2 },
-    questions: [301, 302, 303, 304, 305],
-    isTestData: true
-  });
-  
-  // MÔN VẬT LÝ: Yếu phần Điện học (chỉ đúng 2/5 câu)
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9994,
-    examName: 'Đề kiểm tra Vật lý - Cơ học',
-    subject: 'physics',
-    score: 7.0,
-    correct: 3.5,
-    total: 5,
-    time: '22:10',
-    date: '2026-03-17',
-    answers: { 1: 1, 2: 2, 3: 0, 4: 1, 5: 3 },
-    questions: [401, 402, 403, 404, 405],
-    isTestData: true
-  });
-  
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9995,
-    examName: 'Đề kiểm tra Vật lý - Điện học (YẾU)',
-    subject: 'physics',
-    score: 4.0,
-    correct: 2,
-    total: 5,
-    time: '35:20',
-    date: '2026-03-14',
-    answers: { 1: 0, 2: 2, 3: 1, 4: 3, 5: 0 },
-    questions: [501, 502, 503, 504, 505],
-    isTestData: true
-  });
-  
-  // MÔN HÓA HỌC: Yếu phần Hóa hữu cơ (chỉ đúng 1/5 câu)
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9996,
-    examName: 'Đề kiểm tra Hóa - Vô cơ',
-    subject: 'chemistry',
-    score: 8.0,
-    correct: 4,
-    total: 5,
-    time: '20:45',
-    date: '2026-03-16',
-    answers: { 1: 2, 2: 0, 3: 1, 4: 2, 5: 3 },
-    questions: [601, 602, 603, 604, 605],
-    isTestData: true
-  });
-  
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9997,
-    examName: 'Đề kiểm tra Hóa - Hữu cơ (YẾU)',
-    subject: 'chemistry',
-    score: 2.0,
-    correct: 1,
-    total: 5,
-    time: '32:15',
-    date: '2026-03-12',
-    answers: { 1: 0, 2: 1, 3: 2, 4: 3, 5: 0 },
-    questions: [701, 702, 703, 704, 705],
-    isTestData: true
-  });
-  
-  // MÔN TIẾNG ANH: Yếu phần Từ vựng (chỉ đúng 2/5 câu)
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9998,
-    examName: 'Đề kiểm tra Anh - Ngữ pháp',
-    subject: 'english',
-    score: 7.0,
-    correct: 3.5,
-    total: 5,
-    time: '18:30',
-    date: '2026-03-19',
-    answers: { 1: 1, 2: 0, 3: 2, 4: 0, 5: 1 },
-    questions: [801, 802, 803, 804, 805],
-    isTestData: true
-  });
-  
-  submissions.push({
-    id: subId++,
-    userId: student.id,
-    examId: 9999,
-    examName: 'Đề kiểm tra Anh - Từ vựng (YẾU)',
-    subject: 'english',
-    score: 4.0,
-    correct: 2,
-    total: 5,
-    time: '25:40',
-    date: '2026-03-10',
-    answers: { 1: 2, 2: 3, 3: 0, 4: 1, 5: 2 },
-    questions: [901, 902, 903, 904, 905],
-    isTestData: true
-  });
-  
-  // Thêm vào DB
-  submissions.forEach(sub => {
-    if (!DB.submissions.find(s => s.id === sub.id)) {
-      DB.submissions.push(sub);
-    }
-  });
-  
-  DB.nextIds.submission = subId;
-  persistDB();
-  
-  console.log('✅ Đã tạo dữ liệu test cho cá nhân hóa!');
-  console.log('   - Toán: Yếu phần Tích phân (đúng 1/5 câu)');
-  console.log('   - Vật lý: Yếu phần Điện học (đúng 2/5 câu)');
-  console.log('   - Hóa: Yếu phần Hữu cơ (đúng 1/5 câu)');
-  console.log('   - Anh: Yếu phần Từ vựng (đúng 2/5 câu)');
-}
-
-// Gọi hàm khởi tạo dữ liệu test
-setTimeout(() => {
-  initTestDataForPersonalization();
-}, 500);
-
 
 </script>
 
