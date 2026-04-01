@@ -2673,3 +2673,13 @@ body.dark {
         position: sticky !important;
     }
 }
+
+/* Security warning overlay */
+#security-warning-overlay {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
