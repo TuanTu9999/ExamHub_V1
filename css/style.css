@@ -2673,3 +2673,49 @@ body.dark {
         position: sticky !important;
     }
 }
+
+/* Ẩn nút AI khi đang thi */
+body.exam-mode .ai-inline-btn,
+body.exam-mode .ai-hint-btn,
+body.exam-mode #ai-hint-btn,
+body.exam-mode [onclick*="askAI"],
+body.exam-mode [onclick*="generateAI"] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Result navigator */
+.nqb.ans {
+  background: var(--grn-s);
+  border-color: var(--grn);
+  color: var(--grn);
+}
+
+.nqb.wrong {
+  background: var(--red-s);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.nqb.flg {
+  background: var(--gold-s);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.nqb.cur {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(79, 142, 247, 0.4);
+}
+
+/* Security warning overlay */
+#security-warning-overlay {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
