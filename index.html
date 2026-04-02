@@ -6,16 +6,21 @@
 <meta name="description" content="ExamHub — Hệ thống luyện thi trực tuyến">
 <meta name="theme-color" content="#3b82f6">
 <title>ExamHub — Hệ thống thi trực tuyến</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" defer></script>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<style>
+/* Utility: spacers */
+.spacer-12{height:12px}.spacer-16{height:16px}.spacer-30{height:30px}
+/* Utility: visually hidden (accessibility) */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+</style>
 </head>
-
-
 
 <body>
 
@@ -56,7 +61,7 @@
 <div class="moverlay" id="m-room">
   <div class="mbox">
     <div class="mtitle" id="m-room-title">➕ Tạo phòng thi mới</div>
-    <div style="height:16px"></div>
+    <div class="spacer-16"></div>
     <div class="fg"><label>Tên phòng thi *</label><input id="f-room-name" placeholder="VD: Toán học nâng cao"></div>
     <div class="fg"><label>Mô tả</label><textarea id="f-room-desc" placeholder="Mô tả ngắn gọn về phòng thi..."></textarea></div>
       <div class="fg"><label>Môn học</label>
@@ -76,7 +81,6 @@
           <option value="closed">Đã đóng</option>
         </select>
       </div>
-    </div>
     <div class="fg-row">
       <div class="fg"><label>Thời gian mở</label><input type="datetime-local" id="f-room-start"></div>
       <div class="fg"><label>Thời gian đóng</label><input type="datetime-local" id="f-room-end"></div>
@@ -97,7 +101,7 @@
 <div class="moverlay" id="m-exam">
   <div class="mbox">
     <div class="mtitle" id="m-exam-title">➕ Tạo đề thi mới</div>
-    <div style="height:16px"></div>
+    <div class="spacer-16"></div>
     
     <div class="fg"><label>Tên đề thi *</label><input id="f-exam-name" placeholder="VD: Đề thử số 1 — THPT Lam Sơn"></div>
     
@@ -156,7 +160,7 @@
 <div class="moverlay" id="m-question">
   <div class="mbox mbox-lg">
     <div class="mtitle" id="m-question-title">➕ Thêm câu hỏi</div>
-    <div style="height:16px"></div>
+    <div class="spacer-16"></div>
     <div class="fg"><label>Nội dung câu hỏi *</label><textarea id="f-q-text" placeholder="Nhập nội dung câu hỏi... Hỗ trợ **Markdown** và $LaTeX$"></textarea></div>
     <div class="fg-row">
       <div class="fg"><label>Môn học</label>
@@ -192,7 +196,7 @@
 <div id="m-ai" class="moverlay">
   <div class="mbox mbox-lg">
     <div class="mtitle">🤖 Sinh câu hỏi bằng AI</div>
-    <div style="height:12px"></div>
+    <div class="spacer-12"></div>
     
     <div class="ai-box">
       <div class="ai-box-hd">
@@ -411,7 +415,7 @@
         <div class="umini">
           <div class="ava-s blue" id="sb-ava">NT</div>
           <div class="umini-info"><div class="umini-name" id="sb-name">Nguyễn Thành</div><div class="umini-role" id="sb-role">Học sinh</div></div>
-          <span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span>
+          <span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span>
         </div>
       </div>
     </aside>
@@ -421,7 +425,7 @@
         <div class="tbc"><span>ExamHub</span><span class="sep">›</span><span class="cur">Trang chủ</span></div>
         <div class="tbr" id="topbar-dashboard">
           <div class="srch"><span>🔍</span><input id="dashboard-search" placeholder="Tìm phòng thi..."></div>
-          <div class="tbtn" id="theme-toggle-dashboard">🌙</div>
+          <div class="tbtn" id="theme-toggle-dashboard" role="button" aria-label="Chuyển giao diện">🌙</div>
         </div>
       </div>
       
@@ -514,7 +518,7 @@
             <div class="uct">
               <div class="av-lg" id="rp-ava" style="background:linear-gradient(135deg,#4f8ef7,#7c3aed)">NT</div>
               <div class="un-lg" id="rp-name">Nguyễn Văn A</div>
-              <div class="ue-lg" id="rp-email">student@exam.vn</div>
+              <div class="ue-lg" id="rp-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f3c3b3a2b2a213b0f2a372e22613921">[email&#160;protected]</a></div>
               <div class="prem" id="rp-premium-badge">⭐ Premium</div>
             </div>
             <div class="usg" id="rp-stats">
@@ -549,7 +553,7 @@
         <div class="umini">
           <div class="ava-s blue" id="sb2-ava">NT</div>
           <div class="umini-info"><div class="umini-name" id="sb2-name">Nguyễn Thành</div><div class="umini-role">Học sinh</div></div>
-          <span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span>
+          <span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span>
         </div>
       </div>
     </aside>
@@ -560,7 +564,7 @@
       </div>
       <div class="ca">
         <div class="cm">
-          <div class="back" onclick="goTo('dashboard')">← Quay lại trang chủ</div>
+          <div class="back" onclick="goTo('dashboard')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')goTo('dashboard')">← Quay lại trang chủ</div>
           <div class="card fi" style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
             <div class="rico" id="room-det-ico" style="width:50px;height:50px;font-size:25px;background:var(--acc-s)">📐</div>
             <div style="flex:1">
@@ -729,7 +733,7 @@
         <div class="nav on"><span class="ni">📋</span>Lịch sử thi</div>
       </div>
       <div class="s-foot">
-        <div class="umini"><div class="ava-s blue">NT</div><div class="umini-info"><div class="umini-name">Nguyễn Thành</div><div class="umini-role">Học sinh</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span></div>
+        <div class="umini"><div class="ava-s blue">NT</div><div class="umini-info"><div class="umini-name">Nguyễn Thành</div><div class="umini-role">Học sinh</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div>
       </div>
     </aside>
     <div class="main">
@@ -766,7 +770,7 @@
         <div class="umini">
           <div class="ava-s red" id="sb-admin-ava">AD</div>
           <div class="umini-info"><div class="umini-name" id="sb-admin-name">Admin</div><div class="umini-role">Quản trị viên</div></div>
-          <span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span>
+          <span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span>
         </div>
       </div>
     </aside>
@@ -775,7 +779,7 @@
         <div class="tbc"><span>ExamAdmin</span><span class="sep">›</span><span class="cur">Dashboard</span></div>
         <div class="tbr" id="topbar-admin">
           <button class="btn btn-pur btn-sm" onclick="goTo('admin-questions')">✨ AI Tạo câu hỏi</button>
-          <div class="tbtn">🔔</div>
+          <div class="tbtn" role="button" aria-label="Thông báo">🔔</div>
         </div>
       </div>
       <div class="cm">
@@ -811,7 +815,7 @@
             <div class="sec-title">🚪 Phòng thi gần đây</div>
             <div class="tbl-wrap">
               <table class="tbl" id="adm-rooms-tbl">
-                <thead><tr><th>Tên phòng</th><th>Đề</th><th>Trạng thái</th><th>Thao tác</th> </thead>
+                <thead><tr><th>Tên phòng</th><th>Đề</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
                 <tbody id="adm-rooms-tbody"></tbody>
                </table>
             </div>
@@ -820,7 +824,7 @@
             <div class="sec-title">📄 Đề thi gần đây</div>
             <div class="tbl-wrap">
               <table class="tbl" id="adm-exams-tbl">
-                <thead> <tr><th>Tên đề thi</th><th>Phòng</th><th>Câu</th> </tr> </thead>
+                <thead><tr><th>Tên đề thi</th><th>Phòng</th><th>Câu</th></tr></thead>
                 <tbody id="adm-exams-tbody"></tbody>
                </table>
             </div>
@@ -844,7 +848,7 @@
         <div class="nav" onclick="goTo('admin-questions')"><span class="ni">❓</span>Ngân hàng câu hỏi</div>
         <div class="nav admin-only-nav" onclick="goTo('admin-api')" style="display:none"><span class="ni">🔑</span>Quản lý API</div>
       </div>
-      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-rooms">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-rooms">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span></div></div>
+      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-rooms">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-rooms">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div></div>
     </aside>
     <div class="main">
       <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Phòng thi</span></div><div class="tbr" id="topbar-admin-rooms"><button class="btn btn-p btn-sm" onclick="openRoomModal()">➕ Tạo phòng mới</button></div></div>
@@ -853,7 +857,7 @@
         <div class="tbl-wrap fi">
           <div class="tbl-hd"><div class="tbl-hd-title">Danh sách phòng thi</div><button class="btn btn-p btn-sm" onclick="openRoomModal()">➕ Tạo mới</button></div>
           <table class="tbl">
-            <thead> <tr><th>Môn học</th><th>Tên phòng thi</th><th>Số đề</th><th>Trạng thái</th><th>Premium</th><th>Thao tác</th> </tr> </thead>
+            <thead><tr><th>Môn học</th><th>Tên phòng thi</th><th>Số đề</th><th>Trạng thái</th><th>Premium</th><th>Thao tác</th></tr></thead>
             <tbody id="rooms-tbody"></tbody>
            </table>
         </div>
@@ -875,7 +879,7 @@
         <div class="nav" onclick="goTo('admin-questions')"><span class="ni">❓</span>Ngân hàng câu hỏi</div>
         <div class="nav admin-only-nav" onclick="goTo('admin-api')" style="display:none"><span class="ni">🔑</span>Quản lý API</div>
       </div>
-      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-exams">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-exams">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span></div></div>
+      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-exams">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-exams">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div></div>
     </aside>
     <div class="main">
       <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Đề thi</span></div><div class="tbr" id="topbar-admin-exams"><button class="btn btn-p btn-sm" onclick="openExamModal()">➕ Tạo đề thi</button></div></div>
@@ -884,7 +888,7 @@
         <div class="tbl-wrap fi">
           <div class="tbl-hd"><div class="tbl-hd-title">Danh sách đề thi</div><button class="btn btn-p btn-sm" onclick="openExamModal()">➕ Tạo mới</button></div>
           <table class="tbl">
-            <thead>  <tr><th>Tên đề thi</th><th>Phòng thi</th><th>Thời gian</th><th>Loại</th><th>Câu hỏi</th><th>Thao tác</th> </tr> </thead>
+            <thead><tr><th>Tên đề thi</th><th>Phòng thi</th><th>Thời gian</th><th>Loại</th><th>Câu hỏi</th><th>Thao tác</th></tr></thead>
             <tbody id="exams-tbody"></tbody>
            </table>
         </div>
@@ -906,7 +910,7 @@
         <div class="nav on" onclick="goTo('admin-questions')"><span class="ni">❓</span>Ngân hàng câu hỏi</div>
         <div class="nav admin-only-nav" onclick="goTo('admin-api')" style="display:none"><span class="ni">🔑</span>Quản lý API</div>
       </div>
-      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-qs">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-qs">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span></div></div>
+      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-qs">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-qs">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div></div>
     </aside>
     <div class="main">
       <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Ngân hàng câu hỏi</span></div><div class="tbr" id="topbar-admin-questions"><button class="btn btn-pur btn-sm" onclick="openAIModal()">✨ AI Sinh câu hỏi</button><button class="btn btn-p btn-sm" onclick="openQuestionModal()">➕ Thêm thủ công</button></div></div>
@@ -952,7 +956,7 @@
         <div class="nav" onclick="goTo('admin-questions')"><span class="ni">❓</span>Ngân hàng câu hỏi</div>
         <div class="nav on admin-only-nav" onclick="goTo('admin-api')" style="display:none"><span class="ni">🔑</span>Quản lý API</div>
       </div>
-      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-api">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-api">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()">⏏</span></div></div>
+      <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-api">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-api">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div></div>
     </aside>
     <div class="main">
       <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Quản lý API & Token</span></div><div class="tbr" id="topbar-admin-api"></div></div>
@@ -1283,11 +1287,11 @@
         <div class="fg"><label>Lời giải bằng text <span style="color:var(--txt3);font-weight:400">(Markdown + LaTeX)</span></label><textarea id="fsq-sol-text" class="finp" style="min-height:100px;resize:vertical;font-size:12.5px" oninput="debouncePreview()" placeholder="Nhập lời giải chi tiết..."></textarea></div>
         <div class="fg" style="margin-bottom:0"><label>Link video lời giải <span style="color:var(--txt3);font-weight:400">(YouTube, Google Drive...)</span></label><input id="fsq-sol-video" class="finp" placeholder="https://youtube.com/watch?v=..." oninput="debouncePreview()"></div>
       </div>
-      <div style="height:30px"></div>
+      <div class="spacer-30"></div>
     </div>
     <div class="fs-preview">
       <div class="preview-label">👁 Xem trước — cập nhật tự động</div>
-      <div><div class="preview-label" style="margin-bottom:6px">Câu hỏi</div><div class="preview-box"><div class="preview-q-text" id="prev-q-text"></div><img id="prev-q-img" style="display:none;max-width:100%;border-radius:7px;margin-top:8px;border:1px solid var(--bdr)"><div id="prev-opts"></div></div></div>
+      <div><div class="preview-label" style="margin-bottom:6px">Câu hỏi</div><div class="preview-box"><div class="preview-q-text" id="prev-q-text"></div><img id="prev-q-img" alt="Ảnh câu hỏi" style="display:none;max-width:100%;border-radius:7px;margin-top:8px;border:1px solid var(--bdr)"><div id="prev-opts"></div></div></div>
       <div id="prev-sol-wrap" style="display:none"><div class="preview-label" style="margin-bottom:6px">💡 Lời giải</div><div class="preview-sol" id="prev-sol-text"></div><div id="prev-sol-vid"></div></div>
       <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--bdr)"><div style="font-size:11px;color:var(--txt3);display:flex;gap:14px;flex-wrap:wrap"><span>Mã: <strong id="prev-code" style="color:var(--acc);font-family:var(--fm)">–</strong></span><span>Điểm: <strong id="prev-score" style="color:var(--grn)">1</strong></span><span>Dạng: <strong id="prev-type-disp" style="color:var(--pur)">–</strong></span><span>IRT a=<strong id="prev-irt" style="font-family:var(--fm)">1.0</strong></span></div></div>
     </div>
@@ -1335,6 +1339,10 @@
 
 <script>
 // ===== constants.js =====
+
+// Debug mode: set to true in DevTools console to enable logs
+const DEBUG = false;
+const dbg = (...args) => { if (DEBUG) console.log(...args); };
 
 
 const subjectMap = {
@@ -1454,8 +1462,6 @@ function cleanLatexText(text) {
   cleaned = cleaned.replace(/\\\$/g, '$');
   return cleaned;
 }
-
-
 
 // ===== KẾT QUẢ THI (CHẾ ĐỘ XEM LẠI) =====
 let resultQuestions = [];      // danh sách câu hỏi
@@ -1678,9 +1684,6 @@ function loadSavedQuestions() {
   saved.forEach(id => resultSavedQuestions.add(id));
 }
 
-
-
-
 // ===== db.js =====
 
 // db.js
@@ -1693,14 +1696,14 @@ function loadDB() {
   if (saved) {
     try {
       DB = JSON.parse(saved);
-      console.log('Loaded from localStorage, users:', DB.users?.length || 0); 
+      dbg('Loaded from localStorage, users:', DB.users?.length || 0); 
     } catch(e) {
       console.error('Parse error, using default DB', e);
       DB = JSON.parse(JSON.stringify(DEFAULT_DB));
     }
   } else {
     DB = JSON.parse(JSON.stringify(DEFAULT_DB));
-    console.log('Using default DB');
+    dbg('Using default DB');
   }
   
   if (!DB.users) DB.users = [];
@@ -1720,7 +1723,7 @@ function persistDB() {
     session: DB.session
   };
   localStorage.setItem('examhub_db', JSON.stringify(toSave));
-  console.log('DB persisted');
+  dbg('DB persisted');
 }
 
 loadDB();
@@ -1827,8 +1830,6 @@ if (document.readyState === 'loading') {
 } else {
   initModalClose();
 }
-
-
 
 // ===== tokens.js =====
 
@@ -1944,8 +1945,6 @@ function renderTokenTable() {
 
 window.grantTokens=grantTokens; window.setTokens=setTokens; window.renderTokenTable=renderTokenTable;
 
-
-
 // ===== theme.js =====
 
 function initTheme() {
@@ -1973,8 +1972,6 @@ function initTheme() {
     }
   });
 }
-
-
 
 // ===== dashboard.js =====
 
@@ -2049,6 +2046,42 @@ function startPracticeQuestion(questionId) {
   }
   startExam(fakeExam.id);
 }
+
+// ===== CẬP NHẬT SIDEBAR ĐỘNG =====
+// Định nghĩa sớm vì được gọi trong renderDashboard và các hàm khác
+function updateSidebar() {
+  const user = DB.session;
+  if (!user) return;
+
+  const tokenBal = user.role === 'admin' ? '∞' : getTokens(user.id);
+  const tokenClass = user.role === 'admin' ? 'c-acc' : (tokenBal < 10 ? 'c-red' : tokenBal < 30 ? 'c-org' : 'c-grn');
+  document.querySelectorAll('.token-bal').forEach(el => {
+    el.textContent = tokenBal;
+    el.className = `token-bal ${tokenClass}`;
+  });
+  document.querySelectorAll('.ava-s.blue, .ava-s, #result-ava, #sb-ava, #sb2-ava, #rp-ava').forEach(el => {
+    if (el) el.textContent = user.initials;
+  });
+  document.querySelectorAll('.umini-name, #result-name, #sb-name, #sb2-name, #rp-name').forEach(el => {
+    if (el) el.textContent = user.name.split(' ').slice(-1)[0];
+  });
+  const rpName = document.getElementById('rp-name');
+  if (rpName) rpName.textContent = user.name;
+  const rpEmail = document.getElementById('rp-email');
+  if (rpEmail) rpEmail.textContent = user.email;
+  const roleText = user.role === 'student' ? 'Học sinh' : (user.role === 'teacher' ? 'Giáo viên' : 'Quản trị viên');
+  document.querySelectorAll('.umini-role, #result-role, #sb-role').forEach(el => {
+    if (el) el.textContent = roleText;
+  });
+  const premiumBadge = document.getElementById('rp-premium-badge');
+  if (premiumBadge) {
+    premiumBadge.textContent = user.premium ? '⭐ Premium' : '🆓 Free';
+    premiumBadge.className = user.premium ? 'prem' : 'prem free';
+  }
+}
+function refreshSidebar() { updateSidebar(); }
+window.updateSidebar = updateSidebar;
+window.refreshSidebar = refreshSidebar;
 
 function renderDashboard() {
   const user = DB.session;
@@ -2287,7 +2320,7 @@ function buildSidebarRooms() {
   ['sb-rooms-list', 'sb2-rooms'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.innerHTML = DB.rooms.slice(0, 5).map(r => `<div class="nav" onclick="goTo('room',${r.id})"><span class="ni">${r.icon}</span>${r.name.split(' ')[0]}</div>`).join('');
+    el.innerHTML = DB.rooms.slice(0, 5).map(r => `<div class="nav" onclick="goTo('room',${r.id})"><span class="ni">${r.icon}</span>${escapeHtml(r.name.split(' ')[0])}</div>`).join('');
   });
 }
 
@@ -2331,8 +2364,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.filterRooms(filterMap[txt] || txt);
   }));
 });
-
-
 
 // ===== room.js =====
 
@@ -2392,8 +2423,6 @@ function renderRoom(roomId) {
   }
   buildSidebarRooms();
 }
-
-
 
 // ===== adminApi.js =====
 
@@ -2696,8 +2725,6 @@ function importExtractedQuestions() {
   if (typeof window.renderAdminQuestions === 'function') window.renderAdminQuestions();
 }
 
-
-
 // ===== aiGenerator.js =====
 
 // ===== aiGenerator.js =====
@@ -2789,7 +2816,7 @@ function extractAndParseJSON(rawStr) {
   clean = clean.replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3'); // Thêm quotes cho key
   clean = clean.replace(/:\s*'([^']*)'/g, ':"$1"'); // Đổi ' thành " cho value
   
-  console.log('Cleaned JSON (first 300 chars):', clean.substring(0, 300));
+  dbg('Cleaned JSON (first 300 chars):', clean.substring(0, 300));
   
   try {
     return JSON.parse(clean);
@@ -3159,14 +3186,14 @@ function importAIQuestions() {
 
 // Phân tích chủ đề yếu của học sinh
 function analyzeWeakTopics(userId, subject) {
-  console.log('Analyzing weak topics for user:', userId, 'subject:', subject);
+  dbg('Analyzing weak topics for user:', userId, 'subject:', subject);
   
   // Lấy tất cả submissions của user
   const userSubmissions = DB.submissions.filter(sub => sub.userId === userId);
-  console.log('Total submissions:', userSubmissions.length);
+  dbg('Total submissions:', userSubmissions.length);
   
   if (!userSubmissions.length) {
-    console.log('No submissions found');
+    dbg('No submissions found');
     return null;
   }
 
@@ -3181,7 +3208,7 @@ function analyzeWeakTopics(userId, subject) {
   };
   
   const targetSubjectCode = subjectToCode[subject] || subject.toLowerCase();
-  console.log('Target subject code:', targetSubjectCode);
+  dbg('Target subject code:', targetSubjectCode);
   
   // Lọc theo môn học
   const filteredSubmissions = userSubmissions.filter(sub => {
@@ -3203,14 +3230,14 @@ function analyzeWeakTopics(userId, subject) {
     return false;
   });
   
-  console.log('Filtered submissions by subject:', filteredSubmissions.length);
+  dbg('Filtered submissions by subject:', filteredSubmissions.length);
   
   if (!filteredSubmissions.length) {
     // Log chi tiết để debug
-    console.log('Available submissions by subject:');
+    dbg('Available submissions by subject:');
     userSubmissions.forEach(sub => {
       const exam = DB.exams.find(e => e.id === sub.examId);
-      console.log(`  - subject: ${sub.subject}, exam subject: ${exam?.subject}, exam name: ${exam?.name}`);
+      dbg(`  - subject: ${sub.subject}, exam subject: ${exam?.subject}, exam name: ${exam?.name}`);
     });
     return null;
   }
@@ -3276,7 +3303,7 @@ function analyzeWeakTopics(userId, subject) {
   // Sắp xếp theo tỷ lệ tăng dần (yếu nhất lên đầu)
   weakTopics.sort((a, b) => a.ratio - b.ratio);
   
-  console.log('Weak topics found:', weakTopics);
+  dbg('Weak topics found:', weakTopics);
   
   return weakTopics.length ? weakTopics : null;
 }
@@ -3378,7 +3405,7 @@ BẮT ĐẦU TẠO ${alloc.count} CÂU HỎI:`;
             questions.push(q);
           });
           success = true;
-          console.log(`✅ Tạo ${parsed.length} câu cho chủ đề ${alloc.topic}`);
+          dbg(`✅ Tạo ${parsed.length} câu cho chủ đề ${alloc.topic}`);
         } else {
           throw new Error('Không có câu hỏi hợp lệ');
         }
@@ -3390,7 +3417,7 @@ BẮT ĐẦU TẠO ${alloc.count} CÂU HỎI:`;
           const fallback = createFallbackQuestion(alloc.topic, subject);
           questions.push(fallback);
           success = true;
-          console.log(`⚠️ Dùng câu hỏi fallback cho chủ đề ${alloc.topic}`);
+          dbg(`⚠️ Dùng câu hỏi fallback cho chủ đề ${alloc.topic}`);
 
         }
       }
@@ -3525,8 +3552,6 @@ function createFallbackQuestion(topic, subject) {
 
   return { ...defaultFallback, qtype_label: topic };
 }
-
-
 
 // ===== questionEditor.js =====
 
@@ -4165,8 +4190,6 @@ function toggleSolution() {
 }
 window.toggleSolution = toggleSolution;
 
-
-
 // ===== contestEditor.js =====
 
 let editingContest = null;
@@ -4454,8 +4477,8 @@ window.updateQuestionScore = updateQuestionScore;
 window.applyBulkScore = applyBulkScore;
 window.removeBulkSelected = removeBulkSelected;
 
-// Auto-save draft
-setInterval(() => {
+// Auto-save draft (lưu reference để có thể clearInterval khi cần)
+const contestDraftSaveInt = setInterval(() => {
     if (document.getElementById('fs-contest')?.classList.contains('show') && (editingContest || contestQIds.length > 0)) {
         try {
             localStorage.setItem('examhub_contest_draft', JSON.stringify({ contestQIds, contestScoring, ts: Date.now() }));
@@ -5330,8 +5353,6 @@ window.aiExplainQuestion = async function(qId, btnEl) {
   }
 };
 
-
-
 // ===== exam.js =====
 
 let curQ = 1;
@@ -5954,8 +5975,6 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'ArrowLeft') prevQ();
 });
 
-
-
 // ===== history.js =====
 
 function renderHistory() {
@@ -5989,8 +6008,6 @@ window.viewHistoryResult = function(submissionId) {
   const sub = DB.submissions.find(s => s.id === submissionId);
   if (sub) buildResultFromSubmission(sub);
 };
-
-
 
 // ===== navigation.js =====
 
@@ -6034,8 +6051,6 @@ function getCurrentRoom() { return currentRoom; }
 function setCurrentRoom(id) { currentRoom = id; }
 function getCurrentExam() { return currentExam; }
 function setCurrentExam(exam) { currentExam = exam; }
-
-
 
 // ===== auth.js =====
 
@@ -6174,8 +6189,6 @@ function _applySession(user) {
 window.switchTab=switchTab; window.selectRole=selectRole; window.quickLogin=quickLogin;
 window.doLogin=doLogin; window.doRegister=doRegister; window.doLogout=doLogout;
 
-
-
 // ===== main.js =====
 
 window.goTo = goTo;
@@ -6264,7 +6277,7 @@ window.searchRooms = function(query) {
 initTheme();
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM ready, DB session:', DB.session);
+  dbg('DOM ready, DB session:', DB.session);
   const user = DB.session;
   if (user) {
     if (user.role === 'admin' || user.role === 'teacher') {
@@ -6285,138 +6298,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
-// ===== PC TOGGLE SIDEBAR & RIGHT PANEL =====
-(function() {
-    let isSidebarOpen = false;
-    let isRPOpen = false;
-
-    function getActiveView() {
-        return document.querySelector('.view.active');
-    }
-
-    function isLoginView() {
-        const view = getActiveView();
-        return view && view.id === 'view-login';
-    }
-
-    function getActiveSidebar() {
-        if (isLoginView()) return null;
-        const view = getActiveView();
-        if (!view) return null;
-        return view.querySelector('aside.sidebar, .sidebar');
-    }
-
-    function getActiveRP() {
-        if (isLoginView()) return null;
-        const view = getActiveView();
-        if (!view) return null;
-        return view.querySelector('.rp');
-    }
-
-    function closeAll() {
-        const sb = getActiveSidebar();
-        const rp = getActiveRP();
-        const overlay = document.getElementById('pc-overlay');
-        
-        if (sb) sb.classList.remove('open');
-        if (rp) rp.classList.remove('open');
-        if (overlay) overlay.classList.remove('show');
-        
-        isSidebarOpen = false;
-        isRPOpen = false;
-    }
-
-    function toggleSidebar() {
-        const sb = getActiveSidebar();
-        const overlay = document.getElementById('pc-overlay');
-        
-        if (!sb) return;
-        
-        if (isSidebarOpen) {
-            sb.classList.remove('open');
-            overlay.classList.remove('show');
-            isSidebarOpen = false;
-        } else {
-            const rp = getActiveRP();
-            if (rp && isRPOpen) {
-                rp.classList.remove('open');
-                isRPOpen = false;
-            }
-            sb.classList.add('open');
-            overlay.classList.add('show');
-            isSidebarOpen = true;
-        }
-    }
-
-    function toggleRP() {
-        const rp = getActiveRP();
-        const overlay = document.getElementById('pc-overlay');
-        
-        if (!rp) return;
-        
-        if (isRPOpen) {
-            rp.classList.remove('open');
-            overlay.classList.remove('show');
-            isRPOpen = false;
-        } else {
-            const sb = getActiveSidebar();
-            if (sb && isSidebarOpen) {
-                sb.classList.remove('open');
-                isSidebarOpen = false;
-            }
-            rp.classList.add('open');
-            overlay.classList.add('show');
-            isRPOpen = true;
-        }
-    }
-
-    function updateButtonsVisibility() {
-        const sb = getActiveSidebar();
-        const rp = getActiveRP();
-        const sbBtn = document.getElementById('pc-sidebar-toggle');
-        const rpBtn = document.getElementById('pc-rp-toggle');
-        
-        // Chỉ hiện nút khi không phải màn hình login và có sidebar/rp
-        if (sbBtn) {
-            sbBtn.style.display = (!isLoginView() && sb) ? 'flex' : 'none';
-        }
-        if (rpBtn) {
-            rpBtn.style.display = (!isLoginView() && rp) ? 'flex' : 'none';
-        }
-    }
-
-    // Gán sự kiện
-    const sbBtn = document.getElementById('pc-sidebar-toggle');
-    const rpBtn = document.getElementById('pc-rp-toggle');
-    const overlay = document.getElementById('pc-overlay');
-    
-    if (sbBtn) sbBtn.onclick = toggleSidebar;
-    if (rpBtn) rpBtn.onclick = toggleRP;
-    if (overlay) overlay.onclick = closeAll;
-
-    // SỬA LỖI LAG: Dùng setTimeout và debounce cho MutationObserver
-    let updateTimeout;
-    const observer = new MutationObserver(() => {
-        // Debounce để tránh gọi quá nhiều lần
-        clearTimeout(updateTimeout);
-        updateTimeout = setTimeout(() => {
-            closeAll();
-            updateButtonsVisibility();
-        }, 100);
-    });
-    
-    // Chỉ theo dõi class thay đổi trên body và các view
-    observer.observe(document.body, { 
-        attributes: true, 
-        attributeFilter: ['class'],
-        subtree: true,
-        attributeOldValue: false
-    });
-    
-    // Khởi tạo
-    updateButtonsVisibility();
-})();
 
 </script>
 
@@ -6666,7 +6547,7 @@ setTimeout(() => {
     window.resetPanelState();
   }
   
-  console.log('Đã reset sidebar và right panel');
+  dbg('Đã reset sidebar và right panel');
 }, 200);
 
 function formatTime(seconds) {
@@ -6708,9 +6589,6 @@ function renderPersonalizedExamsList() {
     </div>
   `).join('');
 }
-
-
-
 
 // ===== AI EXPLAIN MORE =====
 const AI_EXPLAIN_COST = 5;
@@ -6874,7 +6752,7 @@ async function createPersonalizedExam() {
     return;
   }
 
-  console.log('Tạo đề cá nhân cho:', { userId, subject, numQuestions, model });
+  dbg('Tạo đề cá nhân cho:', { userId, subject, numQuestions, model });
 
   // Kiểm tra token
   const userTokens = getTokens(userId);
@@ -6889,7 +6767,7 @@ async function createPersonalizedExam() {
 
   // Phân tích điểm yếu
   const weakTopics = analyzeWeakTopics(userId, subject);
-  console.log('Điểm yếu tìm được:', weakTopics);
+  dbg('Điểm yếu tìm được:', weakTopics);
   
   if (!weakTopics || weakTopics.length === 0) {
     const userSubmissions = DB.submissions.filter(s => s.userId === userId);
@@ -7184,68 +7062,7 @@ window.generateSimilarQuestion = generateSimilarQuestion;
 window.saveSimilarQuestion = saveSimilarQuestion;
 window.closeAIBox = closeAIBox;
 
-
-
-
-// ===== CẬP NHẬT SIDEBAR ĐỘNG =====
-function updateSidebar() {
-  const user = DB.session;
-  if (!user) return;
-  
-  // Cập nhật token
-  const tokenBal = user.role === 'admin' ? '∞' : getTokens(user.id);
-  const tokenClass = user.role === 'admin' ? 'c-acc' : (tokenBal < 10 ? 'c-red' : tokenBal < 30 ? 'c-org' : 'c-grn');
-  
-  document.querySelectorAll('.token-bal').forEach(el => {
-    el.textContent = tokenBal;
-    el.className = `token-bal ${tokenClass}`;
-  });
-  
-  // Cập nhật avatar
-  document.querySelectorAll('.ava-s.blue, .ava-s, #result-ava, #sb-ava, #sb2-ava, #rp-ava').forEach(el => {
-    if (el) el.textContent = user.initials;
-  });
-  
-  // Cập nhật tên
-  document.querySelectorAll('.umini-name, #result-name, #sb-name, #sb2-name, #rp-name').forEach(el => {
-    if (el) el.textContent = user.name.split(' ').slice(-1)[0];
-  });
-  
-  // Cập nhật tên đầy đủ (right panel)
-  const rpName = document.getElementById('rp-name');
-  if (rpName) rpName.textContent = user.name;
-  
-  // Cập nhật email
-  const rpEmail = document.getElementById('rp-email');
-  if (rpEmail) rpEmail.textContent = user.email;
-  
-  // Cập nhật role
-  const roleText = user.role === 'student' ? 'Học sinh' : (user.role === 'teacher' ? 'Giáo viên' : 'Quản trị viên');
-  document.querySelectorAll('.umini-role, #result-role, #sb-role').forEach(el => {
-    if (el) el.textContent = roleText;
-  });
-  
-  // Cập nhật premium badge
-  const premiumBadge = document.getElementById('rp-premium-badge');
-  if (premiumBadge) {
-    premiumBadge.textContent = user.premium ? '⭐ Premium' : '🆓 Free';
-    premiumBadge.className = user.premium ? 'prem' : 'prem free';
-  }
-}
-
-// Gọi updateSidebar khi dashboard load và sau mỗi lần thay đổi token
-function refreshSidebar() {
-  updateSidebar();
-}
-
-// Gắn vào window
-window.updateSidebar = updateSidebar;
-window.refreshSidebar = refreshSidebar;
-
-
-
-
-
+// updateSidebar và refreshSidebar đã được định nghĩa sớm hơn (trước renderDashboard)
 
 // data testing
 // ===== DATA TEST CHO TÍNH NĂNG CÁ NHÂN HÓA =====
@@ -7257,7 +7074,7 @@ function initTestDataForPersonalization() {
   const existingTestData = DB.submissions.some(s => s.userId === student.id && s.isTestData);
   if (existingTestData) return;
   
-  console.log('Đang tạo dữ liệu test cho cá nhân hóa...');
+  dbg('Đang tạo dữ liệu test cho cá nhân hóa...');
   
   // Danh sách câu hỏi mẫu theo các chủ đề
   const questionsByTopic = {
@@ -7334,11 +7151,12 @@ function initTestDataForPersonalization() {
     }
   };
   
-  // Thêm câu hỏi vào DB nếu chưa có
+  // Thêm câu hỏi vào DB nếu chưa có (dùng Set để tránh O(n²))
+  const existingQIds = new Set(DB.questions.map(q => q.id));
   for (const subject in questionsByTopic) {
     for (const topic in questionsByTopic[subject]) {
       questionsByTopic[subject][topic].forEach(q => {
-        if (!DB.questions.find(existing => existing.id === q.id)) {
+        if (!existingQIds.has(q.id)) {
           DB.questions.push({
             id: q.id,
             text: q.text,
@@ -7511,9 +7329,10 @@ function initTestDataForPersonalization() {
     isTestData: true
   });
   
-  // Thêm vào DB
+  // Thêm vào DB (dùng Set để tránh O(n²))
+  const existingSubIds = new Set(DB.submissions.map(s => s.id));
   submissions.forEach(sub => {
-    if (!DB.submissions.find(s => s.id === sub.id)) {
+    if (!existingSubIds.has(sub.id)) {
       DB.submissions.push(sub);
     }
   });
@@ -7521,20 +7340,18 @@ function initTestDataForPersonalization() {
   DB.nextIds.submission = subId;
   persistDB();
   
-  console.log('✅ Đã tạo dữ liệu test cho cá nhân hóa!');
-  console.log('   - Toán: Yếu phần Tích phân (đúng 1/5 câu)');
-  console.log('   - Vật lý: Yếu phần Điện học (đúng 2/5 câu)');
-  console.log('   - Hóa: Yếu phần Hữu cơ (đúng 1/5 câu)');
-  console.log('   - Anh: Yếu phần Từ vựng (đúng 2/5 câu)');
+  dbg('✅ Đã tạo dữ liệu test cho cá nhân hóa!');
+  dbg('   - Toán: Yếu phần Tích phân (đúng 1/5 câu)');
+  dbg('   - Vật lý: Yếu phần Điện học (đúng 2/5 câu)');
+  dbg('   - Hóa: Yếu phần Hữu cơ (đúng 1/5 câu)');
+  dbg('   - Tiếng Anh: Yếu phần Từ vựng (đúng 2/5 câu)');
 }
 
-// Gọi hàm khởi tạo dữ liệu test
-setTimeout(() => {
+// Gọi hàm seed dữ liệu test sau khi DB đã sẵn sàng
+if (DB.session && DB.session.role === 'student') {
   initTestDataForPersonalization();
-}, 500);
-
+}
 
 </script>
-
 </body>
 </html>
