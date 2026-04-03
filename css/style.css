@@ -2710,6 +2710,69 @@ body.exam-mode [onclick*="generateAI"] {
   box-shadow: 0 2px 8px rgba(79, 142, 247, 0.4);
 }
 
+/* CSS cho câu hỏi Đúng/Sai trong khi làm bài */
+.tf-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: var(--bg3);
+    border: 1.5px solid var(--bdr);
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.tf-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--bdr);
+    background: var(--bg2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--txt2);
+}
+
+.tf-btn.true-sel {
+    background: var(--grn-s);
+    border-color: var(--grn);
+    color: var(--grn);
+}
+
+.tf-btn.false-sel {
+    background: var(--red-s);
+    border-color: var(--red);
+    color: var(--red);
+}
+
+
+/* CSS cho kết quả câu Đúng/Sai */
+.result-stmt-row {
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.result-stmt-correct {
+    background: var(--grn-s);
+    border-left: 4px solid var(--grn);
+}
+
+.result-stmt-wrong {
+    background: var(--red-s);
+    border-left: 4px solid var(--red);
+}
+
+.result-stmt-skip {
+    background: var(--bg3);
+    border-left: 4px solid var(--bdr);
+}
+
+
+
 /* Security warning overlay */
 #security-warning-overlay {
   animation: fadeIn 0.2s ease;
