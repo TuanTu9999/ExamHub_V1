@@ -312,6 +312,142 @@
   </div>
 </div>
 
+<!-- ===== MODAL: IMPORT EXAM FROM JSON ===== -->
+<div class="moverlay" id="m-json">
+  <div class="mbox mbox-lg">
+    <div class="mtitle">📋 Tạo đề thi bằng JSON</div>
+    <div class="spacer-12"></div>
+    <div class="ai-box">
+      <div class="ai-box-hd">
+        <div class="ai-ico">📄</div>
+        <div>
+          <div class="ai-box-title">JSON Question Importer</div>
+          <div class="ai-box-sub">Dán JSON câu hỏi (nhờ AI tạo) vào đây để import nhanh vào hệ thống</div>
+        </div>
+        <button class="btn btn-g btn-sm" style="margin-left:auto" onclick="showJSONSample()">📄 Xem JSON mẫu</button>
+      </div>
+      <!-- Mode selector -->
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div class="role-card on" id="json-mode-questions" onclick="setJSONMode('questions')" style="flex:1;text-align:center;padding:10px 8px;cursor:pointer">
+          <div style="font-size:16px">❓</div>
+          <div style="font-size:12px;font-weight:700;margin-top:3px">Câu hỏi</div>
+          <div style="font-size:10px;color:var(--txt3)">Import vào ngân hàng</div>
+        </div>
+        <div class="role-card" id="json-mode-exam" onclick="setJSONMode('exam')" style="flex:1;text-align:center;padding:10px 8px;cursor:pointer">
+          <div style="font-size:16px">📄</div>
+          <div style="font-size:12px;font-weight:700;margin-top:3px">Đề thi đầy đủ</div>
+          <div style="font-size:10px;color:var(--txt3)">Tạo đề + câu hỏi</div>
+        </div>
+      </div>
+      <!-- Exam info (shown when mode=exam) -->
+      <div id="json-exam-info" style="display:none">
+        <div class="fg-row">
+          <div class="fg"><label>Tên đề thi *</label><input id="json-exam-name" placeholder="VD: Đề Toán học kỳ 1 lớp 12" class="finp"></div>
+          <div class="fg"><label>Thời gian (phút)</label><input id="json-exam-dur" type="number" value="90" min="5" class="finp"></div>
+        </div>
+        <div class="fg-row">
+          <div class="fg"><label>Phòng thi</label><select id="json-exam-room" class="finp"></select></div>
+          <div class="fg"><label>Loại đề</label>
+            <select id="json-exam-type" class="finp">
+              <option value="official">⭐ Đề chính thức</option>
+              <option value="trial" selected>Đề thử</option>
+              <option value="practice">Luyện tập</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- JSON input -->
+      <div class="fg">
+      <label>Nội dung JSON *</label>
+        <textarea id="json-input" rows="12" class="finp" placeholder='// Trắc nghiệm 1 đáp án
+    [
+      {
+        "type": "single",
+        "text": "Nội dung câu hỏi",
+        "opts": ["A", "B", "C", "D"],
+        "correct": 0,
+        "sol_text": "Lời giải"
+      }
+    ]
+
+    // Trắc nghiệm nhiều đáp án
+    {
+      "type": "multi",
+      "text": "Chọn đáp án đúng",
+      "opts": ["A", "B", "C", "D"],
+      "corrects": [0, 2],
+      "sol_text": "Lời giải"
+    }
+
+    // Đúng/Sai 4 câu
+    {
+      "type": "tf4",
+      "text": "Cho hàm số...",
+      "statements": [
+        "Mệnh đề 1",
+        "Mệnh đề 2",
+        "Mệnh đề 3",
+        "Mệnh đề 4"
+      ],
+      "answers": [true, false, true, false],
+      "sol_text": "Lời giải"
+    }
+
+    // Đúng/Sai n câu
+    {
+      "type": "tfn",
+      "text": "Xét các phát biểu:",
+      "statements": ["P1", "P2", "P3"],
+      "answers": [true, false, true],
+      "sol_text": "Lời giải"
+    }
+
+    // Trả lời ngắn
+    {
+      "type": "short",
+      "text": "Tính giá trị của biểu thức...",
+      "answer": "5",
+      "unit": "cm",
+      "sol_text": "Lời giải"
+    }]'></textarea>
+  </div>
+      <!-- Validation status -->
+      <div id="json-validate-status" style="display:none;padding:10px 12px;border-radius:8px;font-size:12.5px;margin-top:6px"></div>
+      <!-- Preview area -->
+      <div id="json-preview-area" style="display:none;margin-top:12px">
+        <div class="sec-title" style="margin-bottom:8px">📋 Xem trước <span id="json-preview-count" style="color:var(--grn)"></span></div>
+        <div id="json-preview-list" class="ai-result" style="max-height:320px;overflow-y:auto"></div>
+      </div>
+    </div>
+    <div class="mactions">
+      <button class="btn btn-g" onclick="closeModal('m-json')">Hủy</button>
+      <button class="btn btn-pur" onclick="previewJSON()">👁️ Xem trước</button>
+      <button class="btn btn-p" id="json-import-btn" style="display:none" onclick="importJSON()">📥 Import vào hệ thống</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: JSON SAMPLE ===== -->
+<div class="moverlay" id="m-json-sample">
+  <div class="mbox mbox-lg">
+    <div class="mtitle">📄 JSON mẫu để nhờ AI tạo đề</div>
+    <div class="spacer-12"></div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--acc);margin-bottom:10px">💡 Prompt mẫu cho AI (ChatGPT, Gemini, Claude...)</div>
+      <div id="json-sample-prompt" style="font-size:12px;line-height:1.7;color:var(--txt2);white-space:pre-wrap;font-family:var(--fm)"></div>
+      <button class="btn btn-pur btn-sm" style="margin-top:10px" onclick="copyJSONSamplePrompt()">📋 Copy prompt</button>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--grn);margin-bottom:10px">📦 Cấu trúc JSON câu hỏi</div>
+      <pre id="json-sample-content" style="font-size:11px;line-height:1.6;color:var(--txt);overflow-x:auto;margin:0;font-family:var(--fm)"></pre>
+      <button class="btn btn-p btn-sm" style="margin-top:10px" onclick="copyJSONSample()">📋 Copy JSON mẫu</button>
+    </div>
+    <div class="mactions">
+      <button class="btn btn-g" onclick="closeModal('m-json-sample');openModal('m-json')">← Quay lại</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== VIEW: LOGIN ===== -->
 <div id="view-login" class="view active" style="flex-direction:column;min-height:100vh;align-items:center;justify-content:center;background:var(--bg)">
   <div style="width:100%;max-width:390px;padding:20px">
@@ -666,56 +802,77 @@
     <div class="main">
       <div class="topbar">
         <div class="tbc"><span onclick="goTo('dashboard')" style="cursor:pointer">ExamHub</span><span class="sep">›</span><span class="cur">Kết quả thi</span></div>
-        <div class="tbr"></div>
+        <div class="tbr">
+          <button class="btn btn-g btn-sm" onclick="goTo('dashboard')">← Trang chủ</button>
+        </div>
       </div>
+      <!-- Hero score section -->
+      <div id="res-hero" style="text-align:center;padding:24px 20px 16px;background:var(--bg2);border-bottom:1px solid var(--bdr)"></div>
+      <!-- Score distribution -->
+      <div id="res-score-dist" style="padding:0 20px 12px;background:var(--bg2);border-bottom:1px solid var(--bdr);display:none"></div>
+      <!-- Suggestions -->
+      <div id="res-suggest" style="display:none;padding:12px 20px;background:var(--acc-s);border-bottom:1px solid rgba(79,142,247,.2);font-size:13px;color:var(--txt2)"></div>
       <div class="ema" style="margin-top:0">
-        <!-- Left panel: câu hỏi -->
+        <!-- Left panel: câu hỏi chi tiết -->
         <div class="qpanel">
-          <div class="qsl">📐 Câu hỏi trắc nghiệm</div>
-          <div class="qnum" id="result-q-label">Câu 1 / 0</div>
-          <div class="qtxt" id="result-q-text"></div>
-          <div class="ol" id="result-opts"></div>
-          <div class="qnav-bot">
-            <button class="btn btn-g" id="result-prev-btn" onclick="resultPrevQ()">← Câu trước</button>
-            <div style="display:flex;gap:7px;flex-wrap:wrap">
-              <button class="btn btn-g" id="result-show-sol-btn" onclick="toggleResultSolution()">💡 Hiển thị lời giải</button>
-              <button class="btn btn-pur" id="result-explain-q-btn" onclick="explainQuestionAI()">🤔 Giải thích đề bài</button>
-              <button class="btn btn-pur" id="result-explain-sol-btn" onclick="explainSolutionAI()">📖 Giải thích lời giải</button>
-              <button class="btn btn-pur" id="result-similar-btn" onclick="generateSimilarQuestion()">🔄 Tạo câu hỏi tương tự</button>
-              <button class="btn btn-pur" id="result-save-q-btn" onclick="saveCurrentQuestion()">📚 Lưu câu hỏi</button>
+          <!-- Question grid / navigator for result (used by buildResultQGrid) -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:12px;font-weight:700;color:var(--txt2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+              <span>📊 Danh sách câu hỏi</span>
+              <span id="result-nav-answered" style="color:var(--grn)">0/0</span>
             </div>
-            <button class="btn btn-p" id="result-next-btn" onclick="resultNextQ()">Câu sau →</button>
+            <div class="ngrid" id="res-qgrid"></div>
+            <!-- Compat alias: result-ngrid also points to same grid via JS -->
+            <div class="ngrid" id="result-ngrid" style="display:none"></div>
           </div>
-          <div id="result-solution-box" style="display:none; margin-top:16px; padding:14px; background:var(--pur-s); border-radius:10px; border:1px solid var(--pur)">
-            <div style="font-size:12px; font-weight:700; color:var(--pur); margin-bottom:6px">💡 Lời giải chi tiết</div>
-            <div id="result-solution-content" style="font-size:13px; line-height:1.6"></div>
+          <!-- Detailed question review area (used by showResultQuestion & buildDetailedAnswers) -->
+          <div id="res-q-detail">
+            <!-- Filled by showResultQuestion() -->
           </div>
-          <div id="result-ai-box" style="display:none; margin-top:16px; padding:14px; background:var(--acc-s); border-radius:10px; border:1px solid var(--acc)">
+          <!-- Legacy result elements (used by initResultData / renderResultQuestion) -->
+          <div style="display:none">
+            <div id="result-q-label"></div>
+            <div id="result-q-text"></div>
+            <div id="result-opts"></div>
+            <div id="result-solution-box"><div id="result-solution-content"></div></div>
+            <div id="result-ai-box"><div id="result-ai-content"></div><div id="result-similar-actions"></div></div>
+          </div>
+          <!-- Action buttons kept accessible -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr)">
+            <button class="btn btn-g btn-sm" id="result-prev-btn" onclick="resultPrevQ()">← Câu trước</button>
+            <button class="btn btn-g btn-sm" id="result-show-sol-btn" onclick="toggleResultSolution()">💡 Lời giải</button>
+            <button class="btn btn-pur btn-sm" id="result-explain-q-btn" onclick="explainQuestionAI()">🤔 Giải thích đề</button>
+            <button class="btn btn-pur btn-sm" id="result-explain-sol-btn" onclick="explainSolutionAI()">📖 Giải lời giải</button>
+            <button class="btn btn-pur btn-sm" id="result-similar-btn" onclick="generateSimilarQuestion()">🔄 Câu tương tự</button>
+            <button class="btn btn-pur btn-sm" id="result-save-q-btn" onclick="saveCurrentQuestion()">📚 Lưu câu</button>
+            <button class="btn btn-p btn-sm" id="result-next-btn" onclick="resultNextQ()" style="margin-left:auto">Câu sau →</button>
+          </div>
+          <div id="result-ai-box-visible" style="display:none; margin-top:12px; padding:14px; background:var(--acc-s); border-radius:10px; border:1px solid var(--acc)">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
               <span style="font-size:12px; font-weight:700; color:var(--acc)">🤖 AI trợ giúp</span>
               <button class="btn btn-g btn-sm" onclick="closeAIBox()">✖</button>
             </div>
-            <div id="result-ai-content" style="font-size:13px; line-height:1.6"></div>
-            <div id="result-similar-actions" style="display:none; margin-top:12px">
+            <div id="result-ai-content-visible" style="font-size:13px; line-height:1.6"></div>
+            <div id="result-similar-actions-visible" style="display:none; margin-top:12px">
               <button class="btn btn-p btn-sm" onclick="saveSimilarQuestion()">📥 Lưu câu hỏi tương tự</button>
             </div>
           </div>
         </div>
-        <!-- Right panel: navigator -->
+        <!-- Right panel: navigator + stats -->
         <div class="navp">
-          <div class="navp-title"><span>Danh sách câu</span><span id="result-nav-answered">0/0</span></div>
-          <div class="ngrid" id="result-ngrid"></div>
-          <div class="nleg">
-            <div class="nleg-i"><div class="nleg-d" style="background:var(--grn)"></div>Đã trả lời đúng</div>
-            <div class="nleg-i"><div class="nleg-d" style="background:var(--red)"></div>Đã trả lời sai</div>
-            <div class="nleg-i"><div class="nleg-d" style="background:var(--gold)"></div>Đã lưu</div>
-          </div>
+          <div class="navp-title"><span>Thống kê</span></div>
           <div class="nsum">
             <div class="nsum-r"><span>Đúng</span><span class="nsum-v c-grn" id="result-correct-count">0</span></div>
             <div class="nsum-r"><span>Sai</span><span class="nsum-v c-red" id="result-wrong-count">0</span></div>
             <div class="nsum-r"><span>Đã lưu</span><span class="nsum-v c-gld" id="result-saved-count">0</span></div>
           </div>
+          <div class="nleg" style="margin-top:12px">
+            <div class="nleg-i"><div class="nleg-d" style="background:var(--grn)"></div>Đúng</div>
+            <div class="nleg-i"><div class="nleg-d" style="background:var(--red)"></div>Sai</div>
+            <div class="nleg-i"><div class="nleg-d" style="background:var(--bgh);border:1px solid var(--bdr)"></div>Bỏ qua</div>
+          </div>
           <button class="btn btn-g" onclick="goTo('dashboard')" style="width:100%; margin-top:12px">← Về trang chủ</button>
+          <button class="btn btn-p" id="res-retake-btn" onclick="" style="width:100%; margin-top:8px;display:none">🔄 Làm lại</button>
         </div>
       </div>
     </div>
@@ -882,7 +1039,7 @@
       <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-exams">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-exams">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div></div>
     </aside>
     <div class="main">
-      <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Đề thi</span></div><div class="tbr" id="topbar-admin-exams"><button class="btn btn-p btn-sm" onclick="openExamModal()">➕ Tạo đề thi</button></div></div>
+      <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Đề thi</span></div><div class="tbr" id="topbar-admin-exams"><button class="btn btn-g btn-sm" onclick="openJSONModal('exam')">📋 Tạo đề từ JSON</button><button class="btn btn-p btn-sm" onclick="openExamModal()">➕ Tạo đề thi</button></div></div>
       <div class="cm">
         <div class="ph fi"><div class="ph-title">Quản lý đề thi 📄</div><div class="ph-sub">Tạo và quản lý các đề thi cho từng phòng</div></div>
         <div class="tbl-wrap fi">
@@ -913,13 +1070,14 @@
       <div class="s-foot"><div class="umini"><div class="ava-s red" id="sb-admin-ava-qs">AD</div><div class="umini-info"><div class="umini-name" id="sb-admin-name-qs">Admin</div><div class="umini-role">Quản trị viên</div></div><span style="font-size:11px;color:var(--txt3);cursor:pointer" onclick="doLogout()" role="button" aria-label="Đăng xuất" tabindex="0">⏏</span></div></div>
     </aside>
     <div class="main">
-      <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Ngân hàng câu hỏi</span></div><div class="tbr" id="topbar-admin-questions"><button class="btn btn-pur btn-sm" onclick="openAIModal()">✨ AI Sinh câu hỏi</button><button class="btn btn-p btn-sm" onclick="openQuestionModal()">➕ Thêm thủ công</button></div></div>
+      <div class="topbar"><div class="tbc"><span onclick="goTo('admin')" style="cursor:pointer">ExamAdmin</span><span class="sep">›</span><span class="cur">Ngân hàng câu hỏi</span></div><div class="tbr" id="topbar-admin-questions"><button class="btn btn-g btn-sm" onclick="openJSONModal('questions')">📋 Import JSON</button><button class="btn btn-pur btn-sm" onclick="openAIModal()">✨ AI Sinh câu hỏi</button><button class="btn btn-p btn-sm" onclick="openQuestionModal()">➕ Thêm thủ công</button></div></div>
       <div class="cm">
         <div class="ph fi"><div class="ph-title">Ngân hàng câu hỏi ❓</div><div class="ph-sub">Thêm câu hỏi thủ công hoặc dùng AI để tạo nhanh</div></div>
         <div class="tbl-wrap fi">
           <div class="tbl-hd">
             <div class="tbl-hd-title">Danh sách câu hỏi</div>
             <div style="display:flex;gap:8px">
+              <button class="btn btn-g btn-sm" onclick="openJSONModal('questions')">📋 Import JSON</button>
               <button class="btn btn-pur btn-sm" onclick="openAIModal()">✨ AI Sinh câu hỏi</button>
               <button class="btn btn-p btn-sm" onclick="openQuestionModal()">➕ Thêm thủ công</button>
             </div>
@@ -1729,6 +1887,230 @@ function persistDB() {
 loadDB();
 
 
+// ==================== JSON IMPORT FUNCTIONS ====================
+let currentJSONMode = 'questions';
+
+function openJSONModal(mode) {
+    currentJSONMode = mode;
+    const qMode = document.getElementById('json-mode-questions');
+    const eMode = document.getElementById('json-mode-exam');
+    const examInfo = document.getElementById('json-exam-info');
+    
+    if (qMode) qMode.classList.toggle('on', mode === 'questions');
+    if (eMode) eMode.classList.toggle('on', mode === 'exam');
+    if (examInfo) examInfo.style.display = mode === 'exam' ? 'block' : 'none';
+    
+    if (mode === 'exam' && DB.rooms) {
+        const roomSel = document.getElementById('json-exam-room');
+        if (roomSel) {
+            roomSel.innerHTML = DB.rooms.map(r => `<option value="${r.id}">${r.icon} ${r.name}</option>`).join('');
+        }
+    }
+    
+    const preview = document.getElementById('json-preview-area');
+    if (preview) preview.style.display = 'none';
+    
+    const input = document.getElementById('json-input');
+    if (input) input.value = '';
+    
+    openModal('m-json');
+}
+
+function setJSONMode(mode) {
+    currentJSONMode = mode;
+    const qMode = document.getElementById('json-mode-questions');
+    const eMode = document.getElementById('json-mode-exam');
+    const examInfo = document.getElementById('json-exam-info');
+    
+    if (qMode) qMode.classList.toggle('on', mode === 'questions');
+    if (eMode) eMode.classList.toggle('on', mode === 'exam');
+    if (examInfo) examInfo.style.display = mode === 'exam' ? 'block' : 'none';
+    
+    const preview = document.getElementById('json-preview-area');
+    if (preview) preview.style.display = 'none';
+}
+
+function previewJSON() {
+    const raw = document.getElementById('json-input')?.value.trim();
+    if (!raw) { toast('⚠️', 'Vui lòng nhập JSON'); return; }
+    
+    try {
+        const data = JSON.parse(raw);
+        if (!Array.isArray(data)) throw new Error('JSON phải là mảng');
+        
+        const previewDiv = document.getElementById('json-preview-area');
+        const listDiv = document.getElementById('json-preview-list');
+        const countSpan = document.getElementById('json-preview-count');
+        
+        if (previewDiv && listDiv) {
+            listDiv.innerHTML = data.map((q, i) => `
+                <div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px">
+                    <strong>Câu ${i+1}</strong> (${q.type || 'single'})
+                    <div style="margin:5px 0;font-size:12px">${(q.text || '').substring(0, 100)}</div>
+                    <div style="font-size:11px;color:var(--txt3)">Đáp án: ${q.opts?.join(' | ') || q.answer || q.answers?.join(', ')}</div>
+                </div>
+            `).join('');
+            countSpan.textContent = `${data.length} câu`;
+            previewDiv.style.display = 'block';
+        }
+    } catch (e) {
+        toast('❌', 'JSON không hợp lệ: ' + e.message);
+    }
+}
+
+function importJSON() {
+    const raw = document.getElementById('json-input')?.value.trim();
+    if (!raw) { toast('⚠️', 'Vui lòng nhập JSON'); return; }
+    
+    try {
+        let data = JSON.parse(raw);
+        if (!Array.isArray(data)) data = [data];
+        
+        const newIds = [];
+        
+        for (const q of data) {
+            const type = q.type || 'single';
+            const newId = DB.nextIds.question++;
+            
+            const baseQuestion = {
+                id: newId,
+                subject: q.subject || 'math',
+                diff: q.diff || 'medium',
+                source: 'json_import',
+                sol_text: q.sol_text || q.explanation || ''
+            };
+            
+            if (type === 'single') {
+                if (!q.text || !q.opts || q.correct === undefined) continue;
+                baseQuestion.qtype = 'single';
+                baseQuestion.text = q.text;
+                baseQuestion.opts = q.opts;
+                baseQuestion.correct = q.correct;
+            } 
+            else if (type === 'multi') {
+                if (!q.text || !q.opts || !q.corrects) continue;
+                baseQuestion.qtype = 'multi';
+                baseQuestion.text = q.text;
+                baseQuestion.opts = q.opts;
+                baseQuestion.corrects = q.corrects;
+            }
+            else if (type === 'tf4') {
+                if (!q.text || !q.statements || q.statements.length !== 4) continue;
+                baseQuestion.qtype = 'tf4';
+                baseQuestion.text = q.text;
+                baseQuestion.subqs = q.statements.map((stmt, i) => ({ text: stmt, ans: q.answers?.[i] || false }));
+            }
+            else if (type === 'tfn') {
+                if (!q.text || !q.statements) continue;
+                baseQuestion.qtype = 'tfn';
+                baseQuestion.text = q.text;
+                baseQuestion.subqs = q.statements.map((stmt, i) => ({ text: stmt, ans: q.answers?.[i] || false }));
+            }
+            else if (type === 'short') {
+                if (!q.text || q.answer === undefined) continue;
+                baseQuestion.qtype = 'short';
+                baseQuestion.text = q.text;
+                baseQuestion.answer = String(q.answer);
+                baseQuestion.unit = q.unit || '';
+            }
+            else {
+                continue;
+            }
+            
+            DB.questions.push(baseQuestion);
+            newIds.push(newId);
+        }
+        
+        if (newIds.length === 0) {
+            toast('⚠️', 'Không có câu hỏi hợp lệ');
+            return;
+        }
+        
+        if (currentJSONMode === 'exam') {
+            const name = document.getElementById('json-exam-name')?.value.trim();
+            if (!name) { toast('⚠️', 'Vui lòng nhập tên đề thi'); return; }
+            
+            const roomId = parseInt(document.getElementById('json-exam-room')?.value);
+            const duration = parseInt(document.getElementById('json-exam-dur')?.value) || 90;
+            const examType = document.getElementById('json-exam-type')?.value || 'trial';
+            
+            DB.exams.push({
+                id: DB.nextIds.exam++,
+                name: name,
+                roomId: roomId,
+                duration: duration,
+                type: examType,
+                date: new Date().toISOString().split('T')[0],
+                questions: newIds.length,
+                questionIds: newIds
+            });
+            toast('✅', `Đã tạo đề "${name}" với ${newIds.length} câu`);
+            if (typeof renderAdminExams === 'function') renderAdminExams();
+        } else {
+            toast('✅', `Đã import ${newIds.length} câu hỏi`);
+            if (typeof renderAdminQuestions === 'function') renderAdminQuestions();
+        }
+        
+        persistDB();
+        closeModal('m-json');
+        
+    } catch (e) {
+        toast('❌', 'Lỗi: ' + e.message);
+        console.error(e);
+    }
+}
+
+function showJSONSample() {
+    const sample = `[
+  {
+    "type": "single",
+    "text": "Giải phương trình $x^2 - 5x + 6 = 0$. Tổng các nghiệm là?",
+    "opts": ["$3$", "$5$", "$6$", "$7$"],
+    "correct": 1,
+    "sol_text": "Theo Vi-et: S = -b/a = 5"
+  },
+  {
+    "type": "multi",
+    "text": "Chọn đáp án đúng về hàm số $y=x^3$:",
+    "opts": ["Đồng biến", "Có cực trị", "Hàm lẻ", "Cắt Ox tại 1 điểm"],
+    "corrects": [0, 2, 3]
+  },
+  {
+    "type": "short",
+    "text": "Tính $\\\\int_0^1 x^2 dx$",
+    "answer": "1/3"
+  }
+]`;
+    const prompt = `Hãy tạo câu hỏi trắc nghiệm theo format JSON. Hỗ trợ type: single, multi, tf4, tfn, short.`;
+    
+    const promptEl = document.getElementById('json-sample-prompt');
+    const contentEl = document.getElementById('json-sample-content');
+    if (promptEl) promptEl.textContent = prompt;
+    if (contentEl) contentEl.textContent = sample;
+    openModal('m-json-sample');
+}
+
+function copyJSONSamplePrompt() {
+    const text = document.getElementById('json-sample-prompt')?.textContent;
+    if (text) { navigator.clipboard.writeText(text); toast('📋', 'Đã copy prompt'); }
+}
+
+function copyJSONSample() {
+    const text = document.getElementById('json-sample-content')?.textContent;
+    if (text) { navigator.clipboard.writeText(text); toast('📋', 'Đã copy JSON mẫu'); }
+}
+
+// Gắn vào window để dùng trong onclick
+window.openJSONModal = openJSONModal;
+window.setJSONMode = setJSONMode;
+window.previewJSON = previewJSON;
+window.importJSON = importJSON;
+window.showJSONSample = showJSONSample;
+window.copyJSONSamplePrompt = copyJSONSamplePrompt;
+window.copyJSONSample = copyJSONSample;
+
+
+
 // ===== utils.js =====
 
 let toastTimer;
@@ -1830,6 +2212,215 @@ if (document.readyState === 'loading') {
 } else {
   initModalClose();
 }
+
+
+
+function importJSON() {
+    const raw = document.getElementById('json-input').value.trim();
+    if (!raw) { toast('⚠️', 'Vui lòng nhập JSON'); return; }
+    
+    try {
+        let data = JSON.parse(raw);
+        if (!Array.isArray(data)) data = [data];
+        
+        const newIds = [];
+        
+        for (const q of data) {
+            const type = q.type || 'single';
+            let newQuestion = {
+                id: DB.nextIds.question++,
+                subject: q.subject || 'math',
+                diff: q.diff || 'medium',
+                source: 'json_import',
+                sol_text: q.sol_text || q.explanation || ''
+            };
+            
+            // Xử lý theo từng loại câu hỏi
+            switch (type) {
+                case 'single':
+                    if (!q.text || !q.opts || q.correct === undefined) {
+                        toast('⚠️', 'Bỏ qua câu thiếu text/opts/correct');
+                        continue;
+                    }
+                    newQuestion.qtype = 'single';
+                    newQuestion.text = q.text;
+                    newQuestion.opts = q.opts;
+                    newQuestion.correct = q.correct;
+                    break;
+                    
+                case 'multi':
+                    if (!q.text || !q.opts || !q.corrects) {
+                        toast('⚠️', 'Bỏ qua câu multi thiếu corrects');
+                        continue;
+                    }
+                    newQuestion.qtype = 'multi';
+                    newQuestion.text = q.text;
+                    newQuestion.opts = q.opts;
+                    newQuestion.corrects = q.corrects;
+                    break;
+                    
+                case 'tf4':
+                    if (!q.text || !q.statements || q.statements.length !== 4 || !q.answers || q.answers.length !== 4) {
+                        toast('⚠️', 'tf4 cần 4 statements và 4 answers');
+                        continue;
+                    }
+                    newQuestion.qtype = 'tf4';
+                    newQuestion.text = q.text;
+                    newQuestion.subqs = q.statements.map((stmt, i) => ({
+                        text: stmt,
+                        ans: q.answers[i]
+                    }));
+                    newQuestion.tf4scores = q.scores || { s1: 0.25, s2: 0.5, s3: 0.75, s4: 1 };
+                    break;
+                    
+                case 'tfn':
+                    if (!q.text || !q.statements || !q.answers || q.statements.length !== q.answers.length) {
+                        toast('⚠️', 'tfn cần statements và answers cùng số lượng');
+                        continue;
+                    }
+                    newQuestion.qtype = 'tfn';
+                    newQuestion.text = q.text;
+                    newQuestion.subqs = q.statements.map((stmt, i) => ({
+                        text: stmt,
+                        ans: q.answers[i]
+                    }));
+                    break;
+                    
+                case 'short':
+                    if (!q.text || q.answer === undefined) {
+                        toast('⚠️', 'short cần text và answer');
+                        continue;
+                    }
+                    newQuestion.qtype = 'short';
+                    newQuestion.text = q.text;
+                    newQuestion.answer = String(q.answer);
+                    newQuestion.unit = q.unit || '';
+                    break;
+                    
+                default:
+                    toast('⚠️', `Loại câu hỏi không hỗ trợ: ${type}`);
+                    continue;
+            }
+            
+            DB.questions.push(newQuestion);
+            newIds.push(newQuestion.id);
+        }
+        
+        if (newIds.length === 0) {
+            toast('⚠️', 'Không có câu hỏi hợp lệ nào để import');
+            return;
+        }
+        
+        // Nếu là mode exam, tạo đề thi
+        if (currentJSONMode === 'exam') {
+            const name = document.getElementById('json-exam-name')?.value.trim();
+            if (!name) { toast('⚠️', 'Vui lòng nhập tên đề thi'); return; }
+            
+            const roomId = parseInt(document.getElementById('json-exam-room')?.value);
+            const duration = parseInt(document.getElementById('json-exam-dur')?.value) || 90;
+            const type = document.getElementById('json-exam-type')?.value || 'trial';
+            
+            DB.exams.push({
+                id: DB.nextIds.exam++,
+                name: name,
+                roomId: roomId,
+                duration: duration,
+                type: type,
+                date: new Date().toISOString().split('T')[0],
+                questions: newIds.length,
+                questionIds: newIds
+            });
+            toast('✅', `Đã tạo đề thi "${name}" với ${newIds.length} câu hỏi (hỗ trợ đa dạng loại câu)`);
+            if (typeof renderAdminExams === 'function') renderAdminExams();
+        } else {
+            toast('✅', `Đã import ${newIds.length} câu hỏi (single/multi/tf4/tfn/short) vào ngân hàng`);
+            if (typeof renderAdminQuestions === 'function') renderAdminQuestions();
+        }
+        
+        persistDB();
+        closeModal('m-json');
+        
+    } catch (e) {
+        toast('❌', 'JSON không hợp lệ: ' + e.message);
+        console.error(e);
+    }
+}
+
+function showJSONSample() {
+    const prompt = `Bạn là chuyên gia ra đề thi. Hãy tạo câu hỏi theo yêu cầu với các LOẠI sau:
+
+1. Trắc nghiệm 1 đáp án (single)
+2. Trắc nghiệm nhiều đáp án (multi) 
+3. Đúng/Sai 4 câu (tf4)
+4. Đúng/Sai n câu (tfn)
+5. Trả lời ngắn (short)
+
+Trả về JSON array với format đúng theo từng loại.
+
+VÍ DỤ ĐẦY ĐỦ CÁC LOẠI:`;
+
+    const sample = `[
+  {
+    "type": "single",
+    "text": "Giải phương trình $x^2 - 5x + 6 = 0$. Tổng các nghiệm là?",
+    "opts": ["$3$", "$5$", "$6$", "$7$"],
+    "correct": 1,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Theo Vi-et: $S = -b/a = 5$"
+  },
+  {
+    "type": "multi", 
+    "text": "Chọn các đáp án đúng về tính chất của hàm số $y = x^3$:",
+    "opts": ["Đồng biến trên R", "Có cực trị", "Lẻ", "Cắt trục hoành tại 1 điểm"],
+    "corrects": [0, 2, 3],
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "$y'=3x^2 \\ge 0$, hàm lẻ vì $f(-x)=-f(x)$"
+  },
+  {
+    "type": "tf4",
+    "text": "Cho hàm số $f(x) = x^3 - 3x + 1$. Các mệnh đề sau đúng hay sai?",
+    "statements": [
+      "$f'(x) = 3x^2 - 3$",
+      "Hàm số đồng biến trên $(-\\infty, -1)$",
+      "Hàm số đạt cực đại tại $x=1$",
+      "$f(0) = 0$"
+    ],
+    "answers": [true, true, false, false],
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "$f'(x)=3x^2-3=0 \\Rightarrow x=\\pm 1$. CĐ tại $x=-1$, CT tại $x=1$"
+  },
+  {
+    "type": "tfn",
+    "text": "Xét các phát biểu về số nguyên tố:",
+    "statements": [
+      "2 là số nguyên tố chẵn duy nhất",
+      "Mọi số nguyên tố đều lẻ",
+      "Có vô hạn số nguyên tố"
+    ],
+    "answers": [true, false, true],
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "2 là số nguyên tố chẵn duy nhất, có vô hạn số nguyên tố"
+  },
+  {
+    "type": "short",
+    "text": "Tính $\\int_0^1 x^2 dx$",
+    "answer": "1/3",
+    "unit": "",
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "$\\int_0^1 x^2 dx = [x^3/3]_0^1 = 1/3$"
+  }
+]`;
+
+    document.getElementById('json-sample-prompt').textContent = prompt;
+    document.getElementById('json-sample-content').textContent = sample;
+    openModal('m-json-sample');
+}
+
 
 // ===== tokens.js =====
 
@@ -5778,47 +6369,89 @@ function loadQ(n) {
 
   const qLabel = document.getElementById('q-label');
   if (qLabel) qLabel.textContent = `Câu ${n} / ${totalQ}`;
-  
+
+  // Update section label based on type
+  const qsl = document.querySelector('.qsl');
+  const qtypeLabels = { single:'📋 Trắc nghiệm 1 đáp án', multi:'☑️ Trắc nghiệm nhiều đáp án', tf4:'✔ Đúng / Sai 4 ý', tfn:'✔ Đúng / Sai', short:'✍️ Trả lời ngắn' };
+  if (qsl) qsl.textContent = qtypeLabels[q.qtype] || '📐 Câu hỏi';
+
   const qTextEl = document.getElementById('q-text');
-  if (qTextEl) {
-    // QUAN TRỌNG: Chỉ gửi text thường, không bọc $ cho toàn bộ
-    renderMarkdownAndLatex(qTextEl, q.text);
-  }
+  if (qTextEl) renderMarkdownAndLatex(qTextEl, q.text);
 
   const optsDiv = document.getElementById('opts');
   const letters = ['A', 'B', 'C', 'D'];
-  
   let html = '';
-  if (q.qtype === 'single') {
-    html = q.opts.map((opt, i) => {
-      // Mỗi đáp án cần được bọc $ riêng nếu là công thức
-      let displayOpt = opt;
-      // Nếu opt chưa có $ và có ký tự toán học, tự động thêm $
-      if (!opt.includes('$') && /[\^_{}\\\d]/.test(opt)) {
-        displayOpt = `$${opt}$`;
-      }
-      return `
-        <div class="oi${answers[n] === letters[i] ? ' sel' : ''}" data-letter="${letters[i]}" onclick="pickOpt(this,'${letters[i]}')">
-          <div class="oltr">${letters[i]}</div>
-          <div class="otxt" id="opt-text-${n}-${i}"></div>
-        </div>`;
+  const qtype = q.qtype || 'single';
+
+  if (qtype === 'single') {
+    html = (q.opts || []).map((opt, i) => {
+      const letter = letters[i];
+      const sel = answers[n] === letter ? ' sel' : '';
+      return `<div class="oi${sel}" data-letter="${letter}" onclick="pickOpt(this,'${letter}')">
+        <div class="oltr">${letter}</div>
+        <div class="otxt" id="opt-text-${n}-${i}"></div>
+      </div>`;
     }).join('');
+
+  } else if (qtype === 'multi') {
+    const selArr = answers[n] || [];
+    html = `<div style="font-size:11px;color:var(--pur);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--pur-s);border-radius:6px">☑️ Chọn tất cả đáp án đúng (có thể chọn nhiều)</div>`;
+    html += (q.opts || []).map((opt, i) => {
+      const sel = selArr.includes(i) ? ' sel' : '';
+      return `<div class="oi${sel}" data-idx="${i}" onclick="pickMultiOpt(this,${i})">
+        <div class="oltr" style="font-size:10px">${letters[i]}</div>
+        <div class="otxt" id="opt-text-${n}-${i}"></div>
+        <div style="margin-left:auto;flex-shrink:0;width:20px;height:20px;border-radius:4px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:12px" class="chk-box">${selArr.includes(i) ? '✓' : ''}</div>
+      </div>`;
+    }).join('');
+
+  } else if (qtype === 'tf4' || qtype === 'tfn') {
+    const selArr = answers[n] || [];
+    const statements = q.statements || q.opts || [];
+    html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">✔ Xác định mỗi mệnh đề là Đúng hay Sai</div>`;
+    html += statements.map((stmt, i) => {
+      const val = selArr[i];
+      return `<div class="tf-row" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px">
+        <div style="font-size:12px;font-weight:700;color:var(--txt2);min-width:20px;padding-top:2px">${letters[i]}.</div>
+        <div style="flex:1;font-size:13px;line-height:1.6" id="tf-stmt-${n}-${i}"></div>
+        <div style="display:flex;gap:6px;flex-shrink:0;margin-top:2px">
+          <button class="tf-btn${val===true ? ' true-sel' : ''}" data-val="true" onclick="toggleTF(${n},${i},true)" style="padding:5px 14px;border-radius:6px;border:1.5px solid var(${val===true?'--grn':'--bdr'});background:${val===true?'var(--grn-s)':'var(--bg)'};font-size:12px;font-weight:700;cursor:pointer;color:${val===true?'var(--grn)':'var(--txt2)'}">Đ</button>
+          <button class="tf-btn${val===false ? ' false-sel' : ''}" data-val="false" onclick="toggleTF(${n},${i},false)" style="padding:5px 14px;border-radius:6px;border:1.5px solid var(${val===false?'--red':'--bdr'});background:${val===false?'var(--red-s)':'var(--bg)'};font-size:12px;font-weight:700;cursor:pointer;color:${val===false?'var(--red)':'var(--txt2)'}">S</button>
+        </div>
+      </div>`;
+    }).join('');
+
+  } else if (qtype === 'short') {
+    const cur = answers[n] || '';
+    const unit = q.unit ? `<span style="color:var(--txt3);font-size:12px"> (${q.unit})</span>` : '';
+    html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">✍️ Nhập đáp án vào ô bên dưới${q.unit?' — Đơn vị: '+q.unit:''}</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <input type="text" id="short-ans-${n}" value="${cur}" placeholder="Nhập đáp án..." 
+          style="flex:1;padding:12px 14px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px;color:var(--txt);font-size:14px;font-family:var(--fm);outline:none"
+          oninput="saveShortAnswer(${n},this.value)"
+          onkeydown="if(event.key==='Enter')nextQ()">
+        ${unit}
+      </div>
+      <div style="font-size:11.5px;color:var(--txt3);margin-top:8px">Nhấn Enter để sang câu tiếp theo</div>`;
   }
-  // ... các loại khác tương tự
 
   optsDiv.innerHTML = html;
 
-  // Render nội dung từng đáp án
-  if (q.qtype === 'single' || q.qtype === 'multi') {
-    q.opts.forEach((opt, i) => {
+  // Render text content for options
+  if (qtype === 'single' || qtype === 'multi') {
+    (q.opts || []).forEach((opt, i) => {
       const optEl = document.getElementById(`opt-text-${n}-${i}`);
       if (optEl) {
         let displayOpt = opt;
-        if (!opt.includes('$') && /[\^_{}\\\d]/.test(opt)) {
-          displayOpt = `$${opt}$`;
-        }
+        if (!opt.includes('$') && /[\^_{}\\\d]/.test(opt)) displayOpt = `$${opt}$`;
         renderMarkdownAndLatex(optEl, displayOpt);
       }
+    });
+  }
+  if (qtype === 'tf4' || qtype === 'tfn') {
+    (q.statements || q.opts || []).forEach((stmt, i) => {
+      const el = document.getElementById(`tf-stmt-${n}-${i}`);
+      if (el) renderMarkdownAndLatex(el, stmt);
     });
   }
 
