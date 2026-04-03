@@ -2868,6 +2868,14 @@ function previewJSON() {
         if (listDiv) {
             listDiv.innerHTML = data.map((q, i) => {
                 let answerDisplay = '';
+                let imageHtml = '';
+                
+                // Hiển thị ảnh nếu có
+                if (q.image) {
+                    imageHtml = `<div style="margin-top:6px;"><img src="${q.image}" style="max-width:100%; max-height:100px; border-radius:6px; border:1px solid var(--bdr);" onerror="this.style.display='none'"></div>`;
+                }
+                
+                // Hiển thị đáp án theo loại
                 if (q.type === 'tf4' || q.type === 'tfn') {
                     const answers = q.answers || [];
                     answerDisplay = `Đ/S: ${answers.map(a => a === true ? 'Đ' : (a === false ? 'S' : a)).join(' | ')}`;
@@ -2881,6 +2889,7 @@ function previewJSON() {
                     <div style="background:var(--bg3); border-radius:8px; padding:12px; margin-bottom:8px;">
                         <strong>Câu ${i+1}</strong> (${q.type || 'single'})
                         <div style="margin-top:6px; font-size:12px;">${(q.text || '').substring(0, 100)}${(q.text || '').length > 100 ? '...' : ''}</div>
+                        ${imageHtml}
                         <div style="margin-top:4px; font-size:11px; color:var(--txt3);">
                             ${answerDisplay}
                         </div>
@@ -2917,6 +2926,9 @@ function importJSON() {
             const type = q.type || 'single';
             const newId = DB.nextIds.question++;
             
+            // Xử lý ảnh: hỗ trợ cả image và img
+            let imageUrl = q.image || q.img || null;
+            
             const question = {
                 id: newId,
                 text: q.text,
@@ -2925,7 +2937,7 @@ function importJSON() {
                 source: 'json_import',
                 sol_text: q.sol_text || q.explanation || '',
                 qtype: type,
-                img: q.image || null,
+                img: imageUrl,
                 opt_imgs: q.opt_images || []
             };
             
@@ -2939,29 +2951,29 @@ function importJSON() {
                 question.corrects = q.corrects || [0];
             }
             else if (type === 'tf4') {
-              question.statements = q.statements || ['', '', '', ''];
-              // Xử lý answers: có thể là boolean hoặc string "true"/"false"
-              let answers = q.answers || [true, false, true, false];
-              question.answers = answers.map(ans => {
-                  if (typeof ans === 'boolean') return ans;
-                  if (typeof ans === 'string') return ans.toLowerCase() === 'true';
-                  if (typeof ans === 'number') return ans === 1;
-                  return false;
-              });
-              // Đảm bảo đúng 4 đáp án
-              while (question.answers.length < 4) question.answers.push(false);
-              question.answers = question.answers.slice(0, 4);
-          }
-          else if (type === 'tfn') {
-              question.statements = q.statements || [];
-              let answers = q.answers || [];
-              question.answers = answers.map(ans => {
-                  if (typeof ans === 'boolean') return ans;
-                  if (typeof ans === 'string') return ans.toLowerCase() === 'true';
-                  if (typeof ans === 'number') return ans === 1;
-                  return false;
-              });
-          }
+                question.statements = q.statements || ['', '', '', ''];
+                // Xử lý answers: có thể là boolean hoặc string "true"/"false"
+                let answers = q.answers || [true, false, true, false];
+                question.answers = answers.map(ans => {
+                    if (typeof ans === 'boolean') return ans;
+                    if (typeof ans === 'string') return ans.toLowerCase() === 'true';
+                    if (typeof ans === 'number') return ans === 1;
+                    return false;
+                });
+                // Đảm bảo đúng 4 đáp án
+                while (question.answers.length < 4) question.answers.push(false);
+                question.answers = question.answers.slice(0, 4);
+            }
+            else if (type === 'tfn') {
+                question.statements = q.statements || [];
+                let answers = q.answers || [];
+                question.answers = answers.map(ans => {
+                    if (typeof ans === 'boolean') return ans;
+                    if (typeof ans === 'string') return ans.toLowerCase() === 'true';
+                    if (typeof ans === 'number') return ans === 1;
+                    return false;
+                });
+            }
             else if (type === 'short') {
                 question.answer = q.answer || '';
                 question.unit = q.unit || '';
@@ -3015,6 +3027,18 @@ function importJSON() {
 }
 
 function showJSONSample() {
+    const prompt = `Bạn là chuyên gia ra đề thi. Hãy tạo câu hỏi theo yêu cầu với các LOẠI sau:
+
+1. Trắc nghiệm 1 đáp án (single)
+2. Trắc nghiệm nhiều đáp án (multi) 
+3. Đúng/Sai 4 câu (tf4)
+4. Đúng/Sai n câu (tfn)
+5. Trả lời ngắn (short)
+
+Trả về JSON array với format đúng theo từng loại.
+
+VÍ DỤ ĐẦY ĐỦ CÁC LOẠI:`;
+
     const sample = `[
   {
     "type": "single",
@@ -3023,25 +3047,58 @@ function showJSONSample() {
     "correct": 1,
     "subject": "math",
     "diff": "easy",
-    "sol_text": "Theo định lý Vi-et: $S = -b/a = 5$"
+    "sol_text": "Theo định lý Vi-et: $S = -b/a = 5$",
+    "image": "https://example.com/hinh1.jpg"
   },
   {
-    "type": "single",
-    "text": "Cho hình vẽ, tính diện tích tam giác?",
-    "image": "https://example.com/tamgiac.jpg",
-    "opts": ["12 cm²", "16 cm²", "20 cm²", "24 cm²"],
-    "correct": 2,
-    "sol_text": "Áp dụng công thức $S = \\frac{1}{2} \\times \\text{đáy} \\times \\text{cao}$"
+    "type": "multi", 
+    "text": "Chọn các đáp án đúng về tính chất của hàm số $y = x^3$:",
+    "opts": ["Đồng biến trên R", "Có cực trị", "Lẻ", "Cắt trục hoành tại 1 điểm"],
+    "corrects": [0, 2, 3],
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "$y'=3x^2 \\ge 0$, hàm lẻ vì $f(-x)=-f(x)$"
+  },
+  {
+    "type": "tf4",
+    "text": "Cho hàm số $f(x) = x^3 - 3x + 1$. Các mệnh đề sau đúng hay sai?",
+    "statements": [
+      "$f'(x) = 3x^2 - 3$",
+      "Hàm số đồng biến trên $(-\\infty, -1)$",
+      "Hàm số đạt cực đại tại $x=1$",
+      "$f(0) = 0$"
+    ],
+    "answers": [true, true, false, false],
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "$f'(x)=3x^2-3=0 \\Rightarrow x=\\pm 1$. CĐ tại $x=-1$, CT tại $x=1$"
+  },
+  {
+    "type": "tfn",
+    "text": "Xét các phát biểu về số nguyên tố:",
+    "statements": [
+      "2 là số nguyên tố chẵn duy nhất",
+      "Mọi số nguyên tố đều lẻ",
+      "Có vô hạn số nguyên tố"
+    ],
+    "answers": [true, false, true],
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "2 là số nguyên tố chẵn duy nhất, có vô hạn số nguyên tố"
+  },
+  {
+    "type": "short",
+    "text": "Tính $\\int_0^1 x^2 dx$",
+    "answer": "1/3",
+    "unit": "",
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "$\\int_0^1 x^2 dx = [x^3/3]_0^1 = 1/3$"
   }
 ]`;
-    
-    const prompt = `Hãy tạo câu hỏi trắc nghiệm với format JSON. Hỗ trợ type: single, multi, tf4, tfn, short. Có thể thêm trường "image" cho URL ảnh câu hỏi.`;
-    
-    const promptEl = document.getElementById('json-sample-prompt');
-    const contentEl = document.getElementById('json-sample-content');
-    if (promptEl) promptEl.textContent = prompt;
-    if (contentEl) contentEl.textContent = sample;
-    
+
+    document.getElementById('json-sample-prompt').textContent = prompt;
+    document.getElementById('json-sample-content').textContent = sample;
     openModal('m-json-sample');
 }
 
@@ -3063,7 +3120,7 @@ window.importJSON = importJSON;
 window.showJSONSample = showJSONSample;
 window.copyJSONSamplePrompt = copyJSONSamplePrompt;
 window.copyJSONSample = copyJSONSample;
-
+  
 
 // ===== utils.js =====
 
