@@ -420,9 +420,9 @@
       </div>
     </div>
     <div class="mactions">
-      <button class="btn btn-g" onclick="closeModal('m-json')">Hủy</button>
-      <button class="btn btn-pur" onclick="previewJSON()">👁️ Xem trước</button>
-      <button class="btn btn-p" id="json-import-btn" style="display:none" onclick="importJSON()">📥 Import vào hệ thống</button>
+        <button class="btn btn-g" onclick="closeModal('m-json')">Hủy</button>
+        <button class="btn btn-pur" onclick="previewJSON()">👁️ Xem trước</button>
+        <button class="btn btn-p" id="json-import-btn" onclick="importJSON()">📥 Import vào hệ thống</button>
     </div>
   </div>
 </div>
@@ -1417,7 +1417,7 @@
         <div class="fg" style="margin-bottom:0"><label>c — Đoán mò</label><input id="fsq-irt-c" type="number" value="0.25" min="0" max="0.5" step="0.01" class="finp" style="font-family:var(--fm)"><div class="irt-hint">4 lựa chọn: ~0.25</div></div>
       </div>
       <div class="fs-section">✏️ Nội dung câu hỏi</div>
-      <div class="fg" style="margin-bottom:0"><label>Đề bài <span style="color:var(--txt3);font-weight:400">(Hỗ trợ **Markdown** và $LaTeX$)</span></label><textarea id="fsq-text" class="finp" style="min-height:120px;resize:vertical;font-family:var(--fm);font-size:12.5px" oninput="debouncePreview()" placeholder="Nhập nội dung câu hỏi..."></textarea>
+      <div class="fg" style="margin-bottom:0"><label>Đề bài <span style="color:var(--txt3);font-weight:400">(Hỗ trợ $LaTeX$)</span></label><textarea id="fsq-text" class="finp" style="min-height:120px;resize:vertical;font-family:var(--fm);font-size:12.5px" oninput="debouncePreview()" placeholder="Nhập nội dung câu hỏi..."></textarea>
         <div style="margin-top:7px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">
           <button type="button" onclick="triggerQImgUpload()" class="btn btn-g btn-sm" style="font-size:11.5px">🖼 Đính kèm ảnh đề bài</button>
           <span style="font-size:10.5px;color:var(--txt3)">Nén tự động · ~900px · JPEG</span>
@@ -1490,6 +1490,15 @@
              <button class="btn btn-p btn-sm" onclick="applyBulkScore()">✅ Áp dụng</button>
         <button class="btn btn-r btn-sm" onclick="removeBulkSelected()">🗑 Xóa đã chọn</button>
       </div>
+      <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <button class="btn btn-primary" onclick="openAddQuestionModal()">
+            ➕ Thêm câu hỏi từ ngân hàng
+        </button>
+        <button class="btn btn-secondary" onclick="openImportByCodeModal()">
+            📝 Thêm bằng mã bài
+        </button>
+    </div>
+    <div id="ce-q-list"></div>
       <div id="ce-q-list" style="flex:1;overflow-y:auto"></div>
     </div>
   </div>
@@ -1632,33 +1641,29 @@ let resultSavedQuestions = new Set(); // lưu các câu đã bookmark
 
 // Khởi tạo dữ liệu kết quả (gọi từ buildResultFromExam)
 function initResultData(questions, userAnswers, correctArr, exam) {
-  resultQuestions = questions;
-  resultUserAnswers = userAnswers;
-  resultCorrectArr = correctArr;
-  resultTotalQ = questions.length;
+  resultQuestions = Array.isArray(questions) ? questions : [];
+  resultUserAnswers = userAnswers || {};
+  resultCorrectArr = Array.isArray(correctArr) ? correctArr : [];
+  resultTotalQ = resultQuestions.length;
   resultExam = exam;
   resultCurrentQ = 1;
   
-  // Load danh sách câu đã lưu của user
-  loadSavedQuestions();
+  if (resultTotalQ === 0) {
+    console.warn('No questions to display');
+    return;
+  }
   
-  // Render navigator
+  loadSavedQuestions();
   buildResultNavigator();
-  // Hiển thị câu đầu tiên
   renderResultQuestion(1);
-
+  
   // Ẩn sidebar khi xem kết quả
   const resultView = document.getElementById('view-result');
   const sidebar = resultView?.querySelector('.sidebar');
-  if (sidebar) {
-    sidebar.style.display = 'none';
-  }
+  if (sidebar) sidebar.style.display = 'none';
   
-  // Điều chỉnh main chiếm toàn bộ
   const main = resultView?.querySelector('.main');
-  if (main) {
-    main.style.width = '100%';
-  }
+  if (main) main.style.width = '100%';
 }
 
 // Xây dựng navigator cho kết quả
@@ -1698,60 +1703,143 @@ function updateResultStats() {
   document.getElementById('result-nav-answered').textContent = `${correctCount}/${resultTotalQ}`;
 }
 
-// Hiển thị câu hỏi số n
 function renderResultQuestion(n) {
   if (n < 1 || n > resultTotalQ) return;
   resultCurrentQ = n;
+  
+  // Kiểm tra mảng resultQuestions
+  if (!resultQuestions || !Array.isArray(resultQuestions) || resultQuestions.length === 0) {
+    console.error('resultQuestions is empty or invalid');
+    return;
+  }
+  
   const q = resultQuestions[n - 1];
-  if (!q) return;
+  if (!q) {
+    console.error(`Question ${n} not found`);
+    return;
+  }
 
   document.getElementById('result-q-label').textContent = `Câu ${n} / ${resultTotalQ}`;
   
-  // Render câu hỏi (text thường, không bọc $ toàn bộ)
+  // Render câu hỏi
   const qTextEl = document.getElementById('result-q-text');
-  renderMarkdownAndLatex(qTextEl, q.text);
+  if (qTextEl) renderMarkdownAndLatex(qTextEl, q.text);
   
   // Render đáp án
   const optsDiv = document.getElementById('result-opts');
   const letters = ['A', 'B', 'C', 'D'];
   const userAnswer = resultUserAnswers[n];
+  const qtype = q.qtype || 'single';
   
   let optsHtml = '';
-  q.opts.forEach((opt, idx) => {
-    const letter = letters[idx];
-    let cls = 'oi';
-    if (userAnswer === letter) cls += ' sel';
-    if (idx === q.correct) cls += ' corr';
-    if (userAnswer === letter && idx !== q.correct) cls += ' wrong';
+  
+  if (qtype === 'single') {
+    (q.opts || []).forEach((opt, idx) => {
+      const letter = letters[idx];
+      let cls = 'oi';
+      if (userAnswer === letter) cls += ' sel';
+      if (idx === q.correct) cls += ' corr';
+      if (userAnswer === letter && idx !== q.correct) cls += ' wrong';
+      
+      optsHtml += `
+        <div class="${cls}" style="cursor:default">
+          <div class="oltr">${letter}</div>
+          <div class="otxt" id="result-opt-${n}-${idx}"></div>
+        </div>
+      `;
+    });
+  } else if (qtype === 'multi') {
+    // Xử lý multi nếu cần
+    const corrects = q.corrects || [];
+    const userSelected = userAnswer || [];
+    (q.opts || []).forEach((opt, idx) => {
+      const isCorrect = corrects.includes(idx);
+      const isUser = userSelected.includes(idx);
+      let cls = 'oi';
+      if (isUser) cls += ' sel';
+      if (isCorrect) cls += ' corr';
+      if (isUser && !isCorrect) cls += ' wrong';
+      
+      optsHtml += `
+        <div class="${cls}" style="cursor:default">
+          <div class="oltr">${letters[idx]}</div>
+          <div class="otxt" id="result-opt-${n}-${idx}"></div>
+        </div>
+      `;
+    });
+  } else if (qtype === 'tf4' || qtype === 'tfn') {
+    // Xử lý Đúng/Sai
+    const statements = q.statements || q.subqs || [];
+    const correctAnswers = statements.map((_, i) => {
+      if (q.answers) return q.answers[i];
+      if (q.subqs) return q.subqs[i]?.ans;
+      return false;
+    });
+    const userChoices = userAnswer || [];
     
-    // Xử lý hiển thị đáp án: thêm $ nếu cần
-    let displayOpt = opt;
-    if (!opt.includes('$') && /[\^_{}\\\d]/.test(opt)) {
-      displayOpt = `$${opt}$`;
-    }
+    optsHtml = `<div style="margin-top:10px">`;
+    statements.forEach((stmt, i) => {
+      const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+      const isCorrect = correctAnswers[i] === true;
+      const userChoice = userChoices[i];
+      const isUserCorrect = (userChoice === isCorrect);
+      
+      let bgColor = 'var(--bg3)';
+      let borderColor = 'var(--bdr)';
+      if (userChoice !== undefined) {
+        bgColor = isUserCorrect ? 'var(--grn-s)' : 'var(--red-s)';
+        borderColor = isUserCorrect ? 'var(--grn)' : 'var(--red)';
+      }
+      
+      optsHtml += `
+        <div style="margin-bottom:10px;padding:10px;background:${bgColor};border-left:4px solid ${borderColor};border-radius:8px">
+          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <div><strong>${i+1}.</strong> <span id="result-stmt-${n}-${i}"></span></div>
+            <div style="font-size:12px">
+              <span style="color:var(--grn)">✓ Đáp án: ${isCorrect ? 'Đúng' : 'Sai'}</span>
+              <span style="margin-left:12px;color:${userChoice === undefined ? 'var(--txt3)' : (isUserCorrect ? 'var(--grn)' : 'var(--red)')}">
+                📝 Bạn: ${userChoice === undefined ? 'Chưa trả lời' : (userChoice ? 'Đúng' : 'Sai')}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    optsHtml += `</div>`;
     
-    optsHtml += `
-      <div class="${cls}" style="cursor:default">
-        <div class="oltr">${letter}</div>
-        <div class="otxt" id="result-opt-${n}-${idx}"></div>
+    // Render nội dung statements sau khi có HTML
+    setTimeout(() => {
+      statements.forEach((stmt, i) => {
+        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+        const el = document.getElementById(`result-stmt-${n}-${i}`);
+        if (el && stmtText) renderMarkdownAndLatex(el, stmtText);
+      });
+    }, 50);
+    
+  } else if (qtype === 'short') {
+    optsHtml = `
+      <div style="margin-top:12px">
+        <div><strong>Đáp án của bạn:</strong> ${userAnswer || 'Chưa trả lời'}</div>
+        <div><strong>Đáp án đúng:</strong> ${q.answer || ''}</div>
       </div>
     `;
-  });
-  optsDiv.innerHTML = optsHtml;
+  }
   
-  // Render nội dung đáp án
-  q.opts.forEach((opt, idx) => {
-    const el = document.getElementById(`result-opt-${n}-${idx}`);
-    if (el) {
-      let displayOpt = opt;
-      if (!opt.includes('$') && /[\^_{}\\\d]/.test(opt)) {
-        displayOpt = `$${opt}$`;
+  if (optsHtml) optsDiv.innerHTML = optsHtml;
+  
+  // Render nội dung từng đáp án cho single/multi
+  if (qtype === 'single' || qtype === 'multi') {
+    (q.opts || []).forEach((opt, idx) => {
+      const el = document.getElementById(`result-opt-${n}-${idx}`);
+      if (el) {
+        let displayOpt = opt;
+        if (!opt.includes('$') && /[\^_{}\\\d]/.test(opt)) displayOpt = `$${opt}$`;
+        renderMarkdownAndLatex(el, displayOpt);
       }
-      renderMarkdownAndLatex(el, displayOpt);
-    }
-  });
+    });
+  }
   
-  // Ẩn hộp lời giải và AI
+  // Ẩn/hiện lời giải
   const solBox = document.getElementById('result-solution-box');
   if (solBox) solBox.style.display = 'none';
   const aiBox = document.getElementById('result-ai-box');
@@ -1760,12 +1848,12 @@ function renderResultQuestion(n) {
   const showSolBtn = document.getElementById('result-show-sol-btn');
   if (showSolBtn) showSolBtn.textContent = '💡 Hiển thị lời giải';
   
-  // Cập nhật active cho navigator
+  // Cập nhật active navigator
   document.querySelectorAll('#result-ngrid .nqb').forEach((btn, i) => {
     btn.classList.toggle('cur', i + 1 === n);
   });
   
-  // Cập nhật trạng thái nút lưu
+  // Cập nhật nút lưu
   const saveBtn = document.getElementById('result-save-q-btn');
   if (saveBtn) {
     if (resultSavedQuestions.has(q.id)) {
@@ -1887,52 +1975,56 @@ function persistDB() {
 loadDB();
 
 
-// ==================== JSON IMPORT FUNCTIONS ====================
+// ==================== JSON IMPORT ====================
 let currentJSONMode = 'questions';
 
 function openJSONModal(mode) {
     currentJSONMode = mode;
-    const qMode = document.getElementById('json-mode-questions');
-    const eMode = document.getElementById('json-mode-exam');
+    
+    // Cập nhật giao diện tab
+    const qTab = document.getElementById('json-mode-questions');
+    const eTab = document.getElementById('json-mode-exam');
     const examInfo = document.getElementById('json-exam-info');
     
-    if (qMode) qMode.classList.toggle('on', mode === 'questions');
-    if (eMode) eMode.classList.toggle('on', mode === 'exam');
+    if (qTab) qTab.classList.toggle('on', mode === 'questions');
+    if (eTab) eTab.classList.toggle('on', mode === 'exam');
     if (examInfo) examInfo.style.display = mode === 'exam' ? 'block' : 'none';
     
+    // Load danh sách phòng thi nếu mode exam
     if (mode === 'exam' && DB.rooms) {
-        const roomSel = document.getElementById('json-exam-room');
-        if (roomSel) {
-            roomSel.innerHTML = DB.rooms.map(r => `<option value="${r.id}">${r.icon} ${r.name}</option>`).join('');
+        const roomSelect = document.getElementById('json-exam-room');
+        if (roomSelect) {
+            roomSelect.innerHTML = DB.rooms.map(r => 
+                `<option value="${r.id}">${r.icon} ${r.name}</option>`
+            ).join('');
         }
     }
     
-    const preview = document.getElementById('json-preview-area');
-    if (preview) preview.style.display = 'none';
-    
-    const input = document.getElementById('json-input');
-    if (input) input.value = '';
+    // Reset form
+    document.getElementById('json-input').value = '';
+    document.getElementById('json-preview-area').style.display = 'none';
     
     openModal('m-json');
 }
 
 function setJSONMode(mode) {
     currentJSONMode = mode;
-    const qMode = document.getElementById('json-mode-questions');
-    const eMode = document.getElementById('json-mode-exam');
+    const qTab = document.getElementById('json-mode-questions');
+    const eTab = document.getElementById('json-mode-exam');
     const examInfo = document.getElementById('json-exam-info');
     
-    if (qMode) qMode.classList.toggle('on', mode === 'questions');
-    if (eMode) eMode.classList.toggle('on', mode === 'exam');
+    if (qTab) qTab.classList.toggle('on', mode === 'questions');
+    if (eTab) eTab.classList.toggle('on', mode === 'exam');
     if (examInfo) examInfo.style.display = mode === 'exam' ? 'block' : 'none';
-    
-    const preview = document.getElementById('json-preview-area');
-    if (preview) preview.style.display = 'none';
+    document.getElementById('json-preview-area').style.display = 'none';
 }
 
 function previewJSON() {
-    const raw = document.getElementById('json-input')?.value.trim();
-    if (!raw) { toast('⚠️', 'Vui lòng nhập JSON'); return; }
+    const raw = document.getElementById('json-input').value.trim();
+    if (!raw) {
+        toast('⚠️', 'Vui lòng nhập JSON!');
+        return;
+    }
     
     try {
         const data = JSON.parse(raw);
@@ -1942,120 +2034,151 @@ function previewJSON() {
         const listDiv = document.getElementById('json-preview-list');
         const countSpan = document.getElementById('json-preview-count');
         
-        if (previewDiv && listDiv) {
-            listDiv.innerHTML = data.map((q, i) => `
-                <div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px">
-                    <strong>Câu ${i+1}</strong> (${q.type || 'single'})
-                    <div style="margin:5px 0;font-size:12px">${(q.text || '').substring(0, 100)}</div>
-                    <div style="font-size:11px;color:var(--txt3)">Đáp án: ${q.opts?.join(' | ') || q.answer || q.answers?.join(', ')}</div>
-                </div>
-            `).join('');
+        if (listDiv) {
+            listDiv.innerHTML = data.map((q, i) => {
+                let answerDisplay = '';
+                if (q.type === 'tf4' || q.type === 'tfn') {
+                    const answers = q.answers || [];
+                    answerDisplay = `Đ/S: ${answers.map(a => a === true ? 'Đ' : (a === false ? 'S' : a)).join(' | ')}`;
+                } else if (q.type === 'short') {
+                    answerDisplay = `Đáp án: ${q.answer || ''} ${q.unit || ''}`;
+                } else {
+                    answerDisplay = `Đáp án: ${q.opts ? q.opts.join(' | ') : (q.correct !== undefined ? `Option ${q.correct}` : '...')}`;
+                }
+                
+                return `
+                    <div style="background:var(--bg3); border-radius:8px; padding:12px; margin-bottom:8px;">
+                        <strong>Câu ${i+1}</strong> (${q.type || 'single'})
+                        <div style="margin-top:6px; font-size:12px;">${(q.text || '').substring(0, 100)}${(q.text || '').length > 100 ? '...' : ''}</div>
+                        <div style="margin-top:4px; font-size:11px; color:var(--txt3);">
+                            ${answerDisplay}
+                        </div>
+                    </div>
+                `;
+            }).join('');
             countSpan.textContent = `${data.length} câu`;
             previewDiv.style.display = 'block';
         }
-    } catch (e) {
+    } catch(e) {
         toast('❌', 'JSON không hợp lệ: ' + e.message);
     }
 }
 
 function importJSON() {
-    const raw = document.getElementById('json-input')?.value.trim();
-    if (!raw) { toast('⚠️', 'Vui lòng nhập JSON'); return; }
+    const raw = document.getElementById('json-input').value.trim();
+    if (!raw) {
+        toast('⚠️', 'Vui lòng nhập JSON!');
+        return;
+    }
     
     try {
         let data = JSON.parse(raw);
         if (!Array.isArray(data)) data = [data];
         
-        const newIds = [];
+        if (data.length === 0) {
+            toast('⚠️', 'Không có câu hỏi nào!');
+            return;
+        }
+        
+        const newQuestionIds = [];
         
         for (const q of data) {
             const type = q.type || 'single';
             const newId = DB.nextIds.question++;
             
-            const baseQuestion = {
+            const question = {
                 id: newId,
+                text: q.text,
                 subject: q.subject || 'math',
                 diff: q.diff || 'medium',
                 source: 'json_import',
-                sol_text: q.sol_text || q.explanation || ''
+                sol_text: q.sol_text || q.explanation || '',
+                qtype: type,
+                img: q.image || null,
+                opt_imgs: q.opt_images || []
             };
             
+            // Xử lý theo từng loại
             if (type === 'single') {
-                if (!q.text || !q.opts || q.correct === undefined) continue;
-                baseQuestion.qtype = 'single';
-                baseQuestion.text = q.text;
-                baseQuestion.opts = q.opts;
-                baseQuestion.correct = q.correct;
-            } 
+                question.opts = q.opts || ['A', 'B', 'C', 'D'];
+                question.correct = q.correct !== undefined ? q.correct : 0;
+            }
             else if (type === 'multi') {
-                if (!q.text || !q.opts || !q.corrects) continue;
-                baseQuestion.qtype = 'multi';
-                baseQuestion.text = q.text;
-                baseQuestion.opts = q.opts;
-                baseQuestion.corrects = q.corrects;
+                question.opts = q.opts || [];
+                question.corrects = q.corrects || [0];
             }
             else if (type === 'tf4') {
-                if (!q.text || !q.statements || q.statements.length !== 4) continue;
-                baseQuestion.qtype = 'tf4';
-                baseQuestion.text = q.text;
-                baseQuestion.subqs = q.statements.map((stmt, i) => ({ text: stmt, ans: q.answers?.[i] || false }));
-            }
-            else if (type === 'tfn') {
-                if (!q.text || !q.statements) continue;
-                baseQuestion.qtype = 'tfn';
-                baseQuestion.text = q.text;
-                baseQuestion.subqs = q.statements.map((stmt, i) => ({ text: stmt, ans: q.answers?.[i] || false }));
-            }
+              question.statements = q.statements || ['', '', '', ''];
+              // Xử lý answers: có thể là boolean hoặc string "true"/"false"
+              let answers = q.answers || [true, false, true, false];
+              question.answers = answers.map(ans => {
+                  if (typeof ans === 'boolean') return ans;
+                  if (typeof ans === 'string') return ans.toLowerCase() === 'true';
+                  if (typeof ans === 'number') return ans === 1;
+                  return false;
+              });
+              // Đảm bảo đúng 4 đáp án
+              while (question.answers.length < 4) question.answers.push(false);
+              question.answers = question.answers.slice(0, 4);
+          }
+          else if (type === 'tfn') {
+              question.statements = q.statements || [];
+              let answers = q.answers || [];
+              question.answers = answers.map(ans => {
+                  if (typeof ans === 'boolean') return ans;
+                  if (typeof ans === 'string') return ans.toLowerCase() === 'true';
+                  if (typeof ans === 'number') return ans === 1;
+                  return false;
+              });
+          }
             else if (type === 'short') {
-                if (!q.text || q.answer === undefined) continue;
-                baseQuestion.qtype = 'short';
-                baseQuestion.text = q.text;
-                baseQuestion.answer = String(q.answer);
-                baseQuestion.unit = q.unit || '';
-            }
-            else {
-                continue;
+                question.answer = q.answer || '';
+                question.unit = q.unit || '';
             }
             
-            DB.questions.push(baseQuestion);
-            newIds.push(newId);
+            DB.questions.push(question);
+            newQuestionIds.push(newId);
         }
         
-        if (newIds.length === 0) {
-            toast('⚠️', 'Không có câu hỏi hợp lệ');
-            return;
-        }
-        
+        // Nếu là mode exam, tạo đề thi
         if (currentJSONMode === 'exam') {
-            const name = document.getElementById('json-exam-name')?.value.trim();
-            if (!name) { toast('⚠️', 'Vui lòng nhập tên đề thi'); return; }
+            const examName = document.getElementById('json-exam-name')?.value.trim();
+            if (!examName) {
+                toast('⚠️', 'Vui lòng nhập tên đề thi!');
+                return;
+            }
             
             const roomId = parseInt(document.getElementById('json-exam-room')?.value);
             const duration = parseInt(document.getElementById('json-exam-dur')?.value) || 90;
             const examType = document.getElementById('json-exam-type')?.value || 'trial';
             
-            DB.exams.push({
+            const newExam = {
                 id: DB.nextIds.exam++,
-                name: name,
+                name: examName,
                 roomId: roomId,
                 duration: duration,
                 type: examType,
                 date: new Date().toISOString().split('T')[0],
-                questions: newIds.length,
-                questionIds: newIds
-            });
-            toast('✅', `Đã tạo đề "${name}" với ${newIds.length} câu`);
+                questions: newQuestionIds.length,
+                questionIds: newQuestionIds,
+                desc: `Được tạo từ JSON import ngày ${new Date().toLocaleDateString('vi-VN')}`
+            };
+            
+            DB.exams.push(newExam);
+            toast('✅', `Đã tạo đề thi "${examName}" với ${newQuestionIds.length} câu hỏi!`);
+            
+            // Refresh danh sách đề thi nếu đang ở admin-exams
             if (typeof renderAdminExams === 'function') renderAdminExams();
         } else {
-            toast('✅', `Đã import ${newIds.length} câu hỏi`);
+            toast('✅', `Đã import ${newQuestionIds.length} câu hỏi vào ngân hàng!`);
             if (typeof renderAdminQuestions === 'function') renderAdminQuestions();
         }
         
         persistDB();
         closeModal('m-json');
         
-    } catch (e) {
-        toast('❌', 'Lỗi: ' + e.message);
+    } catch(e) {
+        toast('❌', 'Lỗi khi import: ' + e.message);
         console.error(e);
     }
 }
@@ -2067,40 +2190,41 @@ function showJSONSample() {
     "text": "Giải phương trình $x^2 - 5x + 6 = 0$. Tổng các nghiệm là?",
     "opts": ["$3$", "$5$", "$6$", "$7$"],
     "correct": 1,
-    "sol_text": "Theo Vi-et: S = -b/a = 5"
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Theo định lý Vi-et: $S = -b/a = 5$"
   },
   {
-    "type": "multi",
-    "text": "Chọn đáp án đúng về hàm số $y=x^3$:",
-    "opts": ["Đồng biến", "Có cực trị", "Hàm lẻ", "Cắt Ox tại 1 điểm"],
-    "corrects": [0, 2, 3]
-  },
-  {
-    "type": "short",
-    "text": "Tính $\\\\int_0^1 x^2 dx$",
-    "answer": "1/3"
+    "type": "single",
+    "text": "Cho hình vẽ, tính diện tích tam giác?",
+    "image": "https://example.com/tamgiac.jpg",
+    "opts": ["12 cm²", "16 cm²", "20 cm²", "24 cm²"],
+    "correct": 2,
+    "sol_text": "Áp dụng công thức $S = \\frac{1}{2} \\times \\text{đáy} \\times \\text{cao}$"
   }
 ]`;
-    const prompt = `Hãy tạo câu hỏi trắc nghiệm theo format JSON. Hỗ trợ type: single, multi, tf4, tfn, short.`;
+    
+    const prompt = `Hãy tạo câu hỏi trắc nghiệm với format JSON. Hỗ trợ type: single, multi, tf4, tfn, short. Có thể thêm trường "image" cho URL ảnh câu hỏi.`;
     
     const promptEl = document.getElementById('json-sample-prompt');
     const contentEl = document.getElementById('json-sample-content');
     if (promptEl) promptEl.textContent = prompt;
     if (contentEl) contentEl.textContent = sample;
+    
     openModal('m-json-sample');
 }
 
 function copyJSONSamplePrompt() {
     const text = document.getElementById('json-sample-prompt')?.textContent;
-    if (text) { navigator.clipboard.writeText(text); toast('📋', 'Đã copy prompt'); }
+    if (text) { navigator.clipboard.writeText(text); toast('📋', 'Đã copy prompt!'); }
 }
 
 function copyJSONSample() {
     const text = document.getElementById('json-sample-content')?.textContent;
-    if (text) { navigator.clipboard.writeText(text); toast('📋', 'Đã copy JSON mẫu'); }
+    if (text) { navigator.clipboard.writeText(text); toast('📋', 'Đã copy JSON mẫu!'); }
 }
 
-// Gắn vào window để dùng trong onclick
+// Gắn vào window
 window.openJSONModal = openJSONModal;
 window.setJSONMode = setJSONMode;
 window.previewJSON = previewJSON;
@@ -2108,7 +2232,6 @@ window.importJSON = importJSON;
 window.showJSONSample = showJSONSample;
 window.copyJSONSamplePrompt = copyJSONSamplePrompt;
 window.copyJSONSample = copyJSONSample;
-
 
 
 // ===== utils.js =====
@@ -4540,27 +4663,110 @@ function renderTF4Opts(subqs, scores) {
   const wrap = document.getElementById('fsq-opts-wrap'); if (!wrap) return;
   const letters = ['a','b','c','d'];
   const sc = scores || { s1:0.1, s2:0.25, s3:0.5, s4:1 };
-  let html = `<div style="font-size:11.5px;color:var(--txt3);margin-bottom:9px;background:var(--bg3);padding:8px 11px;border-radius:var(--rs);border:1px solid var(--bdr)">✔ Nhấn Đúng/Sai để chọn đáp án cho từng câu nhỏ.</div><div id="tf4-list">`;
+  
+  let html = `<div style="font-size:11.5px;color:var(--txt3);margin-bottom:9px;background:var(--bg3);padding:8px 11px;border-radius:var(--rs);border:1px solid var(--bdr)">
+    ✔ Nhấn Đúng/Sai để chọn đáp án cho từng câu nhỏ.
+  </div>
+  <div id="tf4-list">`;
+  
   subqs.forEach((sq, i) => {
-    html += `<div class="tf-row" id="tf4-row-${i}">
-      <span style="font-size:12px;font-weight:700;color:var(--txt2);width:16px;flex-shrink:0">${letters[i]}.</span>
-      <input class="finp" style="flex:1" id="tf4-text-${i}" value="${escapeHtml(sq.text||'')}" placeholder="Mệnh đề ${letters[i]}..." oninput="window.debouncePreview()">
-      <div class="tf-toggle">
-        <div class="tf-btn${sq.ans?' true-sel':''}" id="tf4-true-${i}" onclick="window.setTF4(${i},true)">Đúng</div>
-        <div class="tf-btn${!sq.ans?' false-sel':''}" id="tf4-false-${i}" onclick="window.setTF4(${i},false)">Sai</div>
-      </div></div>`;
+    // Escape nội dung để tránh XSS nhưng giữ LaTeX
+    const escapedText = escapeHtml(sq.text || '');
+    html += `<div class="tf-row" id="tf4-row-${i}" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;padding:8px 12px;background:var(--bg3);border-radius:8px">
+      <span style="font-size:12px;font-weight:700;color:var(--txt2);width:24px;flex-shrink:0">${letters[i]}.</span>
+      <div style="flex:1">
+        <div id="tf4-text-display-${i}" class="tf4-statement" style="font-size:13px;line-height:1.5;min-height:40px"></div>
+        <input type="hidden" id="tf4-text-${i}" value="${escapedText}">
+      </div>
+      <div class="tf-toggle" style="display:flex;gap:6px;flex-shrink:0">
+        <div class="tf-btn${sq.ans ? ' true-sel' : ''}" id="tf4-true-${i}" onclick="window.setTF4(${i},true)">Đúng</div>
+        <div class="tf-btn${!sq.ans ? ' false-sel' : ''}" id="tf4-false-${i}" onclick="window.setTF4(${i},false)">Sai</div>
+      </div>
+    </div>`;
   });
-  html += `</div><div style="margin-top:12px;background:var(--pur-s);border:1px solid rgba(167,139,250,.2);border-radius:var(--rs);padding:10px 12px"><div style="font-size:11.5px;font-weight:600;color:var(--pur);margin-bottom:8px">⚖️ Thang điểm</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${[1,2,3,4].map(k=>`<div><label style="font-size:10.5px;color:var(--txt3)">${k} câu đúng</label><input class="finp" type="number" id="tf4-s${k}" value="${sc['s'+k]||0}" min="0" step="0.05" style="font-family:var(--fm);font-size:12px;padding:5px 7px"></div>`).join('')}</div></div>`;
+  
+  html += `</div>
+  <div style="margin-top:12px;background:var(--pur-s);border:1px solid rgba(167,139,250,.2);border-radius:var(--rs);padding:10px 12px">
+    <div style="font-size:11.5px;font-weight:600;color:var(--pur);margin-bottom:8px">⚖️ Thang điểm</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${[1,2,3,4].map(k => `<div><label style="font-size:10.5px;color:var(--txt3)">${k} câu đúng</label><input class="finp" type="number" id="tf4-s${k}" value="${sc['s'+k] || 0}" min="0" step="0.05" style="font-family:var(--fm);font-size:12px;padding:5px 7px"></div>`).join('')}
+    </div>
+  </div>`;
+  
   wrap.innerHTML = html;
+  
+  // SAU KHI CÓ HTML, RENDER TỪNG STATEMENT BẰNG KaTeX
+  subqs.forEach((sq, i) => {
+    const displayEl = document.getElementById(`tf4-text-display-${i}`);
+    if (displayEl && sq.text) {
+      // SỬA LỖI LaTeX TRƯỚC KHI RENDER
+      let fixedText = sq.text;
+      // Sửa lỗi \dfrac thành \frac
+      fixedText = fixedText.replace(/\\dfrac/g, '\\frac');
+      // Sửa lỗi thiếu dấu \ trước hàm lượng giác
+      fixedText = fixedText.replace(/\b(sin|cos|tan|cot|log|ln)\b/g, '\\$1');
+      // Đảm bảo phân số có dạng \frac{}{}
+      fixedText = fixedText.replace(/\\frac\s*([^\\{][^}]*(?:\{[^}]*\})*)\s*([^\\{][^}]*(?:\{[^}]*\})*)/g, '\\frac{$1}{$2}');
+      
+      renderMarkdownAndLatex(displayEl, fixedText);
+    }
+  });
 }
+
 window.setTF4 = function(i, val) {
-  const t = document.getElementById('tf4-true-'+i); const f = document.getElementById('tf4-false-'+i);
-  if(t) t.classList.toggle('true-sel', val); if(f) f.classList.toggle('false-sel', !val);
+  // Cập nhật UI buttons
+  const trueBtn = document.getElementById('tf4-true-' + i);
+  const falseBtn = document.getElementById('tf4-false-' + i);
+  
+  if (trueBtn) {
+    if (val) {
+      trueBtn.classList.add('true-sel');
+      trueBtn.classList.remove('false-sel');
+    } else {
+      trueBtn.classList.remove('true-sel');
+      trueBtn.classList.add('false-sel');
+    }
+  }
+  
+  if (falseBtn) {
+    if (!val) {
+      falseBtn.classList.add('false-sel');
+      falseBtn.classList.remove('true-sel');
+    } else {
+      falseBtn.classList.remove('false-sel');
+      falseBtn.classList.add('true-sel');
+    }
+  }
+  
+  // Cập nhật giá trị vào hidden input (nếu có)
+  const hiddenInput = document.getElementById('tf4-text-' + i);
+  if (hiddenInput) {
+    hiddenInput.setAttribute('data-ans', val);
+  }
+  
+  // Cập nhật preview
   updatePreview();
 };
+
 function getTF4Subqs() {
-  const list = document.getElementById('tf4-list'); if(!list) return [];
-  return Array.from(list.querySelectorAll('.tf-row')).map((_,i)=>({ text: document.getElementById(`tf4-text-${i}`)?.value||'', ans: document.getElementById(`tf4-true-${i}`)?.classList.contains('true-sel')??true }));
+  const list = document.getElementById('tf4-list');
+  if (!list) return [];
+  
+  const rows = list.querySelectorAll('.tf-row');
+  const result = [];
+  
+  rows.forEach((row, i) => {
+    const textInput = document.getElementById(`tf4-text-${i}`);
+    const trueBtn = document.getElementById(`tf4-true-${i}`);
+    const isTrue = trueBtn ? trueBtn.classList.contains('true-sel') : true;
+    
+    result.push({
+      text: textInput ? textInput.value : '',
+      ans: isTrue
+    });
+  });
+  
+  return result;
 }
 
 function renderTFNOpts(subqs) {
@@ -4740,14 +4946,28 @@ function updatePreview() {
       </div>`).join('');
     opts.forEach((o,i) => { const el = document.getElementById('prev-mopt-'+i); if (el) renderMarkdownAndLatex(el, o||''); });
   } else if (currentQType === 'tf4' || currentQType === 'tfn') {
-    const subqs = currentQType === 'tf4' ? getTF4Subqs() : getTFNSubqs(), letters = ['a','b','c','d','e','f','g','h'];
-    prevOpts.innerHTML = subqs.map((sq, i) => `
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;padding:8px 12px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px">
-        <span style="font-size:12px;font-weight:700;color:var(--txt2)">${letters[i]||i+1}.</span>
-        <div style="flex:1;font-size:13px">${sq.text||'...'}</div>
-        <span style="font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:5px;background:${sq.ans?'var(--grn-s)':'var(--red-s)'};color:${sq.ans?'var(--grn)':'var(--red)'}">${sq.ans?'Đúng':'Sai'}</span>
-      </div>`).join('');
-  } else if (currentQType === 'short') {
+    const subqs = currentQType === 'tf4' ? getTF4Subqs() : getTFNSubqs();
+    const letters = ['a','b','c','d','e','f','g','h'];
+    
+    prevOpts.innerHTML = subqs.map((sq, i) => {
+        // Render nội dung statement với Markdown/LaTeX
+        let renderedText = '';
+        if (sq.text) {
+            // Tạo div tạm để render
+            const tempDiv = document.createElement('div');
+            renderMarkdownAndLatex(tempDiv, sq.text);
+            renderedText = tempDiv.innerHTML;
+        }
+        
+        return `
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px;padding:8px 12px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px">
+                <span style="font-size:12px;font-weight:700;color:var(--txt2);flex-shrink:0">${letters[i] || i+1}.</span>
+                <div style="flex:1;font-size:13px">${renderedText || sq.text || '...'}</div>
+                <span style="font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:5px;background:${sq.ans?'var(--grn-s)':'var(--red-s)'};color:${sq.ans?'var(--grn)':'var(--red)'}">${sq.ans?'Đúng':'Sai'}</span>
+            </div>
+        `;
+    }).join('');
+} else if (currentQType === 'short') {
     const answer = document.getElementById('short-answer')?.value || '';
     prevOpts.innerHTML = `<div style="padding:14px;background:var(--bg2);border:1.5px solid var(--bdr);border-radius:8px;margin-top:6px"><div style="font-size:11px;color:var(--txt3);margin-bottom:6px">Đáp án đúng:</div><div style="font-size:15px;font-weight:600;color:var(--grn)">${answer||'–'}</div></div>`;
   }
@@ -5435,27 +5655,46 @@ let _resultCorrectArr = [];
 function gradeQuestion(q, userAnswer) {
   if (!q) return false;
   const qtype = q.qtype || 'single';
+  
   if (qtype === 'single') {
-    const letters = ['A','B','C','D','E','F'];
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
     const correctLetter = letters[q.correct];
     return userAnswer === correctLetter;
+    
   } else if (qtype === 'multi') {
     const corrects = q.corrects || [];
     if (!Array.isArray(userAnswer)) return false;
     if (userAnswer.length !== corrects.length) return false;
     return userAnswer.every((val, i) => val === corrects[i]);
+    
   } else if (qtype === 'tf4' || qtype === 'tfn') {
-    const corrects = (q.subqs || []).map(sq => sq.ans);
+    // Lấy mảng đáp án đúng từ câu hỏi
+    let correctAnswers = [];
+    if (q.answers && Array.isArray(q.answers)) {
+      correctAnswers = q.answers;
+    } else if (q.subqs && Array.isArray(q.subqs)) {
+      correctAnswers = q.subqs.map(sq => sq.ans === true);
+    } else if (q.statements && Array.isArray(q.statements)) {
+      correctAnswers = q.statements.map(stmt => stmt.correct === true || stmt.ans === true);
+    }
+    
     if (!Array.isArray(userAnswer)) return false;
-    if (userAnswer.length !== corrects.length) return false;
-    return userAnswer.every((val, i) => val === corrects[i]);
+    if (userAnswer.length !== correctAnswers.length) return false;
+    
+    for (let i = 0; i < correctAnswers.length; i++) {
+      if (userAnswer[i] !== correctAnswers[i]) return false;
+    }
+    return true;
+    
   } else if (qtype === 'short') {
     const expected = String(q.answer || '').trim().toLowerCase();
     const got = String(userAnswer || '').trim().toLowerCase();
     return got === expected;
   }
+  
   return false;
 }
+
 
 function getFirstSubmissionsForExam(examId) {
   if (!examId) return [];
@@ -5557,11 +5796,11 @@ window.showResultQuestion = function(n) {
 
   const userAns = _resultUserAnswers[n];
   const isRight = _resultCorrectArr[n - 1];
-
-  const letters = ['A','B','C','D','E','F','G','H'];
+  const qtype = q.qtype || 'single';
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
   let optsHtml = '';
-  const qtype = q.qtype || 'single';
+  
   if (qtype === 'short') {
     optsHtml = `
       <div style="margin-top:12px">
@@ -5572,43 +5811,113 @@ window.showResultQuestion = function(n) {
         <div style="margin-top:8px;font-size:11.5px;color:var(--txt2)">Đáp án đúng:</div>
         <div style="padding:10px 14px;border-radius:8px;background:var(--grn-s);border:1.5px solid var(--grn);font-size:14px;font-weight:600;color:var(--grn)">${q.answer || ''}</div>
       </div>`;
+      
   } else if (qtype === 'tf4' || qtype === 'tfn') {
-    const subqs = q.subqs || [];
-    optsHtml = subqs.map((sq, i) => {
-      const isUserCorrect = (userAns && userAns[i] === sq.ans);
-      const bg = isUserCorrect ? 'var(--grn-s)' : (userAns && userAns[i] !== undefined ? 'var(--red-s)' : 'var(--bg3)');
-      const border = isUserCorrect ? 'var(--grn)' : (userAns && userAns[i] !== undefined ? 'var(--red)' : 'var(--bdr)');
-      return `<div style="margin-bottom:8px;padding:8px 12px;background:${bg};border:1.5px solid ${border};border-radius:8px;display:flex;gap:8px">
-        <span>${i+1}.</span>
-        <div style="flex:1">${sq.text}</div>
-        <span>${sq.ans ? 'Đúng' : 'Sai'}</span>
-      </div>`;
-    }).join('');
-  } else {
-    const opts = q.opts || [];
-    const corrects = qtype === 'multi' ? (q.corrects || []) : [q.correct];
+    // XỬ LÝ ĐÚNG/SAI - ĐÃ SỬA
+    const statements = q.statements || q.subqs || [];
+    const correctAnswers = statements.map((_, i) => {
+      if (q.answers) return q.answers[i];
+      if (q.subqs) return q.subqs[i]?.ans;
+      return false;
+    });
+    
+    optsHtml = `<div style="margin-top:12px">`;
+    statements.forEach((stmt, i) => {
+      const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+      const isStmtCorrect = correctAnswers[i] === true;
+      const userChoice = userAns ? userAns[i] : undefined;
+      const isUserCorrect = (userChoice === isStmtCorrect);
+      
+      let bgColor = 'var(--bg3)';
+      let borderColor = 'var(--bdr)';
+      let statusIcon = '';
+      
+      if (userChoice !== undefined) {
+        if (isUserCorrect) {
+          bgColor = 'var(--grn-s)';
+          borderColor = 'var(--grn)';
+          statusIcon = '✓';
+        } else {
+          bgColor = 'var(--red-s)';
+          borderColor = 'var(--red)';
+          statusIcon = '✗';
+        }
+      }
+      
+      const correctDisplay = isStmtCorrect ? 'Đúng' : 'Sai';
+      const userDisplay = userChoice === undefined ? 'Chưa trả lời' : (userChoice ? 'Đúng' : 'Sai');
+      
+      optsHtml += `
+        <div style="margin-bottom:10px;padding:10px 12px;background:${bgColor};border-left:4px solid ${borderColor};border-radius:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div style="flex:1">
+              <span style="font-weight:700">${i+1}.</span>
+              <span id="stmt-text-${n}-${i}" style="margin-left:8px"></span>
+            </div>
+            <div style="display:flex;gap:12px;font-size:11px">
+              <span style="color:var(--grn)">✓ Đáp án: ${correctDisplay}</span>
+              <span style="color:${userChoice===undefined?'var(--txt3)':(isUserCorrect?'var(--grn)':'var(--red)')}">
+                📝 Bạn: ${userDisplay} ${statusIcon}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    optsHtml += `</div>`;
+    
+    // Sau khi render xong, cập nhật text cho từng statement
+    setTimeout(() => {
+      statements.forEach((stmt, i) => {
+        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+        const el = document.getElementById(`stmt-text-${n}-${i}`);
+        if (el) renderMarkdownAndLatex(el, stmtText);
+      });
+    }, 50);
+    
+  } else if (qtype === 'multi') {
+    // XỬ LÝ NHIỀU ĐÁP ÁN
+    const corrects = q.corrects || [];
+    const userSelected = userAns || [];
     optsHtml = '<div style="margin-top:14px">';
-    opts.forEach((opt, i) => {
+    (q.opts || []).forEach((opt, i) => {
       const letter = letters[i];
-      const isUser = qtype === 'single'
-        ? (userAns === letter)
-        : (userAns && userAns.includes(i));
-      const isCorr = qtype === 'single'
-        ? (corrects[0] === i)
-        : corrects.includes(i);
+      const isUser = userSelected.includes(i);
+      const isCorr = corrects.includes(i);
       let bg = 'var(--bg3)', border = 'var(--bdr)', mark = '';
       if (isCorr) { bg = 'var(--grn-s)'; border = 'var(--grn)'; mark = ' ✓'; }
       if (isUser && !isCorr) { bg = 'var(--red-s)'; border = 'var(--red)'; mark = ' ✗'; }
       optsHtml += `
         <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:6px;background:${bg};border:1.5px solid ${border};border-radius:8px">
-          <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid ${border};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:${border}">${letter}${mark}</div>
+          <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid ${border};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${letter}${mark}</div>
+          <div style="flex:1;font-size:13px" id="rq-opt-${n}-${i}"></div>
+        </div>`;
+    });
+    optsHtml += '</div>';
+    
+  } else {
+    // XỬ LÝ SINGLE (1 ĐÁP ÁN)
+    const correctIdx = q.correct;
+    const userLetter = userAns;
+    const userIdx = userLetter ? letters.indexOf(userLetter) : -1;
+    optsHtml = '<div style="margin-top:14px">';
+    (q.opts || []).forEach((opt, i) => {
+      const letter = letters[i];
+      const isUser = (userIdx === i);
+      const isCorr = (correctIdx === i);
+      let bg = 'var(--bg3)', border = 'var(--bdr)', mark = '';
+      if (isCorr) { bg = 'var(--grn-s)'; border = 'var(--grn)'; mark = ' ✓'; }
+      if (isUser && !isCorr) { bg = 'var(--red-s)'; border = 'var(--red)'; mark = ' ✗'; }
+      optsHtml += `
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:6px;background:${bg};border:1.5px solid ${border};border-radius:8px">
+          <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid ${border};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${letter}${mark}</div>
           <div style="flex:1;font-size:13px" id="rq-opt-${n}-${i}"></div>
         </div>`;
     });
     optsHtml += '</div>';
   }
 
-  const statusLabel = (userAns === undefined || userAns === null)
+  const statusLabel = (userAns === undefined || userAns === null || (Array.isArray(userAns) && userAns.length === 0 && userAns !== false))
     ? `<span style="background:var(--bg3);color:var(--txt2);border:1px solid var(--bdr);font-size:11px;padding:2px 8px;border-radius:4px">— Chưa trả lời</span>`
     : isRight
     ? `<span style="background:var(--grn-s);color:var(--grn);font-size:11px;padding:2px 8px;border-radius:4px">✓ Đúng</span>`
@@ -5632,7 +5941,7 @@ window.showResultQuestion = function(n) {
         <div id="rq-sol-${n}" style="font-size:13px;color:var(--txt)"></div>
         ${q.sol_video ? `<div id="rq-vid-${n}" style="margin-top:8px"></div>` : ''}
       </div>` : ''}
-    ${!isRight ? `
+    ${!isRight && qtype !== 'tf4' && qtype !== 'tfn' ? `
       <div style="margin-top:10px">
         <button class="ai-inline-btn" id="ai-exp-btn-${n}" onclick="aiExplainQuestion(${q.id},this)">🤖 AI giải thích (${TOKEN_COSTS.explain_answer} token)</button>
         <div id="ai-exp-${q.id}" style="display:none;margin-top:8px;padding:10px 12px;background:var(--pur-s);border:1px solid rgba(167,139,250,.2);border-radius:8px;font-size:12.5px;line-height:1.6;color:var(--txt)"></div>
@@ -5663,7 +5972,6 @@ window.showResultQuestion = function(n) {
 
   if (window.innerWidth < 900) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
-
 
 // ===== RESULT.JS - HIỂN THỊ KẾT QUẢ =====
 function buildResultFromExam(exam, userAnswers, isTrial = false) {
@@ -5769,8 +6077,7 @@ function buildDetailedAnswers(questions, userAnswers, correctArr) {
     
     const isRight = correctArr[i - 1];
     const userAnswer = userAnswers[i];
-    const userAnswerLetter = userAnswer ? (userAnswer.length === 1 ? userAnswer : letters[parseInt(userAnswer)] || '?') : '?';
-    const correctLetter = letters[q.correct];
+    const qtype = q.qtype || 'single';
     
     // Tạo HTML cho từng câu
     html += `
@@ -5779,9 +6086,7 @@ function buildDetailedAnswers(questions, userAnswers, correctArr) {
           <div>
             <span class="badge ${isRight ? 'b-grn' : 'b-red'}">Câu ${i}</span>
             <span style="margin-left: 8px; font-size: 12px;">
-              Đáp án của bạn: <strong>${userAnswerLetter}</strong> 
-              ${isRight ? '✓' : '✗'} 
-              (Đáp án đúng: ${correctLetter})
+              ${isRight ? '✓ Đúng' : '✗ Sai'}
             </span>
           </div>
           <button class="btn btn-pur btn-sm" onclick="askAIExplainMore(${q.id}, ${i}, this)" style="font-size: 11px; padding: 4px 12px;">
@@ -5806,33 +6111,116 @@ function buildDetailedAnswers(questions, userAnswers, correctArr) {
     const q = questions[i - 1];
     if (!q) continue;
     
+    const qtype = q.qtype || 'single';
+    const userAnswer = userAnswers[i];
+    const isRight = correctArr[i - 1];
+    
     // Render câu hỏi
     const qEl = document.getElementById(`rev-qt-${i}`);
     if (qEl) renderMarkdownAndLatex(qEl, q.text);
     
-    // Render đáp án
+    // Render đáp án theo từng loại
     const optsEl = document.getElementById(`rev-opts-${i}`);
-    if (optsEl && q.opts) {
-      optsEl.innerHTML = q.opts.map((opt, j) => {
-        const isCorrect = j === q.correct;
-        const isUserSelected = userAnswers[i] === letters[j] || userAnswers[i] === j;
-        let bgColor = '';
-        if (isCorrect) bgColor = 'var(--grn-s)';
-        else if (isUserSelected && !isCorrect) bgColor = 'var(--red-s)';
-        else bgColor = 'var(--bg3)';
+    if (!optsEl) continue;
+    
+    if (qtype === 'tf4' || qtype === 'tfn') {
+      // XỬ LÝ ĐÚNG/SAI
+      const statements = q.statements || q.subqs || [];
+      const correctAnswers = statements.map((_, idx) => {
+        if (q.answers) return q.answers[idx];
+        if (q.subqs) return q.subqs[idx]?.ans;
+        return false;
+      });
+      
+      optsEl.innerHTML = statements.map((stmt, idx) => {
+        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+        const isStmtCorrect = correctAnswers[idx] === true;
+        const userChoice = userAnswer ? userAnswer[idx] : undefined;
+        const isUserCorrect = (userChoice === isStmtCorrect);
+        
+        let bgColor = 'var(--bg3)';
+        let borderColor = 'var(--bdr)';
+        let userMark = '';
+        
+        if (userChoice !== undefined) {
+          if (isUserCorrect) {
+            bgColor = 'var(--grn-s)';
+            borderColor = 'var(--grn)';
+            userMark = ' ✓';
+          } else {
+            bgColor = 'var(--red-s)';
+            borderColor = 'var(--red)';
+            userMark = ' ✗';
+          }
+        }
+        
+        const correctDisplay = isStmtCorrect ? 'Đúng' : 'Sai';
+        const userDisplay = userChoice === undefined ? 'Chưa trả lời' : (userChoice ? 'Đúng' : 'Sai');
+        
+        return `
+          <div style="margin-bottom: 12px; padding: 12px; background: ${bgColor}; border-left: 4px solid ${borderColor}; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+              <span style="font-weight: 700;">${idx + 1}. ${stmtText}</span>
+              <div style="display: flex; gap: 12px; font-size: 12px;">
+                <span style="color: var(--grn);">✓ Đáp án đúng: ${correctDisplay}</span>
+                <span style="color: ${userChoice === undefined ? 'var(--txt3)' : (isUserCorrect ? 'var(--grn)' : 'var(--red)')}">
+                  📝 Bạn chọn: ${userDisplay}${userMark}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+    } else if (qtype === 'short') {
+      // XỬ LÝ TRẢ LỜI NGẮN
+      const correctAnswer = q.answer || '';
+      const userAnswerText = userAnswer || 'Chưa trả lời';
+      optsEl.innerHTML = `
+        <div style="padding: 12px; background: ${isRight ? 'var(--grn-s)' : 'var(--red-s)'}; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span><strong>📝 Đáp án của bạn:</strong> ${userAnswerText}</span>
+            <span><strong>✅ Đáp án đúng:</strong> ${correctAnswer}</span>
+          </div>
+        </div>
+      `;
+      
+    } else {
+      // XỬ LÝ TRẮC NGHIỆM (single/multi)
+      const lettersList = ['A', 'B', 'C', 'D', 'E', 'F'];
+      const corrects = qtype === 'multi' ? (q.corrects || []) : [q.correct];
+      const userSelected = qtype === 'multi' ? (userAnswer || []) : 
+                          (userAnswer ? lettersList.indexOf(userAnswer) : -1);
+      
+      optsEl.innerHTML = (q.opts || []).map((opt, j) => {
+        const isCorrect = corrects.includes(j);
+        const isUserSelected = qtype === 'multi' ? userSelected.includes(j) : (userSelected === j);
+        
+        let bgColor = 'var(--bg3)';
+        let mark = '';
+        
+        if (isCorrect && isUserSelected) {
+          bgColor = 'var(--grn-s)';
+          mark = ' ✓ Đúng';
+        } else if (isCorrect && !isUserSelected) {
+          bgColor = 'var(--grn-s)';
+          mark = ' (Đáp án đúng)';
+        } else if (!isCorrect && isUserSelected) {
+          bgColor = 'var(--red-s)';
+          mark = ' ✗ Sai';
+        }
         
         return `
           <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 6px; background: ${bgColor}; border-radius: 6px;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bgh); display: flex; align-items: center; justify-content: center; font-weight: bold;">${letters[j]}</div>
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bgh); display: flex; align-items: center; justify-content: center; font-weight: bold;">${lettersList[j]}</div>
             <div style="flex: 1;" id="rev-opt-${i}-${j}"></div>
-            ${isCorrect ? '<span style="color: var(--grn);">✓ Đáp án đúng</span>' : ''}
-            ${isUserSelected && !isCorrect ? '<span style="color: var(--red);">✗ Bạn chọn</span>' : ''}
+            ${mark ? `<span style="font-size: 11px; font-weight: 500; color: ${isCorrect ? 'var(--grn)' : 'var(--red)'}">${mark}</span>` : ''}
           </div>
         `;
       }).join('');
       
       // Render nội dung từng đáp án
-      q.opts.forEach((opt, j) => {
+      (q.opts || []).forEach((opt, j) => {
         const optEl = document.getElementById(`rev-opt-${i}-${j}`);
         if (optEl) renderMarkdownAndLatex(optEl, opt);
       });
@@ -5847,7 +6235,6 @@ function buildDetailedAnswers(questions, userAnswers, correctArr) {
     }
   }
 }
-
 
 function buildResultFromSubmission(submission) {
   if (!submission) return;
@@ -6406,21 +6793,36 @@ function loadQ(n) {
     }).join('');
 
   } else if (qtype === 'tf4' || qtype === 'tfn') {
+    // XỬ LÝ ĐÚNG/SAI - ĐÃ SỬA
     const selArr = answers[n] || [];
-    const statements = q.statements || q.opts || [];
-    html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">✔ Xác định mỗi mệnh đề là Đúng hay Sai</div>`;
-    html += statements.map((stmt, i) => {
-      const val = selArr[i];
-      return `<div class="tf-row" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px">
-        <div style="font-size:12px;font-weight:700;color:var(--txt2);min-width:20px;padding-top:2px">${letters[i]}.</div>
-        <div style="flex:1;font-size:13px;line-height:1.6" id="tf-stmt-${n}-${i}"></div>
-        <div style="display:flex;gap:6px;flex-shrink:0;margin-top:2px">
-          <button class="tf-btn${val===true ? ' true-sel' : ''}" data-val="true" onclick="toggleTF(${n},${i},true)" style="padding:5px 14px;border-radius:6px;border:1.5px solid var(${val===true?'--grn':'--bdr'});background:${val===true?'var(--grn-s)':'var(--bg)'};font-size:12px;font-weight:700;cursor:pointer;color:${val===true?'var(--grn)':'var(--txt2)'}">Đ</button>
-          <button class="tf-btn${val===false ? ' false-sel' : ''}" data-val="false" onclick="toggleTF(${n},${i},false)" style="padding:5px 14px;border-radius:6px;border:1.5px solid var(${val===false?'--red':'--bdr'});background:${val===false?'var(--red-s)':'var(--bg)'};font-size:12px;font-weight:700;cursor:pointer;color:${val===false?'var(--red)':'var(--txt2)'}">S</button>
-        </div>
-      </div>`;
-    }).join('');
-
+    const statements = q.statements || q.subqs || [];
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    
+    html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">
+        ✔ Xác định mỗi mệnh đề là Đúng hay Sai
+    </div>`;
+    
+    statements.forEach((stmt, i) => {
+        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+        const val = selArr[i];
+        
+        html += `
+            <div class="tf-row" id="tf-row-${n}-${i}">
+                <div style="font-size:13px;font-weight:700;color:var(--txt2);min-width:24px">${letters[i]}.</div>
+                <div style="flex:1;font-size:13px;line-height:1.6" id="tf-stmt-${n}-${i}"></div>
+                <div style="display:flex;gap:8px;flex-shrink:0">
+                    <button class="tf-btn${val === true ? ' true-sel' : ''}" data-val="true" 
+                        onclick="toggleTF(${n},${i},true)" style="padding:5px 14px">
+                        Đúng
+                    </button>
+                    <button class="tf-btn${val === false ? ' false-sel' : ''}" data-val="false" 
+                        onclick="toggleTF(${n},${i},false)" style="padding:5px 14px">
+                        Sai
+                    </button>
+                </div>
+            </div>
+        `;
+    });
   } else if (qtype === 'short') {
     const cur = answers[n] || '';
     const unit = q.unit ? `<span style="color:var(--txt3);font-size:12px"> (${q.unit})</span>` : '';
@@ -6436,6 +6838,20 @@ function loadQ(n) {
   }
 
   optsDiv.innerHTML = html;
+  if (qtype === 'tf4' || qtype === 'tfn') {
+    const statements = q.statements || q.subqs || [];
+    statements.forEach((stmt, i) => {
+        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
+        const el = document.getElementById(`tf-stmt-${n}-${i}`);
+        if (el && stmtText) {
+            // Làm sạch LaTeX trước khi render
+            let fixedText = stmtText;
+            fixedText = fixedText.replace(/\\dfrac/g, '\\frac');
+            fixedText = fixedText.replace(/\b(sin|cos|tan|cot|log|ln|sqrt|lim|int)\b/g, '\\$1');
+            renderMarkdownAndLatex(el, fixedText);
+        }
+    });
+}
 
   // Render text content for options
   if (qtype === 'single' || qtype === 'multi') {
@@ -6483,22 +6899,30 @@ window.pickMultiOpt = function(el, idx) {
 };
 
 window.toggleTF = function(qNum, idx, val) {
-  const row = document.querySelector(`#opts .tf-row:nth-child(${idx+1})`);
-  if (!row) return;
-  const trueBtn = row.querySelector('.tf-btn[data-val="true"]');
-  const falseBtn = row.querySelector('.tf-btn[data-val="false"]');
-  if (val) {
-    trueBtn.classList.add('true-sel');
-    falseBtn.classList.remove('false-sel');
-  } else {
-    falseBtn.classList.add('false-sel');
-    trueBtn.classList.remove('true-sel');
-  }
-  let selected = answers[qNum] || [];
-  selected[idx] = val;
-  answers[qNum] = selected;
-  updateNGrid();
-  autoSave();
+    // Lấy row tương ứng
+    const row = document.querySelector(`#tf-row-${qNum}-${idx}`);
+    if (!row) return;
+    
+    // Cập nhật UI buttons
+    const trueBtn = row.querySelector('.tf-btn[data-val="true"]');
+    const falseBtn = row.querySelector('.tf-btn[data-val="false"]');
+    
+    if (val) {
+        trueBtn.classList.add('true-sel');
+        falseBtn.classList.remove('false-sel');
+    } else {
+        falseBtn.classList.add('false-sel');
+        trueBtn.classList.remove('true-sel');
+    }
+    
+    // Lưu vào answers
+    let selected = answers[qNum] || [];
+    selected[idx] = val;
+    answers[qNum] = selected;
+    
+    // Cập nhật grid và auto save
+    updateNGrid();
+    autoSave();
 };
 
 window.saveShortAnswer = function(qNum, val) {
@@ -6930,6 +7354,124 @@ document.addEventListener('DOMContentLoaded', () => {
     goTo('login');
   }
 });
+
+// ==================== EDIT QUESTION INSIDE EXAM ====================
+function editQuestionInExam(questionId, questionIndex) {
+    const question = DB.questions.find(q => q.id === questionId);
+    if (!question) {
+        toast('❌', 'Không tìm thấy câu hỏi!');
+        return;
+    }
+    
+    // Lưu lại context để sau khi sửa xong có thể refresh lại danh sách
+    window._editingQuestionInExam = {
+        examId: currentEditingExam?.id,
+        questionId: questionId,
+        questionIndex: questionIndex
+    };
+    
+    // Mở editor câu hỏi (nếu có hàm openQuestionEditor)
+    if (typeof openQuestionEditor === 'function') {
+        openQuestionEditor(question);
+    } else {
+        // Fallback: hiển thị modal sửa đơn giản
+        openSimpleQuestionEditor(question);
+    }
+}
+
+// Hàm sửa câu hỏi đơn giản (nếu không có editor phức tạp)
+function openSimpleQuestionEditor(question) {
+    // Tạo modal tạm thời nếu chưa có
+    let modal = document.getElementById('m-simple-edit-question');
+    if (!modal) {
+        const modalHtml = `
+            <div class="moverlay" id="m-simple-edit-question">
+                <div class="mbox mbox-lg">
+                    <div class="mtitle">✏️ Sửa câu hỏi</div>
+                    <div class="spacer-12"></div>
+                    <div class="fg">
+                        <label>Nội dung câu hỏi</label>
+                        <textarea id="simple-q-text" rows="4" class="finp" placeholder="Nội dung câu hỏi..."></textarea>
+                    </div>
+                    <div class="fg">
+                        <label>Lời giải</label>
+                        <textarea id="simple-q-sol" rows="3" class="finp" placeholder="Lời giải chi tiết..."></textarea>
+                    </div>
+                    <div class="fg-row">
+                        <div class="fg">
+                            <label>Môn học</label>
+                            <select id="simple-q-subject" class="finp">
+                                <option value="math">📐 Toán</option>
+                                <option value="physics">⚛️ Vật lý</option>
+                                <option value="chemistry">🧪 Hóa</option>
+                                <option value="english">🌐 Anh</option>
+                            </select>
+                        </div>
+                        <div class="fg">
+                            <label>Độ khó</label>
+                            <select id="simple-q-diff" class="finp">
+                                <option value="easy">🟢 Dễ</option>
+                                <option value="medium">🟡 Trung bình</option>
+                                <option value="hard">🔴 Khó</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mactions">
+                        <button class="btn btn-g" onclick="closeModal('m-simple-edit-question')">Hủy</button>
+                        <button class="btn btn-p" onclick="saveSimpleQuestionEdit()">💾 Lưu</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    // Điền dữ liệu
+    document.getElementById('simple-q-text').value = question.text || '';
+    document.getElementById('simple-q-sol').value = question.sol_text || '';
+    document.getElementById('simple-q-subject').value = question.subject || 'math';
+    document.getElementById('simple-q-diff').value = question.diff || 'medium';
+    
+    openModal('m-simple-edit-question');
+}
+
+function saveSimpleQuestionEdit() {
+    const questionId = window._editingQuestionInExam?.questionId;
+    if (!questionId) return;
+    
+    const question = DB.questions.find(q => q.id === questionId);
+    if (!question) return;
+    
+    // Cập nhật
+    question.text = document.getElementById('simple-q-text').value;
+    question.sol_text = document.getElementById('simple-q-sol').value;
+    question.subject = document.getElementById('simple-q-subject').value;
+    question.diff = document.getElementById('simple-q-diff').value;
+    
+    persistDB();
+    closeModal('m-simple-edit-question');
+    
+    // Refresh lại danh sách câu hỏi trong đề
+    renderExamQuestionsList();
+    
+    toast('✅', 'Đã cập nhật câu hỏi!');
+    
+    // Nếu đang ở trang admin-questions, refresh luôn
+    if (typeof renderAdminQuestions === 'function') renderAdminQuestions();
+}
+
+// Hàm này sẽ được gọi sau khi sửa câu hỏi xong (nếu dùng editor phức tạp)
+function refreshExamAfterEdit() {
+    if (window._editingQuestionInExam) {
+        renderExamQuestionsList();
+        window._editingQuestionInExam = null;
+    }
+}
+
+// Gắn vào window
+window.editQuestionInExam = editQuestionInExam;
+window.saveSimpleQuestionEdit = saveSimpleQuestionEdit;
+window.refreshExamAfterEdit = refreshExamAfterEdit;
 
 
 </script>
