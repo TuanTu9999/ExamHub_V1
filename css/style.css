@@ -2772,6 +2772,47 @@ body.exam-mode [onclick*="generateAI"] {
 }
 
 
+/* Thông báo link ảnh */
+.img-link-hint {
+    background: var(--acc-s);
+    border: 1px solid var(--acc);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 12px;
+}
+
+.img-link-hint .hint-title {
+    font-weight: 700;
+    color: var(--acc);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.img-link-hint .hint-list {
+    list-style: none;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.img-link-hint .hint-list li {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.img-link-hint code {
+    background: var(--bg3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--fm);
+    font-size: 11px;
+}
+
+
 
 /* Security warning overlay */
 #security-warning-overlay {
