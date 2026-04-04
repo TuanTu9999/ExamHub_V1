@@ -8,7 +8,7 @@
 <title>ExamHub — Hệ thống thi trực tuyến</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" defer></script>
@@ -37,6 +37,253 @@
 /* AI loading spinner */
 @keyframes spin{to{transform:rotate(360deg)}}
 .spin{display:inline-block;animation:spin .8s linear infinite;}
+</style>
+
+<style>
+/* ===== ROBOTO: Font riêng cho nội dung đề thi ===== */
+/* Áp dụng cho: câu hỏi, đáp án, lời giải, và trang kết quả */
+.qtxt,
+.ol, .oi,
+.tf-btn,
+#result-q-text,
+#result-opts,
+#result-sol-text,
+#result-solution-content,
+#result-ai-content,
+#ai-hint-txt,
+.qsl, .qnum,
+#result-q-label,
+.nsum-r,
+.nleg-i {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+/* ===== EXAM FONT SIZE (CSS variable, điều chỉnh bởi nút A+/A-) ===== */
+:root { --exam-fs: 16px; }
+
+.qtxt,
+.oi, .ol,
+.tf-btn,
+#result-q-text,
+#result-opts .oi,
+#result-sol-text,
+#result-solution-content,
+#ai-hint-txt,
+#result-ai-content { font-size: var(--exam-fs) !important; }
+
+/* Lời giải nhỏ hơn một chút */
+#result-sol-text,
+#result-solution-content { font-size: calc(var(--exam-fs) - 1px) !important; }
+
+/* ===== FONT SIZE CONTROL WIDGET ===== */
+.fs-ctrl {
+  display: flex; align-items: center; gap: 3px;
+  background: var(--bg3); border: 1px solid var(--bdr);
+  border-radius: 8px; padding: 2px 4px;
+}
+.fs-ctrl button {
+  background: none; border: none; cursor: pointer;
+  color: var(--txt2); font-weight: 700; font-size: 13px;
+  width: 24px; height: 24px; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.fs-ctrl button:hover { background: var(--bdr); color: var(--txt); }
+.fs-ctrl .fs-val {
+  font-size: 11px; font-weight: 700; color: var(--txt2);
+  min-width: 28px; text-align: center; font-family: var(--fm);
+}
+
+/* ===== DRAWING CANVAS OVERLAY ===== */
+/* Canvas ẩn hoàn toàn khi không dùng (không ảnh hưởng layout/scroll) */
+.qpanel { position: relative !important; }
+
+#draw-canvas,
+#draw-canvas-result {
+  display: none;           /* ẩn mặc định — chỉ hiện khi draw mode bật */
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 20;
+  cursor: crosshair;
+  /* touch-action chỉ áp dụng khi .active */
+}
+#draw-canvas.active,
+#draw-canvas-result.active {
+  display: block;
+  pointer-events: all;
+  touch-action: none;
+}
+
+
+/* ===== DRAWING TOOLBAR (floating) ===== */
+#draw-toolbar {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  background: var(--bg2);
+  border: 1px solid var(--bdr);
+  border-radius: 14px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.25);
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 95vw;
+}
+#draw-toolbar.visible { display: flex; }
+
+.dt-sep { width: 1px; height: 24px; background: var(--bdr); flex-shrink:0; }
+
+.dt-color {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  flex-shrink: 0;
+}
+.dt-color:hover, .dt-color.sel { border-color: var(--txt); transform: scale(1.2); }
+
+.dt-btn {
+  background: var(--bg3); border: 1px solid var(--bdr);
+  border-radius: 8px; cursor: pointer; color: var(--txt2);
+  font-size: 12px; font-weight: 600; padding: 5px 10px;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; transition: background .15s;
+}
+.dt-btn:hover { background: var(--bdr); }
+.dt-btn.active { background: var(--acc-s); border-color: var(--acc); color: var(--acc); }
+
+.dt-stroke {
+  display: flex; align-items: center; gap: 5px;
+}
+.dt-stroke button {
+  border-radius: 50%; border: 2px solid var(--bdr);
+  background: var(--txt); cursor: pointer; flex-shrink: 0;
+  transition: border-color .15s;
+}
+.dt-stroke button:hover, .dt-stroke button.sel { border-color: var(--acc); }
+
+/* ===== DRAW TOGGLE BUTTON IN TOPBAR ===== */
+#draw-toggle-btn,
+#draw-toggle-btn-result {
+  padding: 5px 10px; font-size: 12px; font-weight: 600;
+  border-radius: 8px; border: 1px solid var(--bdr);
+  background: var(--bg3); color: var(--txt2); cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap; transition: all .15s;
+}
+#draw-toggle-btn.active,
+#draw-toggle-btn-result.active {
+  background: #fef3c7; border-color: #f59e0b; color: #b45309;
+}
+
+
+@media (max-width: 768px) {
+  /* Exam + Result main area: stack vertically */
+  .ema {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: calc(100vh - 54px) !important;
+    overflow: visible !important;
+  }
+
+  /* Question panel: full width, scrollable */
+  .ema .qpanel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 14px 12px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--bdr, #e5e7eb) !important;
+  }
+
+  /* Nav panel (danh sách câu): full width, compact */
+  .ema .navp {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 12px !important;
+    border-left: none !important;
+  }
+
+  /* Number grid: more columns on mobile */
+  .ngrid {
+    grid-template-columns: repeat(8, 1fr) !important;
+    gap: 5px !important;
+  }
+  .nqb {
+    font-size: 11px !important;
+    min-height: 30px !important;
+  }
+
+  /* Top bar of exam */
+  .etopbar {
+    padding: 6px 10px !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    min-height: 48px !important;
+  }
+  .etopbar .etr {
+    gap: 5px !important;
+    flex-wrap: wrap !important;
+  }
+  .etopbar .timer-box {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+  }
+  .etitle-sm {
+    font-size: 12px !important;
+    max-width: 100px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* Question text readable on mobile */
+  .qtxt {
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+  }
+
+  /* Options (đáp án) */
+  .ol { gap: 8px !important; }
+  .oi {
+    padding: 10px 12px !important;
+    font-size: 13.5px !important;
+  }
+
+  /* Bottom nav buttons */
+  .qnav-bot {
+    gap: 8px !important;
+    margin-top: 14px !important;
+    flex-wrap: wrap !important;
+  }
+  .qnav-bot .btn { font-size: 12px !important; padding: 8px 12px !important; }
+
+  /* Submit button in nav panel */
+  .sub-btn { font-size: 13px !important; padding: 11px !important; }
+
+  /* Action buttons in result view */
+  #result-solution-box, #result-ai-box {
+    padding: 12px !important;
+  }
+
+  /* Legend compact */
+  .nleg { flex-wrap: wrap !important; gap: 6px 12px !important; }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+  .ngrid { grid-template-columns: repeat(6, 1fr) !important; }
+  .etopbar .btn { font-size: 11px !important; padding: 5px 8px !important; }
+}
 </style>
 </head>
 
@@ -767,13 +1014,23 @@
     <div class="logo-ico" style="width:26px;height:26px;font-size:12px">📚</div>
     <div class="etitle-sm" id="et-name">Đề thi</div>
     <div class="etr">
+      <!-- Font size control -->
+      <div class="fs-ctrl" title="Cỡ chữ nội dung đề">
+        <button onclick="examFontSize(-1)" title="Giảm cỡ chữ">A−</button>
+        <span class="fs-val" id="exam-fs-val">16</span>
+        <button onclick="examFontSize(+1)" title="Tăng cỡ chữ">A+</button>
+      </div>
+      <!-- Draw toggle -->
+      <button id="draw-toggle-btn" onclick="toggleDrawMode()" title="Bật/tắt bút viết lên đề">✏️ Vẽ</button>
       <div class="autosave" id="autosave-ind"><div class="as-dot"></div><span id="as-txt">Tự động lưu</span></div>
       <div class="timer-box"><span>⏱</span><span class="tv" id="timer">89:59</span><span class="tlbl">còn lại</span></div>
       <button class="btn btn-g" style="padding:6px 12px;font-size:12px" onclick="openSubmitModal()">💾 Nộp bài</button>
     </div>
   </div>
   <div class="ema">
-    <div class="qpanel">
+    <div class="qpanel" id="exam-qpanel">
+      <!-- Drawing canvas overlay -->
+      <canvas id="draw-canvas"></canvas>
       <div class="qsl">📐 Câu hỏi trắc nghiệm</div>
       <div class="qnum" id="q-label">Câu 1 / 50</div>
       <div class="qtxt" id="q-text">Câu hỏi sẽ hiển thị ở đây.</div>
@@ -821,6 +1078,14 @@
     <div class="logo-ico" style="width:26px;height:26px;font-size:12px">🏆</div>
     <div class="etitle-sm" id="result-et-name">Kết quả thi</div>
     <div class="etr">
+      <!-- Font size control -->
+      <div class="fs-ctrl" title="Cỡ chữ nội dung đề">
+        <button onclick="examFontSize(-1)" title="Giảm cỡ chữ">A−</button>
+        <span class="fs-val" id="result-fs-val">16</span>
+        <button onclick="examFontSize(+1)" title="Tăng cỡ chữ">A+</button>
+      </div>
+      <!-- Draw toggle -->
+      <button id="draw-toggle-btn-result" onclick="toggleDrawMode()" title="Bút viết lên đề">✏️ Vẽ</button>
       <div class="timer-box" style="background:var(--grn-s);color:var(--grn);border:1px solid var(--grn)">
         <span>🎯</span><span class="tv" id="result-score-display">8.5</span><span class="tlbl">điểm</span>
       </div>
@@ -830,7 +1095,9 @@
 
   <div class="ema">
     <!-- Cột trái: Đề bài + Đáp án + Lời giải -->
-    <div class="qpanel">
+    <div class="qpanel" id="result-qpanel">
+      <!-- Drawing canvas overlay -->
+      <canvas id="draw-canvas-result"></canvas>
       <div class="qsl" id="result-qsl">📋 Câu hỏi và đáp án</div>
       <div class="qnum" id="result-q-label">Câu 1 / 15</div>
       <div class="qtxt" id="result-q-text"></div>
@@ -5869,129 +6136,190 @@ let examBlurCount = 0;
 let examBlurTimer = null;
 
 // Hàm phát hiện rời khỏi tab/app (cho cả mobile và desktop)
+// Phân biệt tắt màn hình do không dùng vs rời khỏi bài thi
 function setupExamSecurity() {
   examBlurCount = 0;
   examActive = true;
-  
+
   // Xóa timer cũ nếu có
   if (examBlurTimer) clearInterval(examBlurTimer);
-  
-  // Sự kiện khi tab/window bị ẩn (chuyển sang app khác)
+
+  // Ngưỡng thời gian không tương tác: nếu màn hình tắt sau ngưỡng này
+  // thì coi là "tắt màn hình tự động" (không vi phạm)
+  const INACTIVITY_SCREEN_OFF_MS = 20000; // 20 giây không dùng → có thể là màn hình tự tắt
+  let lastInteractionTime = Date.now();
+  let lastEventTime = 0;
+  const DEDUP_MS = 600; // chống đếm 2 lần từ blur + visibilitychange cùng lúc
+
+  // Theo dõi thời điểm tương tác cuối
+  const trackInteraction = () => { lastInteractionTime = Date.now(); };
+  ['touchstart', 'touchmove', 'click', 'keydown', 'scroll', 'mousemove'].forEach(evt => {
+    document.addEventListener(evt, trackInteraction, { passive: true });
+  });
+
+  // Sự kiện khi tab/window bị ẩn
   const handleVisibilityChange = () => {
     if (!examActive) return;
-    
-    if (document.hidden) {
-      // Rời khỏi tab
-      examBlurCount++;
-      const remainWarnings = 3 - examBlurCount;
-      
-      if (examBlurCount >= 3) {
-        // Quá 3 lần, tự động nộp bài
-        toast('⚠️', 'Bạn đã rời khỏi bài thi quá 3 lần. Bài thi sẽ bị nộp tự động!');
-        setTimeout(() => {
-          if (examActive) {
-            alert('Bài thi bị nộp do vi phạm quy định!');
-            doSubmit();
-          }
-        }, 1000);
-      } else {
-        toast('⚠️', `Cảnh báo! Không được rời khỏi bài thi. Còn ${remainWarnings} lần cảnh báo.`);
-        // Hiển thị overlay cảnh báo
-        showSecurityWarning(remainWarnings);
-      }
+    if (!document.hidden) return; // chỉ xử lý khi đang bị ẩn
+
+    const now = Date.now();
+    if (now - lastEventTime < DEDUP_MS) return; // chống đếm 2 lần
+    lastEventTime = now;
+
+    const inactiveDuration = now - lastInteractionTime;
+    const likelyScreenOff = inactiveDuration >= INACTIVITY_SCREEN_OFF_MS;
+
+    if (likelyScreenOff) {
+      // Màn hình tắt do không dùng → KHÔNG tính vi phạm, nhưng phải bấm tiếp tục
+      showScreenOffOverlay();
+    } else {
+      // Chuyển sang app khác / tab khác → tính vi phạm
+      _recordViolation();
     }
   };
-  
-  // Sự kiện khi cửa sổ bị mất focus (chuyển sang tab khác)
+
+  // Sự kiện mất focus cửa sổ (desktop chủ yếu)
   const handleBlur = () => {
     if (!examActive) return;
-    
-    examBlurCount++;
-    const remainWarnings = 3 - examBlurCount;
-    
-    if (examBlurCount >= 3) {
-      toast('⚠️', 'Bạn đã chuyển sang ứng dụng khác quá 3 lần. Bài thi sẽ bị nộp!');
-      setTimeout(() => {
-        if (examActive) {
-          alert('Bài thi bị nộp do vi phạm quy định!');
-          doSubmit();
-        }
-      }, 1000);
-    } else {
-      toast('⚠️', `Cảnh báo! Không được chuyển sang ứng dụng khác. Còn ${remainWarnings} lần cảnh báo.`);
-      showSecurityWarning(remainWarnings);
-    }
+    if (isMobileDevice()) return; // mobile dùng visibilitychange thôi
+
+    const now = Date.now();
+    if (now - lastEventTime < DEDUP_MS) return; // chống đếm 2 lần
+    lastEventTime = now;
+
+    _recordViolation();
   };
-  
-  // Sự kiện chụp màn hình (chỉ hỗ trợ một số trình duyệt)
-  const handleScreenshot = (e) => {
-    if (!examActive) return;
+
+  // Hàm ghi nhận vi phạm
+  function _recordViolation() {
     examBlurCount++;
+    const remaining = 3 - examBlurCount;
+
     if (examBlurCount >= 3) {
-      toast('⚠️', 'Phát hiện chụp màn hình! Bài thi sẽ bị nộp!');
-      setTimeout(() => doSubmit(), 500);
+      // Lần thứ 3: nộp bài tự động
+      showForcedSubmitOverlay();
     } else {
-      toast('⚠️', 'Phát hiện chụp màn hình! Hành vi này bị cấm trong bài thi.');
+      // Lần 1, 2: cảnh báo, phải bấm mới tiếp tục
+      showSecurityWarning(remaining);
     }
-  };
-  
+  }
+
   document.addEventListener('visibilitychange', handleVisibilityChange);
   window.addEventListener('blur', handleBlur);
-  
-  // Thử nghiệm chặn chụp màn hình (không hoạt động trên tất cả trình duyệt)
+
+  // PrintScreen (desktop)
   document.addEventListener('keyup', (e) => {
+    if (!examActive) return;
     if (e.key === 'PrintScreen') {
-      handleScreenshot(e);
+      toast('⚠️', 'Chụp màn hình bị cấm trong bài thi!');
     }
   });
-  
-  // Lưu các hàm để cleanup sau khi nộp bài
+
+  // Cleanup khi nộp bài
   window._examSecurityCleanup = () => {
     examActive = false;
     document.removeEventListener('visibilitychange', handleVisibilityChange);
     window.removeEventListener('blur', handleBlur);
+    ['touchstart', 'touchmove', 'click', 'keydown', 'scroll', 'mousemove'].forEach(evt => {
+      document.removeEventListener(evt, trackInteraction);
+    });
   };
 }
 
-// Hiển thị cảnh báo bảo mật
-function showSecurityWarning(remaining) {
+// Overlay khi màn hình tắt do không dùng (KHÔNG tính vi phạm)
+function showScreenOffOverlay() {
+  const old = document.getElementById('screen-off-overlay');
+  if (old) old.remove();
+
   const overlay = document.createElement('div');
-  overlay.id = 'security-warning-overlay';
-  overlay.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
-    backdrop-filter: blur(4px);
-  `;
+  overlay.id = 'screen-off-overlay';
+  overlay.style.cssText = [
+    'position:fixed', 'top:0', 'left:0', 'right:0', 'bottom:0',
+    'background:rgba(0,0,0,0.92)', 'z-index:2000',
+    'display:flex', 'align-items:center', 'justify-content:center',
+    'flex-direction:column', 'backdrop-filter:blur(6px)'
+  ].join(';');
   overlay.innerHTML = `
-    <div style="background: var(--bg2); padding: 24px; border-radius: 16px; max-width: 280px; text-align: center;">
-      <div style="font-size: 48px; margin-bottom: 12px;">⚠️</div>
-      <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">Cảnh báo vi phạm</div>
-      <div style="font-size: 13px; color: var(--txt2); margin-bottom: 16px;">
-        Bạn đã rời khỏi bài thi. Đây là lần cảnh báo thứ ${4 - remaining}.<br>
-        <strong>Còn ${remaining} lần vi phạm trước khi bài thi bị nộp tự động.</strong>
+    <div style="background:var(--bg2);padding:28px 24px;border-radius:18px;max-width:300px;width:90%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6)">
+      <div style="font-size:52px;margin-bottom:12px">📱</div>
+      <div style="font-size:17px;font-weight:800;margin-bottom:8px;color:var(--txt)">Màn hình đã tắt</div>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:20px;line-height:1.65">
+        Bài thi đang tạm dừng.<br>Bấm bên dưới để tiếp tục làm bài.
       </div>
-      <button class="btn btn-p" onclick="document.getElementById('security-warning-overlay').remove()" style="width: 100%;">
-        Tiếp tục làm bài
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:14px">⚠️ Không tính vào số lần vi phạm</div>
+      <button class="btn btn-p" onclick="document.getElementById('screen-off-overlay').remove()"
+        style="width:100%;padding:13px;font-size:15px;font-weight:700;border-radius:10px">
+        ▶ Tiếp tục làm bài
       </button>
     </div>
   `;
   document.body.appendChild(overlay);
-  
-  // Tự động ẩn sau 3 giây
-  setTimeout(() => {
-    const el = document.getElementById('security-warning-overlay');
-    if (el) el.remove();
-  }, 3000);
+}
+
+// Overlay khi bị nộp bài cưỡng chế (vi phạm lần 3)
+function showForcedSubmitOverlay() {
+  const old = document.getElementById('forced-submit-overlay');
+  if (old) old.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'forced-submit-overlay';
+  overlay.style.cssText = [
+    'position:fixed', 'top:0', 'left:0', 'right:0', 'bottom:0',
+    'background:rgba(0,0,0,0.93)', 'z-index:2001',
+    'display:flex', 'align-items:center', 'justify-content:center',
+    'flex-direction:column', 'backdrop-filter:blur(6px)'
+  ].join(';');
+  overlay.innerHTML = `
+    <div style="background:var(--bg2);padding:28px 24px;border-radius:18px;max-width:300px;width:90%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6)">
+      <div style="font-size:52px;margin-bottom:12px">🚫</div>
+      <div style="font-size:17px;font-weight:800;margin-bottom:8px;color:var(--red)">Vi phạm lần thứ 3!</div>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:20px;line-height:1.65">
+        Bạn đã rời khỏi bài thi <strong>3 lần</strong>.<br>Bài thi sẽ được nộp tự động.
+      </div>
+      <button class="btn btn-r" onclick="doSubmit()"
+        style="width:100%;padding:13px;font-size:15px;font-weight:700;border-radius:10px">
+        🏁 Nộp bài ngay
+      </button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  toast('🚫', 'Vi phạm lần 3 — Bài thi sẽ bị nộp!');
+  setTimeout(() => { if (examActive) doSubmit(); }, 3000);
+}
+
+// Hiển thị cảnh báo bảo mật (vi phạm lần 1 hoặc 2)
+// Người dùng PHẢI bấm "Tiếp tục làm bài" mới được tiếp tục
+function showSecurityWarning(remaining) {
+  const old = document.getElementById('security-warning-overlay');
+  if (old) old.remove();
+
+  const violationNum = 3 - remaining;
+  const overlay = document.createElement('div');
+  overlay.id = 'security-warning-overlay';
+  overlay.style.cssText = [
+    'position:fixed', 'top:0', 'left:0', 'right:0', 'bottom:0',
+    'background:rgba(0,0,0,0.88)', 'z-index:2000',
+    'display:flex', 'align-items:center', 'justify-content:center',
+    'flex-direction:column', 'backdrop-filter:blur(5px)'
+  ].join(';');
+  overlay.innerHTML = `
+    <div style="background:var(--bg2);padding:28px 24px;border-radius:18px;max-width:300px;width:90%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+      <div style="font-size:17px;font-weight:800;margin-bottom:8px;color:var(--red)">Cảnh báo vi phạm</div>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:6px;line-height:1.65">
+        Bạn đã rời khỏi bài thi.
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:20px">
+        Lần vi phạm: ${violationNum}/3 &nbsp;|&nbsp; Còn ${remaining} lần trước khi bị nộp bài
+      </div>
+      <button class="btn btn-p" onclick="document.getElementById('security-warning-overlay').remove()"
+        style="width:100%;padding:13px;font-size:15px;font-weight:700;border-radius:10px">
+        ▶ Tiếp tục làm bài
+      </button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  // KHÔNG tự động ẩn — thí sinh PHẢI bấm nút để tiếp tục
 }
 
 // Sửa lại hàm startExam
@@ -8928,6 +9256,304 @@ window.buildResultFromExam = buildResultFromExam;
 window.resultAIExplain = resultAIExplain;
 </script>
 
+<!-- ===== DRAWING TOOLBAR (floating, shared for exam + result) ===== -->
+<div id="draw-toolbar">
+  <!-- Pen tool -->
+  <button class="dt-btn active" id="dt-pen-btn" onclick="setDrawTool('pen')">✏️ Bút</button>
+  <!-- Highlighter -->
+  <button class="dt-btn" id="dt-hl-btn" onclick="setDrawTool('highlight')">🖊️ Tô màu</button>
+  <!-- Eraser -->
+  <button class="dt-btn" id="dt-erase-btn" onclick="setDrawTool('eraser')">🧹 Tẩy</button>
+
+  <div class="dt-sep"></div>
+
+  <!-- Color swatches -->
+  <div style="display:flex;gap:5px;align-items:center">
+    <div class="dt-color sel" data-color="#1d1d1d" style="background:#1d1d1d" onclick="setDrawColor(this)"></div>
+    <div class="dt-color" data-color="#ef4444" style="background:#ef4444" onclick="setDrawColor(this)"></div>
+    <div class="dt-color" data-color="#3b82f6" style="background:#3b82f6" onclick="setDrawColor(this)"></div>
+    <div class="dt-color" data-color="#22c55e" style="background:#22c55e" onclick="setDrawColor(this)"></div>
+    <div class="dt-color" data-color="#f59e0b" style="background:#f59e0b" onclick="setDrawColor(this)"></div>
+    <div class="dt-color" data-color="#a855f7" style="background:#a855f7" onclick="setDrawColor(this)"></div>
+  </div>
+
+  <div class="dt-sep"></div>
+
+  <!-- Stroke size -->
+  <div class="dt-stroke">
+    <button data-size="2" style="width:10px;height:10px" class="sel" onclick="setDrawSize(this)"></button>
+    <button data-size="4" style="width:14px;height:14px" onclick="setDrawSize(this)"></button>
+    <button data-size="8" style="width:18px;height:18px" onclick="setDrawSize(this)"></button>
+  </div>
+
+  <div class="dt-sep"></div>
+
+  <!-- Undo / Clear -->
+  <button class="dt-btn" onclick="drawUndo()" title="Hoàn tác (Ctrl+Z)">↩ Hoàn tác</button>
+  <button class="dt-btn" onclick="drawClear()" title="Xóa toàn bộ nét vẽ" style="color:#ef4444;border-color:#ef4444">🗑 Xóa hết</button>
+</div>
+
+<script>
+// =====================================================================
+//  EXAM FONT SIZE CONTROL
+// =====================================================================
+(function() {
+  const MIN_FS = 13, MAX_FS = 24;
+  let curFs = parseInt(localStorage.getItem('examFontSize') || '16', 10);
+
+  function applyFs(size) {
+    curFs = Math.min(MAX_FS, Math.max(MIN_FS, size));
+    document.documentElement.style.setProperty('--exam-fs', curFs + 'px');
+    localStorage.setItem('examFontSize', curFs);
+    document.querySelectorAll('.fs-val').forEach(el => el.textContent = curFs);
+  }
+
+  window.examFontSize = function(delta) { applyFs(curFs + delta); };
+  applyFs(curFs);
+})();
+
+// =====================================================================
+//  DRAWING / ANNOTATION SYSTEM
+// =====================================================================
+(function() {
+  let drawMode   = false;
+  let activeTool = 'pen';       // pen | highlight | eraser
+  let drawColor  = '#1d1d1d';
+  let drawSize   = 2;
+  let isDrawing  = false;
+  let lastX = 0, lastY = 0;
+
+  const pages = {
+    exam:   { canvasId: 'draw-canvas',        panelId: 'exam-qpanel',   toggleId: 'draw-toggle-btn' },
+    result: { canvasId: 'draw-canvas-result', panelId: 'result-qpanel', toggleId: 'draw-toggle-btn-result' }
+  };
+  let activePage = null;
+  let histories  = { exam: [], result: [] };
+
+  // ── Helpers ───────────────────────────────────────────────────────────
+  function getCanvas() { return activePage ? document.getElementById(pages[activePage].canvasId) : null; }
+  function getCtx()    { const c = getCanvas(); return c ? c.getContext('2d') : null; }
+  function getPanel()  { return activePage ? document.getElementById(pages[activePage].panelId)  : null; }
+
+  // Sync canvas buffer size to match the full scrollable height of panel
+  function syncCanvasSize() {
+    const canvas = getCanvas();
+    const panel  = getPanel();
+    if (!canvas || !panel) return;
+    const w = panel.scrollWidth  || panel.clientWidth;
+    const h = Math.max(panel.scrollHeight, panel.clientHeight, 600);
+    if (canvas.width !== w || canvas.height !== h) {
+      const ctx  = canvas.getContext('2d');
+      const snap = (canvas.width > 0 && canvas.height > 0)
+        ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+      canvas.width  = w;
+      canvas.height = h;
+      if (snap) ctx.putImageData(snap, 0, 0);
+    }
+    // Match CSS size to buffer
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+  }
+
+  function saveHistory() {
+    const canvas = getCanvas();
+    if (!canvas || canvas.width === 0) return;
+    const snap = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    const hist = histories[activePage];
+    hist.push(snap);
+    if (hist.length > 40) hist.shift();
+  }
+
+  // ── Coordinate helpers ────────────────────────────────────────────────
+  function getPos(e) {
+    const canvas = getCanvas();
+    const panel  = getPanel();
+    if (!canvas || !panel) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const src  = e.touches ? e.touches[0] : e;
+    return {
+      x: (src.clientX - rect.left) * (canvas.width  / rect.width),
+      y: (src.clientY - rect.top)  * (canvas.height / rect.height)
+    };
+  }
+
+  // ── Drawing ───────────────────────────────────────────────────────────
+  function startDraw(e) {
+    if (!drawMode) return;
+    e.preventDefault();
+    isDrawing = true;
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+    saveHistory();
+  }
+  function onDraw(e) {
+    if (!drawMode || !isDrawing) return;
+    e.preventDefault();
+    const ctx = getCtx();
+    const pos = getPos(e);
+    if (!ctx) return;
+
+    ctx.save();
+    ctx.lineCap  = 'round';
+    ctx.lineJoin = 'round';
+
+    if (activeTool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = drawSize * 6;
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+    } else if (activeTool === 'highlight') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth   = drawSize * 7;
+      ctx.strokeStyle = drawColor;
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1;
+      ctx.lineWidth   = drawSize;
+      ctx.strokeStyle = drawColor;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    ctx.restore();
+
+    lastX = pos.x; lastY = pos.y;
+  }
+  function endDraw() { isDrawing = false; }
+
+  function bindCanvasEvents(canvas) {
+    canvas.addEventListener('mousedown',  startDraw);
+    canvas.addEventListener('mousemove',  onDraw);
+    canvas.addEventListener('mouseup',    endDraw);
+    canvas.addEventListener('mouseleave', endDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove',  onDraw,    { passive: false });
+    canvas.addEventListener('touchend',   endDraw);
+  }
+
+  // ── Toggle draw mode ──────────────────────────────────────────────────
+  window.toggleDrawMode = function() {
+    drawMode = !drawMode;
+
+    // Detect active page
+    if (document.getElementById('view-exam')?.classList.contains('active'))   activePage = 'exam';
+    else if (document.getElementById('view-result')?.classList.contains('active')) activePage = 'result';
+
+    // Update toggle buttons
+    ['draw-toggle-btn', 'draw-toggle-btn-result'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.classList.toggle('active', drawMode);
+    });
+
+    // Show/hide toolbar
+    document.getElementById('draw-toolbar')?.classList.toggle('visible', drawMode);
+
+    if (drawMode) {
+      // Show canvas and sync size
+      const canvas = getCanvas();
+      if (canvas) {
+        canvas.classList.add('active');
+        syncCanvasSize();
+      }
+    } else {
+      // Hide all canvases — restore full interactivity to content
+      Object.values(pages).forEach(p => {
+        const c = document.getElementById(p.canvasId);
+        if (c) {
+          c.classList.remove('active');
+          // CSS display:none is controlled by .active class
+        }
+      });
+      isDrawing = false;
+    }
+  };
+
+  // ── Tool / color / size ───────────────────────────────────────────────
+  window.setDrawTool = function(tool) {
+    activeTool = tool;
+    const map = { pen: 'pen', highlight: 'hl', eraser: 'erase' };
+    document.querySelectorAll('.dt-btn[id^="dt-"]').forEach(b => b.classList.remove('active'));
+    document.getElementById('dt-' + (map[tool] || tool) + '-btn')?.classList.add('active');
+    const canvas = getCanvas();
+    if (canvas) canvas.style.cursor = tool === 'eraser' ? 'cell' : 'crosshair';
+  };
+
+  window.setDrawColor = function(el) {
+    document.querySelectorAll('.dt-color').forEach(c => c.classList.remove('sel'));
+    el.classList.add('sel');
+    drawColor = el.dataset.color;
+    if (activeTool === 'eraser') setDrawTool('pen');
+  };
+
+  window.setDrawSize = function(el) {
+    document.querySelectorAll('.dt-stroke button').forEach(b => b.classList.remove('sel'));
+    el.classList.add('sel');
+    drawSize = parseInt(el.dataset.size, 10);
+  };
+
+  // ── Undo / Clear ──────────────────────────────────────────────────────
+  window.drawUndo = function() {
+    const hist = histories[activePage];
+    const ctx  = getCtx();
+    const c    = getCanvas();
+    if (!ctx || !c) return;
+    if (hist.length === 0) { ctx.clearRect(0, 0, c.width, c.height); return; }
+    ctx.putImageData(hist.pop(), 0, 0);
+  };
+
+  window.drawClear = function() {
+    const ctx = getCtx();
+    const c   = getCanvas();
+    if (!ctx || !c) return;
+    saveHistory();
+    ctx.clearRect(0, 0, c.width, c.height);
+  };
+
+  // ── Keyboard shortcut ─────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (drawMode && (e.ctrlKey || e.metaKey) && e.key === 'z') {
+      e.preventDefault();
+      drawUndo();
+    }
+    if (e.key === 'Escape' && drawMode) toggleDrawMode();
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────
+  function initCanvases() {
+    Object.values(pages).forEach(p => {
+      const canvas = document.getElementById(p.canvasId);
+      if (canvas) {
+        bindCanvasEvents(canvas);
+        // Re-sync on panel scroll (only when active)
+        document.getElementById(p.panelId)?.addEventListener('scroll', () => {
+          if (drawMode && activePage === p.canvasId.replace('draw-canvas-', '').replace('draw-canvas','exam')) {
+            syncCanvasSize();
+          }
+        });
+      }
+    });
+    window.addEventListener('resize', () => { if (drawMode) syncCanvasSize(); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCanvases);
+  } else {
+    initCanvases();
+  }
+
+  // Hook goTo to auto-update activePage and turn off draw when leaving
+  const _origGoTo = window.goTo;
+  window.goTo = function(v, param) {
+    if (typeof _origGoTo === 'function') _origGoTo(v, param);
+    if (v === 'exam')   activePage = 'exam';
+    if (v === 'result') activePage = 'result';
+    if (drawMode && v !== 'exam' && v !== 'result') toggleDrawMode();
+    if (drawMode && (v === 'exam' || v === 'result')) setTimeout(syncCanvasSize, 120);
+  };
+})();
+</script>
 
 </body>
 </html>
