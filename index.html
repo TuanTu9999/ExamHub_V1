@@ -797,89 +797,57 @@
   </div>
 </div>
 
-<!-- ===== VIEW: RESULT ===== -->
-<div id="view-result" class="view">
-  <div class="shell">
-    <div class="main">
-      <div class="topbar">
-        <div class="tbc"><span onclick="goTo('dashboard')" style="cursor:pointer">ExamHub</span><span class="sep">›</span><span class="cur">Kết quả thi</span></div>
-        <div class="tbr">
-          <button class="btn btn-g btn-sm" onclick="goTo('dashboard')">← Trang chủ</button>
-        </div>
+<!-- ===== VIEW: RESULT (giống giao diện lúc thi) ===== -->
+<div id="view-result" class="view" style="flex-direction:column">
+  <div class="etopbar">
+    <div class="logo-ico" style="width:26px;height:26px;font-size:12px">🏆</div>
+    <div class="etitle-sm" id="result-et-name">Kết quả thi</div>
+    <div class="etr">
+      <div class="timer-box" style="background:var(--grn-s);color:var(--grn);border:1px solid var(--grn)">
+        <span>🎯</span><span class="tv" id="result-score-display">8.5</span><span class="tlbl">điểm</span>
       </div>
-      <!-- Hero score section -->
-      <div id="res-hero" style="text-align:center;padding:24px 20px 16px;background:var(--bg2);border-bottom:1px solid var(--bdr)"></div>
-      <!-- Score distribution -->
-      <div id="res-score-dist" style="padding:0 20px 12px;background:var(--bg2);border-bottom:1px solid var(--bdr);display:none"></div>
-      <!-- Suggestions -->
-      <div id="res-suggest" style="display:none;padding:12px 20px;background:var(--acc-s);border-bottom:1px solid rgba(79,142,247,.2);font-size:13px;color:var(--txt2)"></div>
-      <div class="ema" style="margin-top:0">
-        <!-- Left panel: câu hỏi chi tiết -->
-        <div class="qpanel">
-          <!-- Question grid / navigator for result (used by buildResultQGrid) -->
-          <div style="margin-bottom:14px">
-            <div style="font-size:12px;font-weight:700;color:var(--txt2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
-              <span>📊 Danh sách câu hỏi</span>
-              <span id="result-nav-answered" style="color:var(--grn)">0/0</span>
-            </div>
-            <div class="ngrid" id="res-qgrid"></div>
-            <!-- Compat alias: result-ngrid also points to same grid via JS -->
-            <div class="ngrid" id="result-ngrid" style="display:none"></div>
-          </div>
-          <!-- Detailed question review area (used by showResultQuestion & buildDetailedAnswers) -->
-          <div id="res-q-detail">
-            <!-- Filled by showResultQuestion() -->
-          </div>
-          <!-- Legacy result elements (used by initResultData / renderResultQuestion) -->
-          <div style="display:none">
-            <div id="result-q-label"></div>
-            <div id="result-q-text"></div>
-            <div id="result-opts"></div>
-            <div id="result-solution-box"><div id="result-solution-content"></div></div>
-            <div id="result-ai-box"><div id="result-ai-content"></div><div id="result-similar-actions"></div></div>
-          </div>
-          <!-- Action buttons kept accessible -->
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--bdr)">
-            <button class="btn btn-g btn-sm" id="result-prev-btn" onclick="resultPrevQ()">← Câu trước</button>
-            <button class="btn btn-g btn-sm" id="result-show-sol-btn" onclick="toggleResultSolution()">💡 Lời giải</button>
-            <button class="btn btn-pur btn-sm" id="result-explain-q-btn" onclick="explainQuestionAI()">🤔 Giải thích đề</button>
-            <button class="btn btn-pur btn-sm" id="result-explain-sol-btn" onclick="explainSolutionAI()">📖 Giải lời giải</button>
-            <button class="btn btn-pur btn-sm" id="result-similar-btn" onclick="generateSimilarQuestion()">🔄 Câu tương tự</button>
-            <button class="btn btn-pur btn-sm" id="result-save-q-btn" onclick="saveCurrentQuestion()">📚 Lưu câu</button>
-            <button class="btn btn-p btn-sm" id="result-next-btn" onclick="resultNextQ()" style="margin-left:auto">Câu sau →</button>
-          </div>
-          <div id="result-ai-box-visible" style="display:none; margin-top:12px; padding:14px; background:var(--acc-s); border-radius:10px; border:1px solid var(--acc)">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-              <span style="font-size:12px; font-weight:700; color:var(--acc)">🤖 AI trợ giúp</span>
-              <button class="btn btn-g btn-sm" onclick="closeAIBox()">✖</button>
-            </div>
-            <div id="result-ai-content-visible" style="font-size:13px; line-height:1.6"></div>
-            <div id="result-similar-actions-visible" style="display:none; margin-top:12px">
-              <button class="btn btn-p btn-sm" onclick="saveSimilarQuestion()">📥 Lưu câu hỏi tương tự</button>
-            </div>
-          </div>
-        </div>
-        <!-- Right panel: navigator + stats -->
-        <div class="navp">
-          <div class="navp-title"><span>Thống kê</span></div>
-          <div class="nsum">
-            <div class="nsum-r"><span>Đúng</span><span class="nsum-v c-grn" id="result-correct-count">0</span></div>
-            <div class="nsum-r"><span>Sai</span><span class="nsum-v c-red" id="result-wrong-count">0</span></div>
-            <div class="nsum-r"><span>Đã lưu</span><span class="nsum-v c-gld" id="result-saved-count">0</span></div>
-          </div>
-          <div class="nleg" style="margin-top:12px">
-            <div class="nleg-i"><div class="nleg-d" style="background:var(--grn)"></div>Đúng</div>
-            <div class="nleg-i"><div class="nleg-d" style="background:var(--red)"></div>Sai</div>
-            <div class="nleg-i"><div class="nleg-d" style="background:var(--bgh);border:1px solid var(--bdr)"></div>Bỏ qua</div>
-          </div>
-          <button class="btn btn-g" onclick="goTo('dashboard')" style="width:100%; margin-top:12px">← Về trang chủ</button>
-          <button class="btn btn-p" id="res-retake-btn" onclick="" style="width:100%; margin-top:8px;display:none">🔄 Làm lại</button>
-        </div>
+      <button class="btn btn-g" onclick="goTo('dashboard')">← Về trang chủ</button>
+    </div>
+  </div>
+
+  <div class="ema">
+    <!-- Cột trái: Đề bài + Đáp án + Lời giải -->
+    <div class="qpanel">
+      <div class="qsl" id="result-qsl">📋 Câu hỏi và đáp án</div>
+      <div class="qnum" id="result-q-label">Câu 1 / 15</div>
+      <div class="qtxt" id="result-q-text"></div>
+      <div id="result-question-image-container" style="margin:10px 0;text-align:center;"></div>
+      <div class="ol" id="result-opts"></div>
+
+      <!-- Lời giải chi tiết (luôn hiển thị) -->
+      <div id="result-solution-box" style="margin-top:20px;padding:16px;background:var(--bg3);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-weight:700;color:var(--grn);margin-bottom:8px">💡 Lời giải chi tiết</div>
+        <div id="result-sol-text" style="line-height:1.6;font-size:13.5px"></div>
       </div>
+
+      <div class="qnav-bot" style="margin-top:20px">
+        <button class="btn btn-g" onclick="resultPrevQ()">← Câu trước</button>
+        <button class="btn btn-p" onclick="resultNextQ()">Câu sau →</button>
+      </div>
+    </div>
+
+    <!-- Cột phải: Danh sách câu + thống kê -->
+    <div class="navp">
+      <div class="navp-title"><span>Danh sách câu</span><span id="result-nav-answered" style="color:var(--grn)">0/15</span></div>
+      <div class="ngrid" id="result-ngrid"></div>
+      <div class="nleg">
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--grn)"></div>Đúng</div>
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--red)"></div>Sai</div>
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--bgh);border:1px solid var(--bdr)"></div>Bỏ qua</div>
+      </div>
+      <div class="nsum">
+        <div class="nsum-r"><span style="color:var(--txt2)">Đúng</span><span class="nsum-v c-grn" id="result-correct-count">0</span></div>
+        <div class="nsum-r"><span style="color:var(--txt2)">Sai</span><span class="nsum-v c-red" id="result-wrong-count">0</span></div>
+      </div>
+      <button class="btn btn-g" onclick="goTo('dashboard')" style="width:100%;margin-top:12px">← Về trang chủ</button>
     </div>
   </div>
 </div>
-
 
 <!-- ===== VIEW: HISTORY ===== -->
 <div id="view-history" class="view">
@@ -1554,876 +1522,6 @@ const reverseSubjectMap = {
 const API_STORAGE_KEY = 'examhub_api_keys';
 const API_ACTIVE_PROVIDER_KEY = 'examhub_active_provider';
 
-const DEFAULT_DB = {
-  "users": [
-    {
-      "id": 1,
-      "email": "student@exam.vn",
-      "pass": "123456",
-      "name": "Nguyễn Văn A",
-      "role": "student",
-      "initials": "NA",
-      "premium": true
-    },
-    {
-      "id": 2,
-      "email": "admin@exam.vn",
-      "pass": "admin123",
-      "name": "Admin Hệ Thống",
-      "role": "admin",
-      "initials": "AD",
-      "premium": true
-    },
-    {
-      "id": 3,
-      "email": "teacher@exam.vn",
-      "pass": "teacher1",
-      "name": "Nguyễn Văn A",
-      "role": "teacher",
-      "initials": "NA",
-      "premium": false
-    }
-  ],
-  "rooms": [
-    {
-      "id": 1,
-      "name": "Toán học nâng cao",
-      "desc": "Ôn thi THPT Quốc gia môn Toán",
-      "subject": "math",
-      "icon": "📐",
-      "status": "open",
-      "premium": true,
-      "color": "var(--acc-s)"
-    },
-    {
-      "id": 2,
-      "name": "Vật lý 12",
-      "desc": "Dao động, sóng cơ, điện từ",
-      "subject": "physics",
-      "icon": "⚛️",
-      "status": "open",
-      "premium": false,
-      "color": "var(--org-s)"
-    },
-    {
-      "id": 3,
-      "name": "Hóa học 12",
-      "desc": "Hóa hữu cơ, vô cơ",
-      "subject": "chemistry",
-      "icon": "🧪",
-      "status": "upcoming",
-      "premium": false,
-      "color": "var(--grn-s)"
-    },
-    {
-      "id": 4,
-      "name": "Tiếng Anh THPT",
-      "desc": "Đọc hiểu, ngữ pháp",
-      "subject": "english",
-      "icon": "🌐",
-      "status": "open",
-      "premium": true,
-      "color": "var(--red-s)"
-    }
-  ],
-  "exams": [
-    {
-      "id": 3,
-      "name": "Đề Toán sở Thái Nguyên lần 1 năm 2026",
-      "roomId": 1,
-      "duration": 90,
-      "type": "official",
-      "date": "2026-04-03",
-      "questions": 22,
-      "questionIds": [
-        1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075,
-        1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087
-      ]
-    }
-  ],
-  "questions": [
-    {
-      "id": 1044,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Thể tích khối chóp: $V = \\frac{1}{3} \\times S_{ABCD} \\times SA = \\frac{1}{3} \\times (1 \\times 1) \\times 3 = 1$.",
-      "qtype": "single",
-      "text": "Cho hình chóp $S.ABCD$ có $SA$ vuông góc với mặt phẳng $(ABCD)$, tứ giác $ABCD$ là hình vuông, $SA = 3$ và $AB = 1$. Thể tích của khối chóp $S.ABCD$ bằng",
-      "opts": ["$2$", "$1$", "$3$", "$9$"],
-      "correct": 1
-    },
-    {
-      "id": 1045,
-      "subject": "math",
-      "diff": "easy",
-      "source": "manual",
-      "sol_text": "$GF$ nằm trong mặt phẳng $(EFGH)$ song song với $(ABCD)$, nên $GF \\parallel (ABCD)$.",
-      "qtype": "single",
-      "text": "Cho hình hộp $ABCD.EFGH$. Đường thẳng $GF$ song song với mặt phẳng nào sau đây?",
-      "opts": ["$(ACGE)$", "$(ABFE)$", "$(ABCD)$", "$(BDHF)$"],
-      "correct": 2,
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/9FCNr8t4/2.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1046,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$\\log_2(x - 1) = 3 \\Leftrightarrow x - 1 = 2^3 = 8 \\Leftrightarrow x = 9$.",
-      "qtype": "single",
-      "text": "Nghiệm của phương trình $\\log_2(x - 1) = 3$ là",
-      "opts": ["$x = 9$", "$x = 4$", "$x = 7$", "$x = 10$"],
-      "correct": 0
-    },
-    {
-      "id": 1047,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "Từ đồ thị, hàm số tăng trên khoảng $(-\\infty;-1)$ (đồ thị đi lên từ trái sang phải).",
-      "qtype": "single",
-      "text": "Cho hàm số đa thức bậc bốn $y = f(x)$ có đồ thị như hình vẽ. Hàm số đã cho đồng biến trên khoảng nào dưới đây?",
-      "opts": ["$(-1;0)$", "$(-\\infty;-1)$", "$(-\\infty;1)$", "$(-1;+\\infty)$"],
-      "correct": 1,
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/t47kxL1J/4.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1048,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Bậc tử và mẫu bằng nhau nên tiệm cận ngang là $y = \\dfrac{2}{1} = 2$.",
-      "qtype": "single",
-      "text": "Tiệm cận ngang của đồ thị hàm số $y = \\dfrac{2x - 5}{x + 2}$ là đường thẳng có phương trình",
-      "opts": ["$y = -2$", "$y = \\dfrac{5}{2}$", "$y = \\dfrac{2}{5}$", "$y = 2$"],
-      "correct": 3
-    },
-    {
-      "id": 1049,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$\\int 2^x dx = \\dfrac{2^x}{\\ln 2}$ và $\\int x dx = \\dfrac{x^2}{2}$.",
-      "qtype": "single",
-      "text": "Nguyên hàm của hàm số $f(x) = 2^x + x$ là",
-      "opts": [
-        "$\\dfrac{2^x}{\\ln 2} + x^2 + C$",
-        "$\\dfrac{2^x}{\\ln 2} + \\dfrac{x^2}{2} + C$",
-        "$2^x + \\dfrac{x^2}{2} + C$",
-        "$2^x + x^2 + C$"
-      ],
-      "correct": 1
-    },
-    {
-      "id": 1050,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "Đường cong là đồ thị hàm bậc ba có hệ số bậc ba dương và tung độ gốc bằng $1$.",
-      "qtype": "single",
-      "text": "Đồ thị của hàm số nào dưới đây có dạng như đường cong trong hình vẽ?",
-      "opts": [
-        "$y = \\dfrac{2x - 1}{x + 2}$",
-        "$y = x^3 - 3x + 1$",
-        "$y = -x^3 + 3x + 1$",
-        "$y = \\dfrac{x^2 - 1}{2x - 1}$"
-      ],
-      "correct": 1,
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/NFp8y4BX/7.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1051,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Chiếu lên $(Oxz)$ thì $y = 0$, nên được $(2;0;-1)$.",
-      "qtype": "single",
-      "text": "Trong không gian với hệ tọa độ $Oxyz$, hình chiếu vuông góc của điểm $M(2;1;-1)$ trên mặt phẳng $(Oxz)$ có tọa độ là",
-      "opts": ["$(0;1;0)$", "$(2;1;0)$", "$(0;1;-1)$", "$(2;0;-1)$"],
-      "correct": 3
-    },
-    {
-      "id": 1052,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$u_4 = u_1 + 3d \\Rightarrow 11 = 2 + 3d \\Rightarrow d = 3$.",
-      "qtype": "single",
-      "text": "Cho cấp số cộng $(u_n)$ có $u_1 = 2$ và $u_4 = 11$. Công sai của cấp số cộng đã cho bằng",
-      "opts": ["$1$", "$2$", "$4$", "$3$"],
-      "correct": 3
-    },
-    {
-      "id": 1053,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$\\vec{c} = (2,-1,3) - 2(1,3,-2) = (0,-7,7)$.",
-      "qtype": "single",
-      "text": "Trong không gian với hệ tọa độ $Oxyz$, cho vectơ $\\vec{a} = (2;-1;3)$, $\\vec{b} = (1;3;-2)$. Tọa độ của vectơ $\\vec{c} = \\vec{a} - 2\\vec{b}$ là",
-      "opts": ["$(0;-7;7)$", "$(4;-7;7)$", "$(0;7;7)$", "$(0;-7;-7)$"],
-      "correct": 0
-    },
-    {
-      "id": 1054,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "$Q_1 = 3,1$; $Q_3 = 3,675$; $IQR = 3,675 - 3,1 = 0,575$.",
-      "qtype": "single",
-      "text": "Quãng đường đi bộ mỗi ngày của bác An trong 20 ngày được thống kê ở bảng sau. Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là",
-      "opts": ["$0,5$", "$0,9$", "$0,575$", "$0,975$"],
-      "correct": 2,
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/63KCYSQ5/11.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1055,
-      "subject": "math",
-      "diff": "easy",
-      "source": "manual",
-      "sol_text": "Từ bảng biến thiên, giá trị cực tiểu là $1$.",
-      "qtype": "single",
-      "text": "Cho hàm số $f(x)$ có bảng biến thiên như hình vẽ. Giá trị cực tiểu của hàm số đã cho là",
-      "opts": ["$y = 1$", "$y = 0$", "$y = -1$", "$y = 2$"],
-      "correct": 0,
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/15d6L4zJ/12.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1056,
-      "subject": "math",
-      "diff": "hard",
-      "source": "manual",
-      "sol_text": "$\\overrightarrow{AB} = (1,-2,-2)$, $\\overrightarrow{AC} = (5,-1,-1)$ nên $\\cos = \\dfrac{1}{\\sqrt{3}}$, $\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = 9$; các mệnh đề còn lại suy ra từ điều kiện hình thang và bài toán cực trị.",
-      "qtype": "tf4",
-      "text": "Trong không gian với hệ tọa độ $Oxyz$, cho hình thang $ABCD$ vuông tại $A$ và $B$. Biết $A(1;2;1)$, $B(2;0;-1)$, $C(6;1;0)$ và diện tích hình thang $ABCD$ bằng $6\\sqrt{2}$.",
-      "subqs": [
-        { "text": "$\\cos(\\overrightarrow{AB}, \\overrightarrow{AC}) = \\dfrac{\\sqrt{3}}{3}$.", "ans": true },
-        { "text": "Tọa độ điểm $D$ là $(a;b;c)$. Khi đó $a + b + c = \\dfrac{22}{3}$.", "ans": false },
-        { "text": "Gọi điểm $M(x_M;y_M;z_M)$ nằm trên mặt phẳng $(Oxy)$ thỏa mãn $MA^2 + 2MB^2 + 3MC^2$ đạt giá trị nhỏ nhất. Khi đó $x_M < 4$.", "ans": true },
-        { "text": "$\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = 9$.", "ans": true }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": null,
-      "opt_imgs": []
-    },
-    {
-      "id": 1057,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "Biên độ là $10$ nên $\\min = -10$; giải $\\sin\\left(10t - \\frac{\\pi}{2}\\right) = \\frac{1}{2}$ cho thời điểm đầu tiên; $\\sin x$ xác định với mọi $t$; trong $3$ giây đầu, chu kỳ $T = \\frac{\\pi}{5}$, số lần qua VTCB là $\\frac{3}{T} \\times 2 = 10$.",
-      "qtype": "tf4",
-      "text": "Trong hình vẽ sau đây, khi kéo ra khỏi vị trí cân bằng ở điểm $O$ và buông tay, lực đàn hồi của lò xo khiến vật $A$ gắn ở đầu của lò xo dao động quanh $O$. Tọa độ $s$ (centimét) của $A$ trên trục $Ox$ vào thời điểm $t$ (giây) sau khi buông tay được xác định bởi công thức $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$.",
-      "subqs": [
-        { "text": "Giá trị nhỏ nhất của hàm số $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$ bằng $-1$.", "ans": false },
-        { "text": "Thời điểm đầu tiên tọa độ của vật $A$ trên trục bằng $5$ là $t = \\dfrac{2\\pi}{15}$ giây.", "ans": false },
-        { "text": "Tập xác định của hàm số $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$ là $\\mathbb{R}$.", "ans": true },
-        { "text": "Trong $3$ giây đầu tiên vật đi qua vị trí cân bằng $10$ lần.", "ans": true }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/Vv6rhcP1/14.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1058,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "$h(t) = 5 + \\int v(t)dt$; $v(2) = 3,2$; $v(t) > 0$ trên $(0,10)$ nên giai đoạn tăng trưởng kéo dài $10$ tuần.",
-      "qtype": "tf4",
-      "text": "Cây cà chua khi trồng có chiều cao $5$ cm. Tốc độ tăng chiều cao của cây cà chua sau khi trồng $t$ tuần được cho bởi hàm số $v(t) = -0,1t^3 + t^2$, đơn vị: centimét/tuần. Gọi $h(t)$ là độ cao của cây cà chua ở tuần thứ $t$, đơn vị: centimét.",
-      "subqs": [
-        { "text": "Vào thời điểm cây cà chua đó phát triển nhanh nhất, chiều cao của cây cà chua nhỏ hơn $54$ cm.", "ans": false },
-        { "text": "Cây cà chua đó có thể phát triển và cao hơn $88$ cm.", "ans": true },
-        { "text": "Tốc độ tăng chiều cao của cây cà chua sau khi trồng được $2$ tuần là $3,2$ centimét/tuần.", "ans": true },
-        { "text": "Giai đoạn tăng trưởng của cây cà chua đó kéo dài $8$ tuần.", "ans": false }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": null,
-      "opt_imgs": []
-    },
-    {
-      "id": 1059,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "$f'(x) = (x^2 - 3x + 2)e^x = (x - 1)(x - 2)e^x$; trên $[0,2]$, $\\min$ đạt tại $x = 0$.",
-      "qtype": "tf4",
-      "text": "Cho hàm số $y = f(x) = (x^2 - 5x + 7)e^x$.",
-      "subqs": [
-        { "text": "$f(0) = 7$.", "ans": true },
-        { "text": "Hàm số $y = f(x)$ nghịch biến trên khoảng $\\left(-\\infty;\\dfrac{5}{2}\\right)$.", "ans": false },
-        { "text": "Đạo hàm của hàm số đã cho là $f'(x) = (2x - 5)e^x$.", "ans": false },
-        { "text": "Giá trị nhỏ nhất của hàm số $y = f(x)$ trên đoạn $[0;2]$ bằng $7$.", "ans": true }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": null,
-      "opt_imgs": []
-    },
-    {
-      "id": 1060,
-      "subject": "math",
-      "diff": "medium",
-      "source": "manual",
-      "sol_text": "Đếm tất cả cách chọn và sắp xếp $6$ số khác nhau vào $6$ ô của hình sao cho ba cột có tổng bằng nhau được $48$ cách.",
-      "qtype": "short",
-      "text": "Có bao nhiêu cách chọn sáu số từ chín số nguyên $1, 2, \\dots, 9$ và điền vào các ô của hình dưới đây (mỗi ô chỉ điền đúng một số) sao cho tổng các số ở mỗi cột (kể cả cột có một ô) bằng nhau?",
-      "answer": "48",
-      "unit": "",
-      "code": "",
-      "score": 1,
-      "qtype_label": "",
-      "irt_a": 1,
-      "irt_b": 0,
-      "irt_c": 0.25,
-      "sol_video": "",
-      "img": "https://i.postimg.cc/7LkCkzrW/17.jpg",
-      "opt_imgs": []
-    },
-    {
-      "id": 1061,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "$\\cos\\alpha = \\sqrt{2} - \\dfrac{1}{\\sqrt{3}} \\approx 0,8374$, làm tròn được $0,84$.",
-      "qtype": "short",
-      "text": "Cho tứ diện $ABCD$ có $\\widehat{BAC} = 30^\\circ$, $\\widehat{CAD} = 45^\\circ$, $\\widehat{DAB} = 60^\\circ$. Gọi $\\alpha = [B;AD;C]$ thì giá trị của $\\cos \\alpha$ bằng bao nhiêu? (làm tròn đến hàng phần trăm)",
-      "answer": "0.84",
-      "unit": ""
-    },
-    {
-      "id": 1062,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "Xét các đỉnh miền nghiệm của hệ bất phương trình, giá trị lớn nhất của $80x + 60y$ là $640$.",
-      "qtype": "short",
-      "text": "Trong một cuộc thi pha chế, mỗi đội chơi được sử dụng tối đa $24$ gam hương liệu, $9$ lít nước và $210$ gam đường để pha chế nước ngọt loại I và nước ngọt loại II. Hỏi số điểm thưởng cao nhất có thể của mỗi đội trong cuộc thi là bao nhiêu?",
-      "answer": "640",
-      "unit": "điểm"
-    },
-    {
-      "id": 1063,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "Chỉ xảy ra khi $t = 7$ hoặc $t = 5$ kèm điều kiện một cạnh gấp đôi cạnh kia. Xác suất xấp xỉ $0,1744$, làm tròn được $0,17$.",
-      "qtype": "short",
-      "text": "Tung đồng thời hai con xúc xắc khác nhau đều cân đối và đồng chất ba lần. Chọn ngẫu nhiên một tam giác có hai cạnh có độ dài là $a$, $b$ và góc xen giữa chúng bằng $(t-1)15^\\circ$. Xác suất để tam giác này là tam giác vuông bằng bao nhiêu? (làm tròn đến hàng phần trăm)",
-      "answer": "0.17",
-      "unit": ""
-    },
-    {
-      "id": 1064,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "Từ $y'(t) = k y(t)$ suy ra $y(t) = Ce^{kt}$. Dùng $y(6)=2$ và $y(12)=1$ được $k = -\\dfrac{\\ln 2}{6}$, nên $y(30) = 2e^{24k} = \\dfrac{1}{8} = 0,125 \\approx 0,13$.",
-      "qtype": "short",
-      "text": "Nồng độ thuốc tồn dư trong nước tại thời điểm $30$ ngày bằng bao nhiêu mg/lít? (làm tròn đến hàng phần trăm)",
-      "answer": "0.13",
-      "unit": "mg/lít"
-    },
-    {
-      "id": 1065,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "Phản xạ $G$ qua $(ABCD)$ được $G'$. Giao của $MG'$ với $(ABCD)$ là $I\\left(4;\\dfrac{8}{3};0\\right)$, nên $a = \\dfrac{8}{3}$, $b = 2$ và $P = 3a + 6b = 20$.",
-      "qtype": "short",
-      "text": "Cho hình hộp chữ nhật $ABCD.EFGH$ với $AB = 6$, $AD = 8$ và $DH = 10$. Gọi $M$ là trung điểm của đoạn thẳng $AF$ và $I$ thuộc mặt phẳng $(ABCD)$. Khi $IM + IG$ nhỏ nhất thì điểm $I$ cách hai đường thẳng $BA$ và $BC$ tương ứng bằng $a$ và $b$. Giá trị của biểu thức $P = 3a + 6b$ bằng bao nhiêu?",
-      "answer": "20",
-      "unit": ""
-    },
-    {
-      "id": 1066,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Thể tích khối chóp: $V = \\frac{1}{3} \\times S_{ABCD} \\times SA = \\frac{1}{3} \\times (1 \\times 1) \\times 3 = 1$.",
-      "qtype": "single",
-      "text": "Cho hình chóp $S.ABCD$ có $SA$ vuông góc với mặt phẳng $(ABCD)$, tứ giác $ABCD$ là hình vuông, $SA = 3$ và $AB = 1$. Thể tích của khối chóp $S.ABCD$ bằng",
-      "opts": ["$2$", "$1$", "$3$", "$9$"],
-      "correct": 1
-    },
-    {
-      "id": 1067,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$GF$ nằm trong mặt phẳng $(EFGH)$ song song với $(ABCD)$, nên $GF \\parallel (ABCD)$.",
-      "qtype": "single",
-      "text": "Cho hình hộp $ABCD.EFGH$. Đường thẳng $GF$ song song với mặt phẳng nào sau đây?",
-      "opts": ["$(ACGE)$", "$(ABFE)$", "$(ABCD)$", "$(BDHF)$"],
-      "correct": 2
-    },
-    {
-      "id": 1068,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$\\log_2(x - 1) = 3 \\Leftrightarrow x - 1 = 2^3 = 8 \\Leftrightarrow x = 9$.",
-      "qtype": "single",
-      "text": "Nghiệm của phương trình $\\log_2(x - 1) = 3$ là",
-      "opts": ["$x = 9$", "$x = 4$", "$x = 7$", "$x = 10$"],
-      "correct": 0
-    },
-    {
-      "id": 1069,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "Từ đồ thị, hàm số tăng trên khoảng $(-\\infty;-1)$ (đồ thị đi lên từ trái sang phải).",
-      "qtype": "single",
-      "text": "Cho hàm số đa thức bậc bốn $y = f(x)$ có đồ thị như hình vẽ. Hàm số đã cho đồng biến trên khoảng nào dưới đây?",
-      "opts": ["$(-1;0)$", "$(-\\infty;-1)$", "$(-\\infty;1)$", "$(-1;+\\infty)$"],
-      "correct": 1
-    },
-    {
-      "id": 1070,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Bậc tử và mẫu bằng nhau nên tiệm cận ngang là $y = \\dfrac{2}{1} = 2$.",
-      "qtype": "single",
-      "text": "Tiệm cận ngang của đồ thị hàm số $y = \\dfrac{2x - 5}{x + 2}$ là đường thẳng có phương trình",
-      "opts": ["$y = -2$", "$y = \\dfrac{5}{2}$", "$y = \\dfrac{2}{5}$", "$y = 2$"],
-      "correct": 3
-    },
-    {
-      "id": 1071,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$\\int 2^x dx = \\dfrac{2^x}{\\ln 2}$ và $\\int x dx = \\dfrac{x^2}{2}$.",
-      "qtype": "single",
-      "text": "Nguyên hàm của hàm số $f(x) = 2^x + x$ là",
-      "opts": [
-        "$\\dfrac{2^x}{\\ln 2} + x^2 + C$",
-        "$\\dfrac{2^x}{\\ln 2} + \\dfrac{x^2}{2} + C$",
-        "$2^x + \\dfrac{x^2}{2} + C$",
-        "$2^x + x^2 + C$"
-      ],
-      "correct": 1
-    },
-    {
-      "id": 1072,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "Đường cong là đồ thị hàm bậc ba có hệ số bậc ba dương và tung độ gốc bằng $1$.",
-      "qtype": "single",
-      "text": "Đồ thị của hàm số nào dưới đây có dạng như đường cong trong hình vẽ?",
-      "opts": [
-        "$y = \\dfrac{2x - 1}{x + 2}$",
-        "$y = x^3 - 3x + 1$",
-        "$y = -x^3 + 3x + 1$",
-        "$y = \\dfrac{x^2 - 1}{2x - 1}$"
-      ],
-      "correct": 1
-    },
-    {
-      "id": 1073,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Chiếu lên $(Oxz)$ thì $y = 0$, nên được $(2;0;-1)$.",
-      "qtype": "single",
-      "text": "Trong không gian với hệ tọa độ $Oxyz$, hình chiếu vuông góc của điểm $M(2;1;-1)$ trên mặt phẳng $(Oxz)$ có tọa độ là",
-      "opts": ["$(0;1;0)$", "$(2;1;0)$", "$(0;1;-1)$", "$(2;0;-1)$"],
-      "correct": 3
-    },
-    {
-      "id": 1074,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$u_4 = u_1 + 3d \\Rightarrow 11 = 2 + 3d \\Rightarrow d = 3$.",
-      "qtype": "single",
-      "text": "Cho cấp số cộng $(u_n)$ có $u_1 = 2$ và $u_4 = 11$. Công sai của cấp số cộng đã cho bằng",
-      "opts": ["$1$", "$2$", "$4$", "$3$"],
-      "correct": 3
-    },
-    {
-      "id": 1075,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "$\\vec{c} = (2,-1,3) - 2(1,3,-2) = (0,-7,7)$.",
-      "qtype": "single",
-      "text": "Trong không gian với hệ tọa độ $Oxyz$, cho vectơ $\\vec{a} = (2;-1;3)$, $\\vec{b} = (1;3;-2)$. Tọa độ của vectơ $\\vec{c} = \\vec{a} - 2\\vec{b}$ là",
-      "opts": ["$(0;-7;7)$", "$(4;-7;7)$", "$(0;7;7)$", "$(0;-7;-7)$"],
-      "correct": 0
-    },
-    {
-      "id": 1076,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "$Q_1 = 3,1$; $Q_3 = 3,675$; $IQR = 3,675 - 3,1 = 0,575$.",
-      "qtype": "single",
-      "text": "Quãng đường đi bộ mỗi ngày của bác An trong 20 ngày được thống kê ở bảng sau. Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là",
-      "opts": ["$0,5$", "$0,9$", "$0,575$", "$0,975$"],
-      "correct": 2
-    },
-    {
-      "id": 1077,
-      "subject": "math",
-      "diff": "easy",
-      "source": "json_import",
-      "sol_text": "Từ bảng biến thiên, giá trị cực tiểu là $1$.",
-      "qtype": "single",
-      "text": "Cho hàm số $f(x)$ có bảng biến thiên như hình vẽ. Giá trị cực tiểu của hàm số đã cho là",
-      "opts": ["$y = 1$", "$y = 0$", "$y = -1$", "$y = 2$"],
-      "correct": 0
-    },
-    {
-      "id": 1078,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "$\\overrightarrow{AB} = (1,-2,-2)$, $\\overrightarrow{AC} = (5,-1,-1)$ nên $\\cos = \\dfrac{1}{\\sqrt{3}}$, $\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = 9$; các mệnh đề còn lại suy ra từ điều kiện hình thang và bài toán cực trị.",
-      "qtype": "tf4",
-      "text": "Trong không gian với hệ tọa độ $Oxyz$, cho hình thang $ABCD$ vuông tại $A$ và $B$. Biết $A(1;2;1)$, $B(2;0;-1)$, $C(6;1;0)$ và diện tích hình thang $ABCD$ bằng $6\\sqrt{2}$.",
-      "subqs": [
-        { "text": "$\\cos(\\overrightarrow{AB}, \\overrightarrow{AC}) = \\dfrac{\\sqrt{3}}{3}$.", "ans": true },
-        { "text": "Tọa độ điểm $D$ là $(a;b;c)$. Khi đó $a + b + c = \\dfrac{22}{3}$.", "ans": false },
-        { "text": "Gọi điểm $M(x_M;y_M;z_M)$ nằm trên mặt phẳng $(Oxy)$ thỏa mãn $MA^2 + 2MB^2 + 3MC^2$ đạt giá trị nhỏ nhất. Khi đó $x_M < 4$.", "ans": true },
-        { "text": "$\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = 9$.", "ans": true }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 }
-    },
-    {
-      "id": 1079,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "Biên độ là $10$ nên $\\min = -10$; giải $\\sin\\left(10t - \\frac{\\pi}{2}\\right) = \\frac{1}{2}$ cho thời điểm đầu tiên; $\\sin x$ xác định với mọi $t$; trong $3$ giây đầu, chu kỳ $T = \\frac{\\pi}{5}$, số lần qua VTCB là $\\frac{3}{T} \\times 2 = 10$.",
-      "qtype": "tf4",
-      "text": "Trong hình vẽ sau đây, khi kéo ra khỏi vị trí cân bằng ở điểm $O$ và buông tay, lực đàn hồi của lò xo khiến vật $A$ gắn ở đầu của lò xo dao động quanh $O$. Tọa độ $s$ (centimét) của $A$ trên trục $Ox$ vào thời điểm $t$ (giây) sau khi buông tay được xác định bởi công thức $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$.",
-      "subqs": [
-        { "text": "Giá trị nhỏ nhất của hàm số $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$ bằng $-1$.", "ans": false },
-        { "text": "Thời điểm đầu tiên tọa độ của vật $A$ trên trục bằng $5$ là $t = \\dfrac{2\\pi}{15}$ giây.", "ans": false },
-        { "text": "Tập xác định của hàm số $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$ là $\\mathbb{R}$.", "ans": true },
-        { "text": "Trong $3$ giây đầu tiên vật đi qua vị trí cân bằng $10$ lần.", "ans": true }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 }
-    },
-    {
-      "id": 1080,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "$h(t) = 5 + \\int v(t)dt$; $v(2) = 3,2$; $v(t) > 0$ trên $(0,10)$ nên giai đoạn tăng trưởng kéo dài $10$ tuần.",
-      "qtype": "tf4",
-      "text": "Cây cà chua khi trồng có chiều cao $5$ cm. Tốc độ tăng chiều cao của cây cà chua sau khi trồng $t$ tuần được cho bởi hàm số $v(t) = -0,1t^3 + t^2$, đơn vị: centimét/tuần. Gọi $h(t)$ là độ cao của cây cà chua ở tuần thứ $t$, đơn vị: centimét.",
-      "subqs": [
-        { "text": "Vào thời điểm cây cà chua đó phát triển nhanh nhất, chiều cao của cây cà chua nhỏ hơn $54$ cm.", "ans": false },
-        { "text": "Cây cà chua đó có thể phát triển và cao hơn $88$ cm.", "ans": true },
-        { "text": "Tốc độ tăng chiều cao của cây cà chua sau khi trồng được $2$ tuần là $3,2$ centimét/tuần.", "ans": true },
-        { "text": "Giai đoạn tăng trưởng của cây cà chua đó kéo dài $8$ tuần.", "ans": false }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 }
-    },
-    {
-      "id": 1081,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "$f'(x) = (x^2 - 3x + 2)e^x = (x - 1)(x - 2)e^x$; trên $[0,2]$, $\\min$ đạt tại $x = 0$.",
-      "qtype": "tf4",
-      "text": "Cho hàm số $y = f(x) = (x^2 - 5x + 7)e^x$.",
-      "subqs": [
-        { "text": "$f(0) = 7$.", "ans": true },
-        { "text": "Hàm số $y = f(x)$ nghịch biến trên khoảng $\\left(-\\infty;\\dfrac{5}{2}\\right)$.", "ans": false },
-        { "text": "Đạo hàm của hàm số đã cho là $f'(x) = (2x - 5)e^x$.", "ans": false },
-        { "text": "Giá trị nhỏ nhất của hàm số $y = f(x)$ trên đoạn $[0;2]$ bằng $7$.", "ans": true }
-      ],
-      "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 }
-    },
-    {
-      "id": 1082,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "Đếm tất cả cách chọn và sắp xếp $6$ số khác nhau vào $6$ ô của hình sao cho ba cột có tổng bằng nhau được $48$ cách.",
-      "qtype": "short",
-      "text": "Có bao nhiêu cách chọn sáu số từ chín số nguyên $1, 2, \\dots, 9$ và điền vào các ô của hình dưới đây (mỗi ô chỉ điền đúng một số) sao cho tổng các số ở mỗi cột (kể cả cột có một ô) bằng nhau?",
-      "answer": "48",
-      "unit": ""
-    },
-    {
-      "id": 1083,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "$\\cos\\alpha = \\sqrt{2} - \\dfrac{1}{\\sqrt{3}} \\approx 0,8374$, làm tròn được $0,84$.",
-      "qtype": "short",
-      "text": "Cho tứ diện $ABCD$ có $\\widehat{BAC} = 30^\\circ$, $\\widehat{CAD} = 45^\\circ$, $\\widehat{DAB} = 60^\\circ$. Gọi $\\alpha = [B;AD;C]$ thì giá trị của $\\cos \\alpha$ bằng bao nhiêu? (làm tròn đến hàng phần trăm)",
-      "answer": "0.84",
-      "unit": ""
-    },
-    {
-      "id": 1084,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "Xét các đỉnh miền nghiệm của hệ bất phương trình, giá trị lớn nhất của $80x + 60y$ là $640$.",
-      "qtype": "short",
-      "text": "Trong một cuộc thi pha chế, mỗi đội chơi được sử dụng tối đa $24$ gam hương liệu, $9$ lít nước và $210$ gam đường để pha chế nước ngọt loại I và nước ngọt loại II. Hỏi số điểm thưởng cao nhất có thể của mỗi đội trong cuộc thi là bao nhiêu?",
-      "answer": "640",
-      "unit": "điểm"
-    },
-    {
-      "id": 1085,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "Chỉ xảy ra khi $t = 7$ hoặc $t = 5$ kèm điều kiện một cạnh gấp đôi cạnh kia. Xác suất xấp xỉ $0,1744$, làm tròn được $0,17$.",
-      "qtype": "short",
-      "text": "Tung đồng thời hai con xúc xắc khác nhau đều cân đối và đồng chất ba lần. Chọn ngẫu nhiên một tam giác có hai cạnh có độ dài là $a$, $b$ và góc xen giữa chúng bằng $(t-1)15^\\circ$. Xác suất để tam giác này là tam giác vuông bằng bao nhiêu? (làm tròn đến hàng phần trăm)",
-      "answer": "0.17",
-      "unit": ""
-    },
-    {
-      "id": 1086,
-      "subject": "math",
-      "diff": "medium",
-      "source": "json_import",
-      "sol_text": "Từ $y'(t) = k y(t)$ suy ra $y(t) = Ce^{kt}$. Dùng $y(6)=2$ và $y(12)=1$ được $k = -\\dfrac{\\ln 2}{6}$, nên $y(30) = 2e^{24k} = \\dfrac{1}{8} = 0,125 \\approx 0,13$.",
-      "qtype": "short",
-      "text": "Nồng độ thuốc tồn dư trong nước tại thời điểm $30$ ngày bằng bao nhiêu mg/lít? (làm tròn đến hàng phần trăm)",
-      "answer": "0.13",
-      "unit": "mg/lít"
-    },
-    {
-      "id": 1087,
-      "subject": "math",
-      "diff": "hard",
-      "source": "json_import",
-      "sol_text": "Phản xạ $G$ qua $(ABCD)$ được $G'$. Giao của $MG'$ với $(ABCD)$ là $I\\left(4;\\dfrac{8}{3};0\\right)$, nên $a = \\dfrac{8}{3}$, $b = 2$ và $P = 3a + 6b = 20$.",
-      "qtype": "short",
-      "text": "Cho hình hộp chữ nhật $ABCD.EFGH$ với $AB = 6$, $AD = 8$ và $DH = 10$. Gọi $M$ là trung điểm của đoạn thẳng $AF$ và $I$ thuộc mặt phẳng $(ABCD)$. Khi $IM + IG$ nhỏ nhất thì điểm $I$ cách hai đường thẳng $BA$ và $BC$ tương ứng bằng $a$ và $b$. Giá trị của biểu thức $P = 3a + 6b$ bằng bao nhiêu?",
-      "answer": "20",
-      "unit": ""
-    }
-  ],
-  "submissions": [
-    {
-      "id": 1,
-      "userId": 1,
-      "examId": 9991,
-      "examName": "Đề kiểm tra Toán - Hàm số",
-      "subject": "math",
-      "score": 8,
-      "correct": 4,
-      "total": 5,
-      "time": "25:30",
-      "date": "2026-03-20",
-      "answers": { "1": 2, "2": 0, "3": 1, "4": 0, "5": 2 },
-      "questions": [101, 102, 103, 104, 105],
-      "isTestData": true
-    },
-    {
-      "id": 2,
-      "userId": 1,
-      "examId": 9992,
-      "examName": "Đề kiểm tra Toán - Phương trình",
-      "subject": "math",
-      "score": 6,
-      "correct": 3,
-      "total": 5,
-      "time": "28:15",
-      "date": "2026-03-18",
-      "answers": { "1": 0, "2": 1, "3": 2, "4": 1, "5": 3 },
-      "questions": [201, 202, 203, 204, 205],
-      "isTestData": true
-    },
-    {
-      "id": 3,
-      "userId": 1,
-      "examId": 9993,
-      "examName": "Đề kiểm tra Toán - Tích phân (YẾU)",
-      "subject": "math",
-      "score": 2,
-      "correct": 1,
-      "total": 5,
-      "time": "30:45",
-      "date": "2026-03-15",
-      "answers": { "1": 2, "2": 3, "3": 1, "4": 0, "5": 2 },
-      "questions": [301, 302, 303, 304, 305],
-      "isTestData": true
-    },
-    {
-      "id": 4,
-      "userId": 1,
-      "examId": 9994,
-      "examName": "Đề kiểm tra Vật lý - Cơ học",
-      "subject": "physics",
-      "score": 7,
-      "correct": 3.5,
-      "total": 5,
-      "time": "22:10",
-      "date": "2026-03-17",
-      "answers": { "1": 1, "2": 2, "3": 0, "4": 1, "5": 3 },
-      "questions": [401, 402, 403, 404, 405],
-      "isTestData": true
-    },
-    {
-      "id": 5,
-      "userId": 1,
-      "examId": 9995,
-      "examName": "Đề kiểm tra Vật lý - Điện học (YẾU)",
-      "subject": "physics",
-      "score": 4,
-      "correct": 2,
-      "total": 5,
-      "time": "35:20",
-      "date": "2026-03-14",
-      "answers": { "1": 0, "2": 2, "3": 1, "4": 3, "5": 0 },
-      "questions": [501, 502, 503, 504, 505],
-      "isTestData": true
-    },
-    {
-      "id": 6,
-      "userId": 1,
-      "examId": 9996,
-      "examName": "Đề kiểm tra Hóa - Vô cơ",
-      "subject": "chemistry",
-      "score": 8,
-      "correct": 4,
-      "total": 5,
-      "time": "20:45",
-      "date": "2026-03-16",
-      "answers": { "1": 2, "2": 0, "3": 1, "4": 2, "5": 3 },
-      "questions": [601, 602, 603, 604, 605],
-      "isTestData": true
-    },
-    {
-      "id": 7,
-      "userId": 1,
-      "examId": 9997,
-      "examName": "Đề kiểm tra Hóa - Hữu cơ (YẾU)",
-      "subject": "chemistry",
-      "score": 2,
-      "correct": 1,
-      "total": 5,
-      "time": "32:15",
-      "date": "2026-03-12",
-      "answers": { "1": 0, "2": 1, "3": 2, "4": 3, "5": 0 },
-      "questions": [701, 702, 703, 704, 705],
-      "isTestData": true
-    },
-    {
-      "id": 8,
-      "userId": 1,
-      "examId": 9998,
-      "examName": "Đề kiểm tra Anh - Ngữ pháp",
-      "subject": "english",
-      "score": 7,
-      "correct": 3.5,
-      "total": 5,
-      "time": "18:30",
-      "date": "2026-03-19",
-      "answers": { "1": 1, "2": 0, "3": 2, "4": 0, "5": 1 },
-      "questions": [801, 802, 803, 804, 805],
-      "isTestData": true
-    },
-    {
-      "id": 9,
-      "userId": 1,
-      "examId": 9999,
-      "examName": "Đề kiểm tra Anh - Từ vựng (YẾU)",
-      "subject": "english",
-      "score": 4,
-      "correct": 2,
-      "total": 5,
-      "time": "25:40",
-      "date": "2026-03-10",
-      "answers": { "1": 2, "2": 3, "3": 0, "4": 1, "5": 2 },
-      "questions": [901, 902, 903, 904, 905],
-      "isTestData": true
-    }
-  ],
-  "nextIds": {
-    "user": 4,
-    "room": 5,
-    "exam": 5,
-    "question": 1089,
-    "submission": 11
-  },
-  "session": null
-};
-
 const VIEW_IDS = ['login', 'dashboard', 'room', 'exam', 'result', 'history', 'admin', 'admin-rooms', 'admin-exams', 'admin-questions', 'admin-api'];
 
 
@@ -2738,10 +1836,10 @@ function toggleResultSolution() {
 
 // Điều hướng câu
 function resultPrevQ() {
-  if (resultCurrentQ > 1) renderResultQuestion(resultCurrentQ - 1);
+  if (resultCurrentQ > 1) loadResultQ(resultCurrentQ - 1);
 }
 function resultNextQ() {
-  if (resultCurrentQ < resultTotalQ) renderResultQuestion(resultCurrentQ + 1);
+  if (resultCurrentQ < resultTotalQ) loadResultQ(resultCurrentQ + 1);
 }
 
 // Lưu câu hỏi hiện tại vào kho lưu trữ
@@ -2793,19 +1891,31 @@ function loadDB() {
   if (saved) {
     try {
       DB = JSON.parse(saved);
-      dbg('Loaded from localStorage, users:', DB.users?.length || 0); 
+      dbg('Loaded from localStorage, users:', DB.users?.length || 0);
     } catch(e) {
-      console.error('Parse error, using default DB', e);
-      DB = JSON.parse(JSON.stringify(DEFAULT_DB));
+      console.error('Parse error, reset về DB mặc định', e);
+      localStorage.removeItem('examhub_db');
+      initMinimalDB();
+      return DB;
     }
   } else {
-    DB = JSON.parse(JSON.stringify(DEFAULT_DB));
-    dbg('Using default DB');
+    initMinimalDB();
+    dbg('Using default DB (initMinimalDB)');
+    return DB;
   }
-  
-  if (!DB.users) DB.users = [];
-  if (!DB.nextIds) DB.nextIds = { user: 1, question: 1 };
-  
+
+  if (!DB.users)       DB.users       = [];
+  if (!DB.rooms)       DB.rooms       = [];
+  if (!DB.exams)       DB.exams       = [];
+  if (!DB.questions)   DB.questions   = [];
+  if (!DB.submissions) DB.submissions = [];
+  if (!DB.nextIds) DB.nextIds = { user: 1, room: 1, exam: 1, question: 1, submission: 1 };
+  if (!DB.nextIds.room)       DB.nextIds.room       = Math.max(...DB.rooms.map(r=>r.id), 0) + 1;
+  if (!DB.nextIds.exam)       DB.nextIds.exam       = Math.max(...DB.exams.map(e=>e.id), 0) + 1;
+  if (!DB.nextIds.submission) DB.nextIds.submission = Math.max(...DB.submissions.map(s=>s.id), 0) + 1;
+  if (!DB.nextIds.question)   DB.nextIds.question   = Math.max(...DB.questions.map(q=>q.id), 0) + 1;
+  if (!DB.nextIds.user)       DB.nextIds.user       = Math.max(...DB.users.map(u=>u.id), 0) + 1;
+
   return DB;
 }
 
@@ -2946,8 +2056,14 @@ function importJSON() {
             const type = q.type || 'single';
             const newId = DB.nextIds.question++;
             
-            // Xử lý ảnh: hỗ trợ cả image và img
-            let imageUrl = q.image || q.img || null;
+            // ===== QUAN TRỌNG: XỬ LÝ ẢNH =====
+            // Hỗ trợ cả image và img
+            let imageUrl = null;
+            if (q.image) {
+                imageUrl = q.image;
+            } else if (q.img) {
+                imageUrl = q.img;
+            }
             
             const question = {
                 id: newId,
@@ -2957,7 +2073,7 @@ function importJSON() {
                 source: 'json_import',
                 sol_text: q.sol_text || q.explanation || '',
                 qtype: type,
-                img: imageUrl,
+                img: imageUrl,  // Lưu link ảnh vào trường img
                 opt_imgs: q.opt_images || []
             };
             
@@ -2972,7 +2088,6 @@ function importJSON() {
             }
             else if (type === 'tf4') {
                 question.statements = q.statements || ['', '', '', ''];
-                // Xử lý answers: có thể là boolean hoặc string "true"/"false"
                 let answers = q.answers || [true, false, true, false];
                 question.answers = answers.map(ans => {
                     if (typeof ans === 'boolean') return ans;
@@ -2980,7 +2095,6 @@ function importJSON() {
                     if (typeof ans === 'number') return ans === 1;
                     return false;
                 });
-                // Đảm bảo đúng 4 đáp án
                 while (question.answers.length < 4) question.answers.push(false);
                 question.answers = question.answers.slice(0, 4);
             }
@@ -2998,6 +2112,9 @@ function importJSON() {
                 question.answer = q.answer || '';
                 question.unit = q.unit || '';
             }
+            
+            // Log để kiểm tra
+            console.log(`Import câu ${newId}:`, { type: type, hasImage: !!imageUrl, imageUrl: imageUrl });
             
             DB.questions.push(question);
             newQuestionIds.push(newId);
@@ -3030,7 +2147,6 @@ function importJSON() {
             DB.exams.push(newExam);
             toast('✅', `Đã tạo đề thi "${examName}" với ${newQuestionIds.length} câu hỏi!`);
             
-            // Refresh danh sách đề thi nếu đang ở admin-exams
             if (typeof renderAdminExams === 'function') renderAdminExams();
         } else {
             toast('✅', `Đã import ${newQuestionIds.length} câu hỏi vào ngân hàng!`);
@@ -3039,6 +2155,16 @@ function importJSON() {
         
         persistDB();
         closeModal('m-json');
+        
+        // Thông báo về ảnh
+        const imagesCount = newQuestionIds.filter(id => {
+            const q = DB.questions.find(q => q.id === id);
+            return q && q.img;
+        }).length;
+        
+        if (imagesCount > 0) {
+            toast('🖼️', `${imagesCount} câu hỏi có ảnh đã được import!`);
+        }
         
     } catch(e) {
         toast('❌', 'Lỗi khi import: ' + e.message);
@@ -3244,213 +2370,6 @@ if (document.readyState === 'loading') {
   initModalClose();
 }
 
-
-
-function importJSON() {
-    const raw = document.getElementById('json-input').value.trim();
-    if (!raw) { toast('⚠️', 'Vui lòng nhập JSON'); return; }
-    
-    try {
-        let data = JSON.parse(raw);
-        if (!Array.isArray(data)) data = [data];
-        
-        const newIds = [];
-        
-        for (const q of data) {
-            const type = q.type || 'single';
-            let newQuestion = {
-                id: DB.nextIds.question++,
-                subject: q.subject || 'math',
-                diff: q.diff || 'medium',
-                source: 'json_import',
-                sol_text: q.sol_text || q.explanation || ''
-            };
-            
-            // Xử lý theo từng loại câu hỏi
-            switch (type) {
-                case 'single':
-                    if (!q.text || !q.opts || q.correct === undefined) {
-                        toast('⚠️', 'Bỏ qua câu thiếu text/opts/correct');
-                        continue;
-                    }
-                    newQuestion.qtype = 'single';
-                    newQuestion.text = q.text;
-                    newQuestion.opts = q.opts;
-                    newQuestion.correct = q.correct;
-                    break;
-                    
-                case 'multi':
-                    if (!q.text || !q.opts || !q.corrects) {
-                        toast('⚠️', 'Bỏ qua câu multi thiếu corrects');
-                        continue;
-                    }
-                    newQuestion.qtype = 'multi';
-                    newQuestion.text = q.text;
-                    newQuestion.opts = q.opts;
-                    newQuestion.corrects = q.corrects;
-                    break;
-                    
-                case 'tf4':
-                    if (!q.text || !q.statements || q.statements.length !== 4 || !q.answers || q.answers.length !== 4) {
-                        toast('⚠️', 'tf4 cần 4 statements và 4 answers');
-                        continue;
-                    }
-                    newQuestion.qtype = 'tf4';
-                    newQuestion.text = q.text;
-                    newQuestion.subqs = q.statements.map((stmt, i) => ({
-                        text: stmt,
-                        ans: q.answers[i]
-                    }));
-                    newQuestion.tf4scores = q.scores || { s1: 0.25, s2: 0.5, s3: 0.75, s4: 1 };
-                    break;
-                    
-                case 'tfn':
-                    if (!q.text || !q.statements || !q.answers || q.statements.length !== q.answers.length) {
-                        toast('⚠️', 'tfn cần statements và answers cùng số lượng');
-                        continue;
-                    }
-                    newQuestion.qtype = 'tfn';
-                    newQuestion.text = q.text;
-                    newQuestion.subqs = q.statements.map((stmt, i) => ({
-                        text: stmt,
-                        ans: q.answers[i]
-                    }));
-                    break;
-                    
-                case 'short':
-                    if (!q.text || q.answer === undefined) {
-                        toast('⚠️', 'short cần text và answer');
-                        continue;
-                    }
-                    newQuestion.qtype = 'short';
-                    newQuestion.text = q.text;
-                    newQuestion.answer = String(q.answer);
-                    newQuestion.unit = q.unit || '';
-                    break;
-                    
-                default:
-                    toast('⚠️', `Loại câu hỏi không hỗ trợ: ${type}`);
-                    continue;
-            }
-            
-            DB.questions.push(newQuestion);
-            newIds.push(newQuestion.id);
-        }
-        
-        if (newIds.length === 0) {
-            toast('⚠️', 'Không có câu hỏi hợp lệ nào để import');
-            return;
-        }
-        
-        // Nếu là mode exam, tạo đề thi
-        if (currentJSONMode === 'exam') {
-            const name = document.getElementById('json-exam-name')?.value.trim();
-            if (!name) { toast('⚠️', 'Vui lòng nhập tên đề thi'); return; }
-            
-            const roomId = parseInt(document.getElementById('json-exam-room')?.value);
-            const duration = parseInt(document.getElementById('json-exam-dur')?.value) || 90;
-            const type = document.getElementById('json-exam-type')?.value || 'trial';
-            
-            DB.exams.push({
-                id: DB.nextIds.exam++,
-                name: name,
-                roomId: roomId,
-                duration: duration,
-                type: type,
-                date: new Date().toISOString().split('T')[0],
-                questions: newIds.length,
-                questionIds: newIds
-            });
-            toast('✅', `Đã tạo đề thi "${name}" với ${newIds.length} câu hỏi (hỗ trợ đa dạng loại câu)`);
-            if (typeof renderAdminExams === 'function') renderAdminExams();
-        } else {
-            toast('✅', `Đã import ${newIds.length} câu hỏi (single/multi/tf4/tfn/short) vào ngân hàng`);
-            if (typeof renderAdminQuestions === 'function') renderAdminQuestions();
-        }
-        
-        persistDB();
-        closeModal('m-json');
-        
-    } catch (e) {
-        toast('❌', 'JSON không hợp lệ: ' + e.message);
-        console.error(e);
-    }
-}
-
-function showJSONSample() {
-    const prompt = `Bạn là chuyên gia ra đề thi. Hãy tạo câu hỏi theo yêu cầu với các LOẠI sau:
-
-1. Trắc nghiệm 1 đáp án (single)
-2. Trắc nghiệm nhiều đáp án (multi) 
-3. Đúng/Sai 4 câu (tf4)
-4. Đúng/Sai n câu (tfn)
-5. Trả lời ngắn (short)
-
-Trả về JSON array với format đúng theo từng loại.
-
-VÍ DỤ ĐẦY ĐỦ CÁC LOẠI:`;
-
-    const sample = `[
-  {
-    "type": "single",
-    "text": "Giải phương trình $x^2 - 5x + 6 = 0$. Tổng các nghiệm là?",
-    "opts": ["$3$", "$5$", "$6$", "$7$"],
-    "correct": 1,
-    "subject": "math",
-    "diff": "easy",
-    "sol_text": "Theo Vi-et: $S = -b/a = 5$"
-  },
-  {
-    "type": "multi", 
-    "text": "Chọn các đáp án đúng về tính chất của hàm số $y = x^3$:",
-    "opts": ["Đồng biến trên R", "Có cực trị", "Lẻ", "Cắt trục hoành tại 1 điểm"],
-    "corrects": [0, 2, 3],
-    "subject": "math",
-    "diff": "medium",
-    "sol_text": "$y'=3x^2 \\ge 0$, hàm lẻ vì $f(-x)=-f(x)$"
-  },
-  {
-    "type": "tf4",
-    "text": "Cho hàm số $f(x) = x^3 - 3x + 1$. Các mệnh đề sau đúng hay sai?",
-    "statements": [
-      "$f'(x) = 3x^2 - 3$",
-      "Hàm số đồng biến trên $(-\\infty, -1)$",
-      "Hàm số đạt cực đại tại $x=1$",
-      "$f(0) = 0$"
-    ],
-    "answers": [true, true, false, false],
-    "subject": "math",
-    "diff": "hard",
-    "sol_text": "$f'(x)=3x^2-3=0 \\Rightarrow x=\\pm 1$. CĐ tại $x=-1$, CT tại $x=1$"
-  },
-  {
-    "type": "tfn",
-    "text": "Xét các phát biểu về số nguyên tố:",
-    "statements": [
-      "2 là số nguyên tố chẵn duy nhất",
-      "Mọi số nguyên tố đều lẻ",
-      "Có vô hạn số nguyên tố"
-    ],
-    "answers": [true, false, true],
-    "subject": "math",
-    "diff": "easy",
-    "sol_text": "2 là số nguyên tố chẵn duy nhất, có vô hạn số nguyên tố"
-  },
-  {
-    "type": "short",
-    "text": "Tính $\\int_0^1 x^2 dx$",
-    "answer": "1/3",
-    "unit": "",
-    "subject": "math",
-    "diff": "easy",
-    "sol_text": "$\\int_0^1 x^2 dx = [x^3/3]_0^1 = 1/3$"
-  }
-]`;
-
-    document.getElementById('json-sample-prompt').textContent = prompt;
-    document.getElementById('json-sample-content').textContent = sample;
-    openModal('m-json-sample');
-}
 
 
 // ===== tokens.js =====
@@ -5276,7 +4195,7 @@ async function runAIFormatCheck() {
     if (!_consumeFormatCheck()) { toast('🚫', 'Hết lượt kiểm tra AI!'); return; }
 
     const raw = await callAI(_buildCheckPrompt(questionText, opts), 900);
-    const result = parseAIResponse(clean);
+    const result = parseAIResponse(raw);
     _renderCheckResult(result);
     _updateCheckBtnLabel();
     toast(result.ok ? '✅' : '⚠️', result.ok ? 'Format hợp lệ!' : `Có ${result.issues?.length||0} vấn đề cần xem`);
@@ -6551,654 +5470,6 @@ function saveExam() {
 window.openExamModal = openExamModal;
 window.saveExam = saveExam;
 
-// ===== result.js =====
-
-let _resultCurQ = 1;
-let _resultTotalQ = 50;
-let _resultUserAnswers = {};
-let _resultExam = null;
-let _resultQuestions = [];
-let _resultCorrectArr = [];
-
-function gradeQuestion(q, userAnswer) {
-  if (!q) return false;
-  const qtype = q.qtype || 'single';
-  
-  if (qtype === 'single') {
-    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-    const correctLetter = letters[q.correct];
-    return userAnswer === correctLetter;
-    
-  } else if (qtype === 'multi') {
-    const corrects = q.corrects || [];
-    if (!Array.isArray(userAnswer)) return false;
-    if (userAnswer.length !== corrects.length) return false;
-    return userAnswer.every((val, i) => val === corrects[i]);
-    
-  } else if (qtype === 'tf4' || qtype === 'tfn') {
-    // Lấy mảng đáp án đúng từ câu hỏi
-    let correctAnswers = [];
-    if (q.answers && Array.isArray(q.answers)) {
-      correctAnswers = q.answers;
-    } else if (q.subqs && Array.isArray(q.subqs)) {
-      correctAnswers = q.subqs.map(sq => sq.ans === true);
-    } else if (q.statements && Array.isArray(q.statements)) {
-      correctAnswers = q.statements.map(stmt => stmt.correct === true || stmt.ans === true);
-    }
-    
-    if (!Array.isArray(userAnswer)) return false;
-    if (userAnswer.length !== correctAnswers.length) return false;
-    
-    for (let i = 0; i < correctAnswers.length; i++) {
-      if (userAnswer[i] !== correctAnswers[i]) return false;
-    }
-    return true;
-    
-  } else if (qtype === 'short') {
-    const expected = String(q.answer || '').trim().toLowerCase();
-    const got = String(userAnswer || '').trim().toLowerCase();
-    return got === expected;
-  }
-  
-  return false;
-}
-
-
-function getFirstSubmissionsForExam(examId) {
-  if (!examId) return [];
-  const seen = new Set();
-  return [...DB.submissions]
-    .sort((a, b) => a.id - b.id)
-    .filter(sub => {
-      if (sub.examId !== examId) return false;
-      if ((sub.total ?? 0) <= 0) return false;
-      if (sub.correct === 0 && sub.time) {
-        const parts = String(sub.time).split(':');
-        const secs = (parseInt(parts[0]) || 0) * 60 + (parseInt(parts[1]) || 0);
-        if (secs < 30) return false;
-      }
-      if (seen.has(sub.userId)) return false;
-      seen.add(sub.userId);
-      return true;
-    });
-}
-
-function buildScoreDistribution(submissions, myScore) {
-  const el = document.getElementById('res-score-dist');
-  if (!el) return;
-  if (submissions.length < 2) {
-    el.innerHTML = `<div style="font-size:12px;color:var(--txt3);text-align:center;padding:14px">
-      Chưa đủ dữ liệu để hiển thị phổ điểm (cần ≥ 2 thí sinh).
-    </div>`;
-    return;
-  }
-  const buckets = Array(10).fill(0);
-  submissions.forEach(s => {
-    const idx = Math.min(9, Math.floor(s.score));
-    buckets[idx]++;
-  });
-  const maxCount = Math.max(1, ...buckets);
-  const myBucket = Math.min(9, Math.floor(myScore));
-  const aboveMe = submissions.filter(s => s.score > myScore).length;
-  const total = submissions.length;
-  const rankPct = total > 1 ? Math.round((1 - aboveMe / total) * 100) : null;
-
-  const labels = ['0–1','1–2','2–3','3–4','4–5','5–6','6–7','7–8','8–9','9–10'];
-  const colors = [
-    'var(--red)','var(--red)','var(--red)','var(--org)','var(--org)',
-    'var(--org)','var(--grn)','var(--grn)','var(--grn)','var(--acc)'
-  ];
-
-  el.innerHTML = `
-    <div style="margin-bottom:10px">
-      <div style="font-size:11.5px;color:var(--txt2);margin-bottom:6px">
-        Tổng <strong style="color:var(--txt)">${total}</strong> thí sinh đã hoàn thành đề này.
-        ${rankPct !== null ? `Điểm của bạn xếp <strong style="color:var(--acc)">top ${rankPct}%</strong>.` : ''}
-      </div>
-      <div style="display:flex;align-items:flex-end;gap:3px;height:70px">
-        ${buckets.map((cnt, i) => {
-          const h = Math.round((cnt / maxCount) * 60);
-          const isMe = i === myBucket;
-          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:default" title="${labels[i]}: ${cnt} thí sinh">
-            ${cnt > 0 ? `<div style="font-size:9px;color:var(--txt3)">${cnt}</div>` : '<div style="height:14px"></div>'}
-            <div style="width:100%;border-radius:3px 3px 0 0;background:${isMe ? colors[i] : colors[i]+'44'};border:${isMe ? `2px solid ${colors[i]}` : 'none'};height:${Math.max(3,h)}px;box-sizing:border-box;transition:height .3s"></div>
-          </div>`;
-        }).join('')}
-      </div>
-      <div style="display:flex;gap:3px;margin-top:3px">
-        ${labels.map((l, i) => `<div style="flex:1;font-size:8.5px;text-align:center;color:${i===myBucket?'var(--acc)':'var(--txt3)'};font-weight:${i===myBucket?700:400}">${l}</div>`).join('')}
-      </div>
-    </div>`;
-}
-
-function buildResultQGrid(total, correctArr, userAnswers) {
-  const grid = document.getElementById('res-qgrid');
-  if (!grid) return;
-  let html = '';
-  for (let i = 1; i <= total; i++) {
-    const isRight = correctArr[i - 1];
-    const ua = userAnswers[i];
-    let cls = 'res-qb';
-    if (ua === undefined || ua === null) cls += ' res-qb-skip';
-    else if (isRight) cls += ' res-qb-ok';
-    else cls += ' res-qb-err';
-    html += `<div class="${cls}" id="rqb-${i}" data-n="${i}" onclick="window.showResultQuestion(${i})">${i}</div>`;
-  }
-  grid.innerHTML = html;
-}
-
-window.showResultQuestion = function(n) {
-  if (n < 1 || n > _resultTotalQ) return;
-  _resultCurQ = n;
-
-  document.querySelectorAll('.res-qb').forEach(b => {
-    b.classList.toggle('cur', parseInt(b.dataset.n) === n);
-  });
-
-  const detail = document.getElementById('res-q-detail');
-  if (!detail) return;
-
-  const idx = (n - 1) % _resultQuestions.length;
-  const q = _resultQuestions[idx];
-  if (!q) return;
-
-  const userAns = _resultUserAnswers[n];
-  const isRight = _resultCorrectArr[n - 1];
-  const qtype = q.qtype || 'single';
-  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
-  // ===== TẠO HTML CÓ ẢNH =====
-  let imageHtml = '';
-  if (q.img && q.img.trim() !== '') {
-    imageHtml = `<img src="${q.img}" style="max-width:100%; max-height:250px; border-radius:8px; border:1px solid var(--bdr); margin:10px 0" onerror="this.style.display='none'">`;
-  }
-
-  let optsHtml = '';
-  
-  if (qtype === 'short') {
-    optsHtml = `
-      <div style="margin-top:12px">
-        <div style="font-size:11.5px;color:var(--txt2);margin-bottom:6px">Đáp án của bạn:</div>
-        <div style="padding:10px 14px;border-radius:8px;background:${isRight?'var(--grn-s)':'var(--red-s)'};border:1.5px solid ${isRight?'var(--grn)':'var(--red)'};font-size:14px;font-weight:600">
-          ${userAns || '<em style="color:var(--txt3)">Chưa trả lời</em>'}
-        </div>
-        <div style="margin-top:8px;font-size:11.5px;color:var(--txt2)">Đáp án đúng:</div>
-        <div style="padding:10px 14px;border-radius:8px;background:var(--grn-s);border:1.5px solid var(--grn);font-size:14px;font-weight:600;color:var(--grn)">${q.answer || ''}</div>
-      </div>`;
-      
-  } else if (qtype === 'tf4' || qtype === 'tfn') {
-    // ... (giữ nguyên phần xử lý tf4/tfn)
-    const statements = q.statements || q.subqs || [];
-    const correctAnswers = statements.map((_, i) => {
-      if (q.answers) return q.answers[i];
-      if (q.subqs) return q.subqs[i]?.ans;
-      return false;
-    });
-    const userChoices = userAns || [];
-    
-    optsHtml = `<div style="margin-top:12px">`;
-    statements.forEach((stmt, i) => {
-      const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
-      const isCorrect = correctAnswers[i] === true;
-      const userChoice = userChoices[i];
-      const isUserCorrect = (userChoice === isCorrect);
-      
-      let bgColor = 'var(--bg3)';
-      let borderColor = 'var(--bdr)';
-      if (userChoice !== undefined) {
-        bgColor = isUserCorrect ? 'var(--grn-s)' : 'var(--red-s)';
-        borderColor = isUserCorrect ? 'var(--grn)' : 'var(--red)';
-      }
-      
-      optsHtml += `
-        <div style="margin-bottom:10px;padding:10px;background:${bgColor};border-left:4px solid ${borderColor};border-radius:8px">
-          <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
-            <div><strong>${i+1}.</strong> <span id="result-stmt-${n}-${i}"></span></div>
-            <div style="font-size:12px">
-              <span style="color:var(--grn)">✓ Đáp án: ${isCorrect ? 'Đúng' : 'Sai'}</span>
-              <span style="margin-left:12px;color:${userChoice === undefined ? 'var(--txt3)' : (isUserCorrect ? 'var(--grn)' : 'var(--red)')}">
-                📝 Bạn: ${userChoice === undefined ? 'Chưa trả lời' : (userChoice ? 'Đúng' : 'Sai')}
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-    optsHtml += `</div>`;
-    
-    setTimeout(() => {
-      statements.forEach((stmt, i) => {
-        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
-        const el = document.getElementById(`result-stmt-${n}-${i}`);
-        if (el && stmtText) renderMarkdownAndLatex(el, stmtText);
-      });
-    }, 50);
-    
-  } else if (qtype === 'multi') {
-    // ... (giữ nguyên)
-  } else {
-    // ... (giữ nguyên)
-  }
-
-  const statusLabel = (userAns === undefined || userAns === null || (Array.isArray(userAns) && userAns.length === 0 && userAns !== false))
-    ? `<span style="background:var(--bg3);color:var(--txt2);border:1px solid var(--bdr);font-size:11px;padding:2px 8px;border-radius:4px">— Chưa trả lời</span>`
-    : isRight
-    ? `<span style="background:var(--grn-s);color:var(--grn);font-size:11px;padding:2px 8px;border-radius:4px">✓ Đúng</span>`
-    : `<span style="background:var(--red-s);color:var(--red);font-size:11px;padding:2px 8px;border-radius:4px">✗ Sai</span>`;
-
-  detail.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <button onclick="window.showResultQuestion(${n-1})" ${n<=1?'disabled':''} class="btn btn-g btn-sm">← Trước</button>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:12.5px;font-family:var(--fm);color:var(--txt2)">Câu ${n} / ${_resultTotalQ}</span>
-        ${statusLabel}
-      </div>
-      <button onclick="window.showResultQuestion(${n+1})" ${n>=_resultTotalQ?'disabled':''} class="btn btn-g btn-sm">Sau →</button>
-    </div>
-    <div style="font-size:13.5px;line-height:1.7;margin-bottom:4px" id="rq-text-${n}"></div>
-    ${imageHtml}
-    ${optsHtml}
-    ${q.sol_text || q.sol_video ? `
-      <div style="margin-top:14px;padding:12px 14px;background:var(--pur-s);border-radius:9px;border:1px solid rgba(167,139,250,.25)">
-        <div style="font-size:11.5px;font-weight:700;color:var(--pur);margin-bottom:6px">💡 Lời giải</div>
-        <div id="rq-sol-${n}" style="font-size:13px;color:var(--txt)"></div>
-        ${q.sol_video ? `<div id="rq-vid-${n}" style="margin-top:8px"></div>` : ''}
-      </div>` : ''}
-    ${!isRight && qtype !== 'tf4' && qtype !== 'tfn' ? `
-      <div style="margin-top:10px">
-        <button class="ai-inline-btn" id="ai-exp-btn-${n}" onclick="aiExplainQuestion(${q.id},this)">🤖 AI giải thích (${TOKEN_COSTS.explain_answer} token)</button>
-        <div id="ai-exp-${q.id}" style="display:none;margin-top:8px;padding:10px 12px;background:var(--pur-s);border:1px solid rgba(167,139,250,.2);border-radius:8px;font-size:12.5px;line-height:1.6;color:var(--txt)"></div>
-      </div>` : ''}
-  `;
-
-  const qtEl = document.getElementById(`rq-text-${n}`);
-  if (qtEl) renderMarkdownAndLatex(qtEl, q.text || '');
-
-  if (qtype !== 'short' && qtype !== 'tf4' && qtype !== 'tfn') {
-    (q.opts || []).forEach((opt, i) => {
-      const el = document.getElementById(`rq-opt-${n}-${i}`);
-      if (el) renderMarkdownAndLatex(el, opt || '');
-    });
-  }
-
-  if (q.sol_text) {
-    const solEl = document.getElementById(`rq-sol-${n}`);
-    if (solEl) renderMarkdownAndLatex(solEl, q.sol_text);
-  }
-  if (q.sol_video) {
-    const vidEl = document.getElementById(`rq-vid-${n}`);
-    if (vidEl) {
-      const yt = q.sol_video.match(/youtube\.com\/watch\?v=([\w-]+)/) || q.sol_video.match(/youtu\.be\/([\w-]+)/);
-      if (yt) vidEl.innerHTML = `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${yt[1]}" frameborder="0" allowfullscreen></iframe></div>`;
-    }
-  }
-
-  if (window.innerWidth < 900) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-// ===== RESULT.JS - HIỂN THỊ KẾT QUẢ =====
-function buildResultFromExam(exam, userAnswers, isTrial = false) {
-  if (!exam) return;
-  
-  let correct = 0;
-  let questions = [];
-  
-  if (exam.questionIds?.length) {
-    questions = exam.questionIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
-  } else {
-    // Fallback nếu không có questionIds
-    const totalQ = exam.questions || 50;
-    for (let i = 0; i < totalQ; i++) {
-      questions.push(DB.questions[i % DB.questions.length]);
-    }
-  }
-  
-  const totalQ = questions.length;
-  const correctArr = [];
-  
-  for (let i = 1; i <= totalQ; i++) {
-    const q = questions[i - 1];
-    const isRight = q ? gradeQuestion(q, userAnswers[i]) : false;
-    if (isRight) correct++;
-    correctArr.push(isRight);
-  }
-  
-  const score = totalQ > 0 ? (correct / totalQ * 10).toFixed(1) : '0.0';
-  const timeStr = formatTime(getTimerSec());
-  
-  // Lưu kết quả vào submission (trừ khi là chế độ thử)
-  if (!isTrial && exam) {
-    const submissionId = DB.nextIds.submission || (DB.submissions.length + 1);
-    DB.submissions.push({
-      id: submissionId,
-      userId: DB.session?.id || 1,
-      examId: exam.id,
-      examName: exam.name,
-      score: parseFloat(score),
-      correct: correct,
-      total: totalQ,
-      time: timeStr,
-      date: new Date().toLocaleDateString('vi-VN'),
-      answers: { ...userAnswers },
-      questions: questions.map(q => q.id),
-      isPersonalized: exam.isPersonal || false
-    });
-    DB.nextIds.submission = submissionId + 1;
-    persistDB();
-  }
-  
-  // Hiển thị kết quả
-  renderResultUI(score, correct, totalQ, timeStr, isTrial, exam);
-  
-  // Nếu là đề cá nhân hóa, hiển thị thêm phân tích
-  if (exam.isPersonal && exam.weakTopics) {
-    const analysisHtml = `
-      <div class="card" style="margin-top: 16px; background: var(--pur-s);">
-        <div class="card-title">📊 Phân tích đề cá nhân hóa</div>
-        <div>Đề được tạo dựa trên điểm yếu của bạn ở các chủ đề: 
-          <strong>${exam.weakTopics.join(', ')}</strong>
-        </div>
-        <div style="margin-top: 8px; font-size: 12px; color: var(--txt2);">
-          ${score >= 7 ? '🎉 Bạn đã cải thiện đáng kể! Hãy tiếp tục luyện tập.' : '💪 Cố gắng thêm! Ôn lại các chủ đề trên và thử lại.'}
-        </div>
-      </div>
-    `;
-    const heroDiv = document.getElementById('res-hero');
-    if (heroDiv) {
-      heroDiv.insertAdjacentHTML('afterend', analysisHtml);
-    }
-  }
-  
-  // Lưu questions và answers để dùng cho showResultQuestion
-  window._resultQuestions = questions;
-  window._resultUserAnswers = userAnswers;
-  window._resultCorrectArr = correctArr;
-  window._resultTotalQ = totalQ;
-  window._resultExam = exam;
-  
-  // Hiển thị đáp án chi tiết với nút hỏi AI
-  buildResultQGrid(totalQ, correctArr, userAnswers);
-  buildDetailedAnswers(questions, userAnswers, correctArr);
-  setTimeout(() => window.showResultQuestion(1), 80);
-  
-  initResultData(questions, userAnswers, correctArr, exam);
-  goTo('result');
-}
-
-// Hàm xây dựng đáp án chi tiết với nút hỏi AI
-function buildDetailedAnswers(questions, userAnswers, correctArr) {
-  const container = document.getElementById('res-q-detail');
-  if (!container) return;
-  
-  const AI_EXPLAIN_COST = 5;
-  const letters = ['A', 'B', 'C', 'D'];
-  
-  let html = '';
-  for (let i = 1; i <= questions.length; i++) {
-    const q = questions[i - 1];
-    if (!q) continue;
-    
-    const isRight = correctArr[i - 1];
-    const qtype = q.qtype || 'single';
-    
-    // Tạo HTML ảnh nếu có
-    let imageHtml = '';
-    if (q.img && q.img.trim() !== '') {
-      imageHtml = `<img src="${q.img}" style="max-width:100%; max-height:200px; border-radius:8px; border:1px solid var(--bdr); margin:10px 0" onerror="this.style.display='none'">`;
-    }
-    
-    html += `
-      <div class="rev-q" id="rev-q-${i}" style="margin-bottom: 20px; border-left: 4px solid ${isRight ? 'var(--grn)' : 'var(--red)'}">
-        <div class="rev-qh" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-          <div>
-            <span class="badge ${isRight ? 'b-grn' : 'b-red'}">Câu ${i}</span>
-            <span style="margin-left: 8px; font-size: 12px;">
-              ${isRight ? '✓ Đúng' : '✗ Sai'}
-            </span>
-          </div>
-          <button class="btn btn-pur btn-sm" onclick="askAIExplainMore(${q.id}, ${i}, this)" style="font-size: 11px; padding: 4px 12px;">
-            🤖 Hỏi AI giải thích thêm (${AI_EXPLAIN_COST} token)
-          </button>
-        </div>
-        <div class="rev-qt" id="rev-qt-${i}" style="font-size: 14px; font-weight: 500; margin-bottom: 12px;"></div>
-        ${imageHtml}
-        <div id="rev-opts-${i}" style="margin-bottom: 12px;"></div>
-        <div class="rev-o ca" style="background: var(--acc-s); padding: 12px; border-radius: 8px; margin-top: 8px;">
-          <strong>💡 Lời giải chi tiết:</strong>
-          <div id="rev-exp-${i}" style="margin-top: 8px; line-height: 1.6;"></div>
-        </div>
-        <div id="ai-extra-exp-${i}" style="display: none; margin-top: 12px; padding: 12px; background: var(--pur-s); border-radius: 8px;"></div>
-      </div>
-    `;
-  }
-  
-  container.innerHTML = html;
-  
-  // Render nội dung cho từng câu
-  for (let i = 1; i <= questions.length; i++) {
-    const q = questions[i - 1];
-    if (!q) continue;
-    
-    const qtype = q.qtype || 'single';
-    const userAnswer = userAnswers[i];
-    const isRight = correctArr[i - 1];
-    
-    // Render câu hỏi
-    const qEl = document.getElementById(`rev-qt-${i}`);
-    if (qEl) renderMarkdownAndLatex(qEl, q.text);
-    
-    // Render đáp án theo từng loại
-    const optsEl = document.getElementById(`rev-opts-${i}`);
-    if (!optsEl) continue;
-    
-    if (qtype === 'tf4' || qtype === 'tfn') {
-      // XỬ LÝ ĐÚNG/SAI
-      const statements = q.statements || q.subqs || [];
-      const correctAnswers = statements.map((_, idx) => {
-        if (q.answers) return q.answers[idx];
-        if (q.subqs) return q.subqs[idx]?.ans;
-        return false;
-      });
-      
-      optsEl.innerHTML = statements.map((stmt, idx) => {
-        const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
-        const isStmtCorrect = correctAnswers[idx] === true;
-        const userChoice = userAnswer ? userAnswer[idx] : undefined;
-        const isUserCorrect = (userChoice === isStmtCorrect);
-        
-        let bgColor = 'var(--bg3)';
-        let borderColor = 'var(--bdr)';
-        let userMark = '';
-        
-        if (userChoice !== undefined) {
-          if (isUserCorrect) {
-            bgColor = 'var(--grn-s)';
-            borderColor = 'var(--grn)';
-            userMark = ' ✓';
-          } else {
-            bgColor = 'var(--red-s)';
-            borderColor = 'var(--red)';
-            userMark = ' ✗';
-          }
-        }
-        
-        const correctDisplay = isStmtCorrect ? 'Đúng' : 'Sai';
-        const userDisplay = userChoice === undefined ? 'Chưa trả lời' : (userChoice ? 'Đúng' : 'Sai');
-        
-        return `
-          <div style="margin-bottom: 12px; padding: 12px; background: ${bgColor}; border-left: 4px solid ${borderColor}; border-radius: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
-              <span style="font-weight: 700;">${idx + 1}. ${stmtText}</span>
-              <div style="display: flex; gap: 12px; font-size: 12px;">
-                <span style="color: var(--grn);">✓ Đáp án đúng: ${correctDisplay}</span>
-                <span style="color: ${userChoice === undefined ? 'var(--txt3)' : (isUserCorrect ? 'var(--grn)' : 'var(--red)')}">
-                  📝 Bạn chọn: ${userDisplay}${userMark}
-                </span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-      
-    } else if (qtype === 'short') {
-      // XỬ LÝ TRẢ LỜI NGẮN
-      const correctAnswer = q.answer || '';
-      const userAnswerText = userAnswer || 'Chưa trả lời';
-      optsEl.innerHTML = `
-        <div style="padding: 12px; background: ${isRight ? 'var(--grn-s)' : 'var(--red-s)'}; border-radius: 8px;">
-          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-            <span><strong>📝 Đáp án của bạn:</strong> ${userAnswerText}</span>
-            <span><strong>✅ Đáp án đúng:</strong> ${correctAnswer}</span>
-          </div>
-        </div>
-      `;
-      
-    } else {
-      // XỬ LÝ TRẮC NGHIỆM (single/multi)
-      const lettersList = ['A', 'B', 'C', 'D', 'E', 'F'];
-      const corrects = qtype === 'multi' ? (q.corrects || []) : [q.correct];
-      const userSelected = qtype === 'multi' ? (userAnswer || []) : 
-                          (userAnswer ? lettersList.indexOf(userAnswer) : -1);
-      
-      optsEl.innerHTML = (q.opts || []).map((opt, j) => {
-        const isCorrect = corrects.includes(j);
-        const isUserSelected = qtype === 'multi' ? userSelected.includes(j) : (userSelected === j);
-        
-        let bgColor = 'var(--bg3)';
-        let mark = '';
-        
-        if (isCorrect && isUserSelected) {
-          bgColor = 'var(--grn-s)';
-          mark = ' ✓ Đúng';
-        } else if (isCorrect && !isUserSelected) {
-          bgColor = 'var(--grn-s)';
-          mark = ' (Đáp án đúng)';
-        } else if (!isCorrect && isUserSelected) {
-          bgColor = 'var(--red-s)';
-          mark = ' ✗ Sai';
-        }
-        
-        return `
-          <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 6px; background: ${bgColor}; border-radius: 6px;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bgh); display: flex; align-items: center; justify-content: center; font-weight: bold;">${lettersList[j]}</div>
-            <div style="flex: 1;" id="rev-opt-${i}-${j}"></div>
-            ${mark ? `<span style="font-size: 11px; font-weight: 500; color: ${isCorrect ? 'var(--grn)' : 'var(--red)'}">${mark}</span>` : ''}
-          </div>
-        `;
-      }).join('');
-      
-      // Render nội dung từng đáp án
-      (q.opts || []).forEach((opt, j) => {
-        const optEl = document.getElementById(`rev-opt-${i}-${j}`);
-        if (optEl) renderMarkdownAndLatex(optEl, opt);
-      });
-    }
-    
-    // Render lời giải
-    const expEl = document.getElementById(`rev-exp-${i}`);
-    if (expEl && q.sol_text) {
-      renderMarkdownAndLatex(expEl, q.sol_text);
-    } else if (expEl) {
-      expEl.innerHTML = '<em>Chưa có lời giải chi tiết. Hãy bấm "Hỏi AI giải thích thêm" để được hỗ trợ.</em>';
-    }
-  }
-}
-
-function buildResultFromSubmission(submission) {
-  if (!submission) return;
-  const exam = DB.exams.find(e => e.id === submission.examId);
-  if (!exam) return;
-  let questions = [];
-  if (submission.questions) {
-    questions = submission.questions.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
-  } else if (exam.questionIds) {
-    questions = exam.questionIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
-  } else {
-    for (let i = 0; i < submission.total; i++) questions.push(DB.questions[i % DB.questions.length]);
-  }
-
-  const correctArr = [];
-  for (let i = 1; i <= submission.total; i++) {
-    const q = questions[i - 1];
-    const isRight = q ? gradeQuestion(q, submission.answers[i]) : false;
-    correctArr.push(isRight);
-  }
-
-  _resultTotalQ = submission.total;
-  _resultUserAnswers = { ...submission.answers };
-  _resultExam = exam;
-  _resultQuestions = questions;
-  _resultCorrectArr = correctArr;
-
-  renderResultUI(submission.score, submission.correct, submission.total, submission.time, false, exam);
-  buildScoreDistribution(getFirstSubmissionsForExam(exam.id), submission.score);
-  buildResultQGrid(submission.total, correctArr, submission.answers);
-  setTimeout(() => window.showResultQuestion(1), 80);
-
-  const suggestEl = document.getElementById('res-suggest');
-  if (suggestEl) {
-    const isGood = submission.score >= 7;
-    suggestEl.innerHTML = isGood
-      ? `Kết quả tốt! Bạn làm tốt phần đầu. Ôn thêm phần cuối để tăng điểm.<br><br><button class="btn btn-o btn-full" onclick="goTo('room')">📚 Làm thêm đề</button>`
-      : `Cần ôn tập thêm. Tập trung vào các dạng bài bạn hay sai.<br><br><button class="btn btn-p btn-full" onclick="startExam(${exam.id})">🔄 Làm lại ngay</button>`;
-  }
-
-  goTo('result');
-}
-
-function renderResultUI(score, correct, total, timeStr, isTrial, exam) {
-  const heroDiv = document.getElementById('res-hero');
-  if (!heroDiv) return;
-  const trialNote = isTrial
-    ? `<div style="background:var(--gold-s);border-radius:8px;padding:8px 14px;margin-bottom:10px;display:flex;align-items:center;gap:7px"><span>🧪</span><span><strong>Chế độ làm thử</strong> — Kết quả không lưu</span></div>`
-    : '';
-  const isGood = parseFloat(score) >= 7;
-  heroDiv.innerHTML = `
-    ${trialNote}
-    <div class="res-circle" style="${isGood ? '' : 'border-color:var(--org);'}">
-      <div class="res-sb" style="${isGood ? '' : 'color:var(--org)'}">${score}</div>
-      <div class="res-sm">/10</div>
-    </div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:5px">${isGood ? 'Hoàn thành xuất sắc! 🎉' : 'Cố gắng hơn lần sau! 💪'}</div>
-    <div style="font-size:12px;color:var(--txt2)">${exam?.name || 'Bài thi'}${isTrial ? ' <span style="color:var(--gold)">(Bài thử)</span>' : ''}</div>
-    <div class="res-grid">
-      <div class="rs"><div class="rs-v c-grn">${correct}</div><div class="rs-l">Câu đúng</div></div>
-      <div class="rs"><div class="rs-v c-red">${total - correct}</div><div class="rs-l">Câu sai</div></div>
-      <div class="rs"><div class="rs-v c-acc">${timeStr}</div><div class="rs-l">Thời gian</div></div>
-    </div>
-    <div style="display:flex;gap:9px;justify-content:center;margin-top:16px">
-      ${isTrial
-        ? `<button class="btn btn-g" onclick="exitTrialMode()">← Thoát thử</button><button class="btn btn-pur" onclick="startExam(${exam?.id})">🔄 Thử lại</button>`
-        : `<button class="btn btn-o" onclick="goTo('room')">📋 Về phòng thi</button><button class="btn btn-p" onclick="startExam(${exam?.id})">🔄 Làm lại</button>`
-      }
-    </div>`;
-}
-
-window.aiExplainQuestion = async function(qId, btnEl) {
-  const cost = TOKEN_COSTS.explain_answer;
-  if (!canAfford(cost)) { toast('❌',`Cần ${cost} token. Không đủ token!`); return; }
-  const q = DB.questions.find(q=>q.id===qId); if (!q) return;
-  const boxId = 'ai-exp-'+qId;
-  let box = document.getElementById(boxId);
-  if (!box) return;
-  if (btnEl) btnEl.disabled=true;
-  box.style.display='block';
-  box.innerHTML='<span class="spin">⚙️</span> AI đang giải thích...';
-  try {
-    const letters    = ['A','B','C','D'];
-    const correctAns = letters[q.correct]||'A';
-    const prompt     = `Câu hỏi: ${q.text.replace(/\$/g,'')}\nĐáp án đúng: ${correctAns}. ${q.opts?.[q.correct]||''}\nHãy giải thích tại sao đáp án này đúng, ngắn gọn (2-4 câu), bằng tiếng Việt.`;
-    const explanation = await callAI(prompt, 300);
-    box.innerHTML = `<div style="font-size:12px;line-height:1.6">💡 <strong>Giải thích AI:</strong><br>${explanation}</div>`;
-    consumeTokens(DB.session?.id, cost);
-    toast('✅',`Đã giải thích (−${cost} token)`);
-  } catch(err) {
-    box.innerHTML='<span style="color:var(--red)">❌ '+err.message+'</span>';
-  } finally {
-    if (btnEl) btnEl.disabled=false;
-  }
-};
-
 // ===== exam.js =====
 
 let curQ = 1;
@@ -7883,6 +6154,106 @@ function renderHistory() {
   }).join('');
 }
 
+// ====================== GRADE QUESTION ======================
+// Chấm điểm cho 1 câu hỏi dựa trên loại câu và đáp án của user
+function gradeQuestion(q, userAnswer) {
+  if (!q || userAnswer === undefined || userAnswer === null) return false;
+  const qtype = q.qtype || 'single';
+
+  if (qtype === 'single') {
+    // userAnswer là chữ cái 'A','B','C','D' hoặc index số
+    const letters = ['A','B','C','D'];
+    if (typeof userAnswer === 'string' && letters.includes(userAnswer)) {
+      return letters.indexOf(userAnswer) === q.correct;
+    }
+    return Number(userAnswer) === q.correct;
+  }
+
+  if (qtype === 'multi') {
+    // userAnswer là mảng chữ cái hoặc mảng index
+    const letters = ['A','B','C','D'];
+    const corrects = new Set(q.corrects || []);
+    let userIdxs;
+    if (Array.isArray(userAnswer)) {
+      userIdxs = new Set(userAnswer.map(a => typeof a === 'string' ? letters.indexOf(a) : Number(a)));
+    } else {
+      return false;
+    }
+    if (userIdxs.size !== corrects.size) return false;
+    for (const idx of corrects) { if (!userIdxs.has(idx)) return false; }
+    return true;
+  }
+
+  if (qtype === 'tf4' || qtype === 'tfn') {
+    // userAnswer là object { 0: true/false, 1: true/false, ... } hoặc mảng
+    const subqs = q.subqs || [];
+    if (Array.isArray(userAnswer)) {
+      return subqs.every((sq, i) => userAnswer[i] === sq.ans);
+    }
+    if (typeof userAnswer === 'object') {
+      return subqs.every((sq, i) => userAnswer[i] === sq.ans);
+    }
+    return false;
+  }
+
+  if (qtype === 'short') {
+    // So sánh chuỗi, không phân biệt hoa/thường, trim khoảng trắng
+    const correct = String(q.answer || '').trim().toLowerCase().replace(',', '.');
+    const user    = String(userAnswer).trim().toLowerCase().replace(',', '.');
+    if (correct === user) return true;
+    // So sánh số (để 1/3 == 0.333... không cần, chỉ so sánh chính xác)
+    return false;
+  }
+
+  return false;
+}
+
+// ====================== BUILD RESULT FROM SUBMISSION ======================
+// Xem lại kết quả từ một lần nộp bài đã lưu trong DB
+function buildResultFromSubmission(sub) {
+  if (!sub) return;
+
+  // Lấy đề thi
+  const exam = DB.exams.find(e => e.id === sub.examId);
+  if (!exam) {
+    toast('⚠️', 'Không tìm thấy đề thi!');
+    return;
+  }
+
+  // Lấy danh sách câu hỏi theo questionIds của đề, hoặc theo sub.questions
+  const qIds = exam.questionIds || sub.questions || [];
+  const questions = qIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
+
+  if (!questions.length) {
+    toast('⚠️', 'Không tìm thấy câu hỏi trong đề!');
+    return;
+  }
+
+  // Tái tạo correctArr từ đáp án đã lưu
+  const answers = sub.answers || {};
+  const correctArr = questions.map((q, i) => gradeQuestion(q, answers[i + 1]));
+
+  // Gán vào biến result toàn cục
+  resultTotalQ     = questions.length;
+  resultQuestions  = questions;
+  resultUserAnswers = answers;
+  resultCorrectArr = correctArr;
+  resultExam       = exam;
+
+  // Hiển thị điểm
+  const score = sub.score !== undefined ? sub.score : (correctArr.filter(Boolean).length / questions.length * 10).toFixed(1);
+  document.getElementById('result-score-display').textContent = score;
+  document.getElementById('result-et-name').textContent = exam.name;
+
+  buildResultQGrid(questions.length, correctArr, answers);
+  resultCurrentQ = 1;
+  loadResultQ(1);
+  goTo('result');
+}
+
+window.gradeQuestion            = gradeQuestion;
+window.buildResultFromSubmission = buildResultFromSubmission;
+
 window.viewHistoryResult = function(submissionId) {
   const sub = DB.submissions.find(s => s.id === submissionId);
   if (sub) buildResultFromSubmission(sub);
@@ -8105,7 +6476,6 @@ window.renderTokenTable = renderTokenTable;
 window.grantTokens      = grantTokens;
 window.setTokens        = setTokens;
 
-window.buildResultFromSubmission = buildResultFromSubmission;
 
 window.renderAdmin = renderAdmin;
 window.renderAdminRooms = renderAdminRooms;
@@ -8419,6 +6789,404 @@ window.saveQuestionFromEditor = function() {
     }
     originalSaveQuestionFromEditor();
 };
+
+
+
+
+// ====================== DB BAN ĐẦU (chỉ 3 user + 1 đề 15 câu) ======================
+function initMinimalDB() {
+  DB = {
+    nextIds: { user: 4, room: 2, exam: 2, question: 1066, submission: 1 },
+    users: [
+      { id:1, email:"student@exam.vn", pass:"123456", name:"Học sinh Test", role:"student", initials:"HT", premium:false },
+      { id:2, email:"teacher@exam.vn", pass:"teacher1", name:"Giáo viên Test", role:"teacher", initials:"GV", premium:false },
+      { id:3, email:"admin@exam.vn", pass:"admin123", name:"Admin Test", role:"admin", initials:"AD", premium:false }
+    ],
+    rooms: [{
+      id:1, name:"Toán học THPT", desc:"Phòng thi Toán học THPT", subject:"math",
+      icon:"📐", color:"var(--acc-s)",
+      status:"open", start:"2026-04-01T00:00", end:"2026-12-31T23:59", premium:false
+    }],
+    exams: [{
+      id:1, name:"Đề toán sở Thái Nguyên lần 1 năm 2026", roomId:1, duration:90,
+      type:"official", author:"Admin", questions:22,
+      questionIds:[1044,1045,1046,1047,1048,1049,1050,1051,1052,1053,1054,1055,1056,1057,1058,1059,1060,1061,1062,1063,1064,1065],
+      created: new Date().toISOString()
+    }],
+    questions: [
+  {
+    "id": 1044,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "Thể tích khối chóp: $V = \\frac{1}{3} \\times S_{ABCD} \\times SA = \\frac{1}{3} \\times (1 \\times 1) \\times 3 = 1$.",
+    "qtype": "single",
+    "text": "Cho hình chóp $S.ABCD$ có $SA$ vuông góc với mặt phẳng $(ABCD)$, tứ giác $ABCD$ là hình vuông, $SA = 3$ và $AB = 1$. Thể tích của khối chóp $S.ABCD$ bằng",
+    "opts": ["$2$", "$1$", "$3$", "$9$"],
+    "correct": 1
+  },
+  {
+    "id": 1045,
+    "subject": "math",
+    "diff": "easy",
+    "source": "manual",
+    "sol_text": "$GF$ nằm trong mặt phẳng $(EFGH)$ song song với $(ABCD)$, nên $GF \\parallel (ABCD)$.",
+    "qtype": "single",
+    "text": "Cho hình hộp $ABCD.EFGH$. Đường thẳng $GF$ song song với mặt phẳng nào sau đây?",
+    "opts": ["$(ACGE)$", "$(ABFE)$", "$(ABCD)$", "$(BDHF)$"],
+    "correct": 2,
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/9FCNr8t4/2.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1046,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "$\\log_2(x - 1) = 3 \\Leftrightarrow x - 1 = 2^3 = 8 \\Leftrightarrow x = 9$.",
+    "qtype": "single",
+    "text": "Nghiệm của phương trình $\\log_2(x - 1) = 3$ là",
+    "opts": ["$x = 9$", "$x = 4$", "$x = 7$", "$x = 10$"],
+    "correct": 0
+  },
+  {
+    "id": 1047,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "Từ đồ thị, hàm số tăng trên khoảng $(-\\infty;-1)$ (đồ thị đi lên từ trái sang phải).",
+    "qtype": "single",
+    "text": "Cho hàm số đa thức bậc bốn $y = f(x)$ có đồ thị như hình vẽ. Hàm số đã cho đồng biến trên khoảng nào dưới đây?",
+    "opts": ["$(-1;0)$", "$(-\\infty;-1)$", "$(-\\infty;1)$", "$(-1;+\\infty)$"],
+    "correct": 1,
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/t47kxL1J/4.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1048,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "Bậc tử và mẫu bằng nhau nên tiệm cận ngang là $y = \\dfrac{2}{1} = 2$.",
+    "qtype": "single",
+    "text": "Tiệm cận ngang của đồ thị hàm số $y = \\dfrac{2x - 5}{x + 2}$ là đường thẳng có phương trình",
+    "opts": ["$y = -2$", "$y = \\dfrac{5}{2}$", "$y = \\dfrac{2}{5}$", "$y = 2$"],
+    "correct": 3
+  },
+  {
+    "id": 1049,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "$\\int 2^x dx = \\dfrac{2^x}{\\ln 2}$ và $\\int x dx = \\dfrac{x^2}{2}$.",
+    "qtype": "single",
+    "text": "Nguyên hàm của hàm số $f(x) = 2^x + x$ là",
+    "opts": [
+      "$\\dfrac{2^x}{\\ln 2} + x^2 + C$",
+      "$\\dfrac{2^x}{\\ln 2} + \\dfrac{x^2}{2} + C$",
+      "$2^x + \\dfrac{x^2}{2} + C$",
+      "$2^x + x^2 + C$"
+    ],
+    "correct": 1
+  },
+  {
+    "id": 1050,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "Đường cong là đồ thị hàm bậc ba có hệ số bậc ba dương và tung độ gốc bằng $1$.",
+    "qtype": "single",
+    "text": "Đồ thị của hàm số nào dưới đây có dạng như đường cong trong hình vẽ?",
+    "opts": [
+      "$y = \\dfrac{2x - 1}{x + 2}$",
+      "$y = x^3 - 3x + 1$",
+      "$y = -x^3 + 3x + 1$",
+      "$y = \\dfrac{x^2 - 1}{2x - 1}$"
+    ],
+    "correct": 1,
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/NFp8y4BX/7.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1051,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "Chiếu lên $(Oxz)$ thì $y = 0$, nên được $(2;0;-1)$.",
+    "qtype": "single",
+    "text": "Trong không gian với hệ tọa độ $Oxyz$, hình chiếu vuông góc của điểm $M(2;1;-1)$ trên mặt phẳng $(Oxz)$ có tọa độ là",
+    "opts": ["$(0;1;0)$", "$(2;1;0)$", "$(0;1;-1)$", "$(2;0;-1)$"],
+    "correct": 3
+  },
+  {
+    "id": 1052,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "$u_4 = u_1 + 3d \\Rightarrow 11 = 2 + 3d \\Rightarrow d = 3$.",
+    "qtype": "single",
+    "text": "Cho cấp số cộng $(u_n)$ có $u_1 = 2$ và $u_4 = 11$. Công sai của cấp số cộng đã cho bằng",
+    "opts": ["$1$", "$2$", "$4$", "$3$"],
+    "correct": 3
+  },
+  {
+    "id": 1053,
+    "subject": "math",
+    "diff": "easy",
+    "source": "json_import",
+    "sol_text": "$\\vec{c} = (2,-1,3) - 2(1,3,-2) = (0,-7,7)$.",
+    "qtype": "single",
+    "text": "Trong không gian với hệ tọa độ $Oxyz$, cho vectơ $\\vec{a} = (2;-1;3)$, $\\vec{b} = (1;3;-2)$. Tọa độ của vectơ $\\vec{c} = \\vec{a} - 2\\vec{b}$ là",
+    "opts": ["$(0;-7;7)$", "$(4;-7;7)$", "$(0;7;7)$", "$(0;-7;-7)$"],
+    "correct": 0
+  },
+  {
+    "id": 1054,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "$Q_1 = 3,1$; $Q_3 = 3,675$; $IQR = 3,675 - 3,1 = 0,575$.",
+    "qtype": "single",
+    "text": "Quãng đường đi bộ mỗi ngày của bác An trong 20 ngày được thống kê ở bảng sau. Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là",
+    "opts": ["$0,5$", "$0,9$", "$0,575$", "$0,975$"],
+    "correct": 2,
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/63KCYSQ5/11.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1055,
+    "subject": "math",
+    "diff": "easy",
+    "source": "manual",
+    "sol_text": "Từ bảng biến thiên, giá trị cực tiểu là $1$.",
+    "qtype": "single",
+    "text": "Cho hàm số $f(x)$ có bảng biến thiên như hình vẽ. Giá trị cực tiểu của hàm số đã cho là",
+    "opts": ["$y = 1$", "$y = 0$", "$y = -1$", "$y = 2$"],
+    "correct": 0,
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/15d6L4zJ/12.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1056,
+    "subject": "math",
+    "diff": "hard",
+    "source": "manual",
+    "sol_text": "$\\overrightarrow{AB} = (1,-2,-2)$, $\\overrightarrow{AC} = (5,-1,-1)$ nên $\\cos = \\dfrac{1}{\\sqrt{3}}$, $\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = 9$; các mệnh đề còn lại suy ra từ điều kiện hình thang và bài toán cực trị.",
+    "qtype": "tf4",
+    "text": "Trong không gian với hệ tọa độ $Oxyz$, cho hình thang $ABCD$ vuông tại $A$ và $B$. Biết $A(1;2;1)$, $B(2;0;-1)$, $C(6;1;0)$ và diện tích hình thang $ABCD$ bằng $6\\sqrt{2}$.",
+    "subqs": [
+      { "text": "$\\cos(\\overrightarrow{AB}, \\overrightarrow{AC}) = \\dfrac{\\sqrt{3}}{3}$.", "ans": true },
+      { "text": "Tọa độ điểm $D$ là $(a;b;c)$. Khi đó $a + b + c = \\dfrac{22}{3}$.", "ans": false },
+      { "text": "Gọi điểm $M(x_M;y_M;z_M)$ nằm trên mặt phẳng $(Oxy)$ thỏa mãn $MA^2 + 2MB^2 + 3MC^2$ đạt giá trị nhỏ nhất. Khi đó $x_M < 4$.", "ans": true },
+      { "text": "$\\overrightarrow{AB} \\cdot \\overrightarrow{AC} = 9$.", "ans": true }
+    ],
+    "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": null,
+    "opt_imgs": []
+  },
+  {
+    "id": 1057,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "Biên độ là $10$ nên $\\min = -10$; giải $\\sin\\left(10t - \\frac{\\pi}{2}\\right) = \\frac{1}{2}$ cho thời điểm đầu tiên; $\\sin x$ xác định với mọi $t$; trong $3$ giây đầu, chu kỳ $T = \\frac{\\pi}{5}$, số lần qua VTCB là $\\frac{3}{T} \\times 2 = 10$.",
+    "qtype": "tf4",
+    "text": "Trong hình vẽ sau đây, khi kéo ra khỏi vị trí cân bằng ở điểm $O$ và buông tay, lực đàn hồi của lò xo khiến vật $A$ gắn ở đầu của lò xo dao động quanh $O$. Tọa độ $s$ (centimét) của $A$ trên trục $Ox$ vào thời điểm $t$ (giây) sau khi buông tay được xác định bởi công thức $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$.",
+    "subqs": [
+      { "text": "Giá trị nhỏ nhất của hàm số $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$ bằng $-1$.", "ans": false },
+      { "text": "Thời điểm đầu tiên tọa độ của vật $A$ trên trục bằng $5$ là $t = \\dfrac{2\\pi}{15}$ giây.", "ans": false },
+      { "text": "Tập xác định của hàm số $s = 10\\sin\\left(10t - \\dfrac{\\pi}{2}\\right)$ là $\\mathbb{R}$.", "ans": true },
+      { "text": "Trong $3$ giây đầu tiên vật đi qua vị trí cân bằng $10$ lần.", "ans": true }
+    ],
+    "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/Vv6rhcP1/14.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1058,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "$h(t) = 5 + \\int v(t)dt$; $v(2) = 3,2$; $v(t) > 0$ trên $(0,10)$ nên giai đoạn tăng trưởng kéo dài $10$ tuần.",
+    "qtype": "tf4",
+    "text": "Cây cà chua khi trồng có chiều cao $5$ cm. Tốc độ tăng chiều cao của cây cà chua sau khi trồng $t$ tuần được cho bởi hàm số $v(t) = -0,1t^3 + t^2$, đơn vị: centimét/tuần. Gọi $h(t)$ là độ cao của cây cà chua ở tuần thứ $t$, đơn vị: centimét.",
+    "subqs": [
+      { "text": "Vào thời điểm cây cà chua đó phát triển nhanh nhất, chiều cao của cây cà chua nhỏ hơn $54$ cm.", "ans": false },
+      { "text": "Cây cà chua đó có thể phát triển và cao hơn $88$ cm.", "ans": true },
+      { "text": "Tốc độ tăng chiều cao của cây cà chua sau khi trồng được $2$ tuần là $3,2$ centimét/tuần.", "ans": true },
+      { "text": "Giai đoạn tăng trưởng của cây cà chua đó kéo dài $8$ tuần.", "ans": false }
+    ],
+    "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": null,
+    "opt_imgs": []
+  },
+  {
+    "id": 1059,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "$f'(x) = (x^2 - 3x + 2)e^x = (x - 1)(x - 2)e^x$; trên $[0,2]$, $\\min$ đạt tại $x = 0$.",
+    "qtype": "tf4",
+    "text": "Cho hàm số $y = f(x) = (x^2 - 5x + 7)e^x$.",
+    "subqs": [
+      { "text": "$f(0) = 7$.", "ans": true },
+      { "text": "Hàm số $y = f(x)$ nghịch biến trên khoảng $\\left(-\\infty;\\dfrac{5}{2}\\right)$.", "ans": false },
+      { "text": "Đạo hàm của hàm số đã cho là $f'(x) = (2x - 5)e^x$.", "ans": false },
+      { "text": "Giá trị nhỏ nhất của hàm số $y = f(x)$ trên đoạn $[0;2]$ bằng $7$.", "ans": true }
+    ],
+    "tf4scores": { "s1": 0.25, "s2": 0.5, "s3": 0.75, "s4": 1 },
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": null,
+    "opt_imgs": []
+  },
+  {
+    "id": 1060,
+    "subject": "math",
+    "diff": "medium",
+    "source": "manual",
+    "sol_text": "Đếm tất cả cách chọn và sắp xếp $6$ số khác nhau vào $6$ ô của hình sao cho ba cột có tổng bằng nhau được $48$ cách.",
+    "qtype": "short",
+    "text": "Có bao nhiêu cách chọn sáu số từ chín số nguyên $1, 2, \\dots, 9$ và điền vào các ô của hình dưới đây (mỗi ô chỉ điền đúng một số) sao cho tổng các số ở mỗi cột (kể cả cột có một ô) bằng nhau?",
+    "answer": "48",
+    "unit": "",
+    "code": "",
+    "score": 1,
+    "qtype_label": "",
+    "irt_a": 1,
+    "irt_b": 0,
+    "irt_c": 0.25,
+    "sol_video": "",
+    "img": "https://i.postimg.cc/7LkCkzrW/17.jpg",
+    "opt_imgs": []
+  },
+  {
+    "id": 1061,
+    "subject": "math",
+    "diff": "hard",
+    "source": "json_import",
+    "sol_text": "$\\cos\\alpha = \\sqrt{2} - \\dfrac{1}{\\sqrt{3}} \\approx 0,8374$, làm tròn được $0,84$.",
+    "qtype": "short",
+    "text": "Cho tứ diện $ABCD$ có $\\widehat{BAC} = 30^\\circ$, $\\widehat{CAD} = 45^\\circ$, $\\widehat{DAB} = 60^\\circ$. Gọi $\\alpha = [B;AD;C]$ thì giá trị của $\\cos \\alpha$ bằng bao nhiêu? (làm tròn đến hàng phần trăm)",
+    "answer": "0.84",
+    "unit": ""
+  },
+  {
+    "id": 1062,
+    "subject": "math",
+    "diff": "hard",
+    "source": "json_import",
+    "sol_text": "Xét các đỉnh miền nghiệm của hệ bất phương trình, giá trị lớn nhất của $80x + 60y$ là $640$.",
+    "qtype": "short",
+    "text": "Trong một cuộc thi pha chế, mỗi đội chơi được sử dụng tối đa $24$ gam hương liệu, $9$ lít nước và $210$ gam đường để pha chế nước ngọt loại I và nước ngọt loại II. Hỏi số điểm thưởng cao nhất có thể của mỗi đội trong cuộc thi là bao nhiêu?",
+    "answer": "640",
+    "unit": "điểm"
+  },
+  {
+    "id": 1063,
+    "subject": "math",
+    "diff": "hard",
+    "source": "json_import",
+    "sol_text": "Chỉ xảy ra khi $t = 7$ hoặc $t = 5$ kèm điều kiện một cạnh gấp đôi cạnh kia. Xác suất xấp xỉ $0,1744$, làm tròn được $0,17$.",
+    "qtype": "short",
+    "text": "Tung đồng thời hai con xúc xắc khác nhau đều cân đối và đồng chất ba lần. Chọn ngẫu nhiên một tam giác có hai cạnh có độ dài là $a$, $b$ và góc xen giữa chúng bằng $(t-1)15^\\circ$. Xác suất để tam giác này là tam giác vuông bằng bao nhiêu? (làm tròn đến hàng phần trăm)",
+    "answer": "0.17",
+    "unit": ""
+  },
+  {
+    "id": 1064,
+    "subject": "math",
+    "diff": "medium",
+    "source": "json_import",
+    "sol_text": "Từ $y'(t) = k y(t)$ suy ra $y(t) = Ce^{kt}$. Dùng $y(6)=2$ và $y(12)=1$ được $k = -\\dfrac{\\ln 2}{6}$, nên $y(30) = 2e^{24k} = \\dfrac{1}{8} = 0,125 \\approx 0,13$.",
+    "qtype": "short",
+    "text": "Nồng độ thuốc tồn dư trong nước tại thời điểm $30$ ngày bằng bao nhiêu mg/lít? (làm tròn đến hàng phần trăm)",
+    "answer": "0.13",
+    "unit": "mg/lít"
+  },
+  {
+    "id": 1065,
+    "subject": "math",
+    "diff": "hard",
+    "source": "json_import",
+    "sol_text": "Phản xạ $G$ qua $(ABCD)$ được $G'$. Giao của $MG'$ với $(ABCD)$ là $I\\left(4;\\dfrac{8}{3};0\\right)$, nên $a = \\dfrac{8}{3}$, $b = 2$ và $P = 3a + 6b = 20$.",
+    "qtype": "short",
+    "text": "Cho hình hộp chữ nhật $ABCD.EFGH$ với $AB = 6$, $AD = 8$ và $DH = 10$. Gọi $M$ là trung điểm của đoạn thẳng $AF$ và $I$ thuộc mặt phẳng $(ABCD)$. Khi $IM + IG$ nhỏ nhất thì điểm $I$ cách hai đường thẳng $BA$ và $BC$ tương ứng bằng $a$ và $b$. Giá trị của biểu thức $P = 3a + 6b$ bằng bao nhiêu?",
+    "answer": "20",
+    "unit": ""
+  }
+],
+    submissions: []
+  };
+  persistDB();
+  console.log('✅ DB đã reset: 3 user + 1 đề 15 câu');
+}
+
+// initMinimalDB() đã được gọi tự động bởi loadDB() khi không có dữ liệu trong localStorage.
+// Không cần gọi lại ở đây.
+
+
 
 
 </script>
@@ -9470,10 +8238,190 @@ function initTestDataForPersonalization() {
 }
 
 // Gọi hàm seed dữ liệu test sau khi DB đã sẵn sàng
-if (DB.session && DB.session.role === 'student') {
+if (typeof DB !== 'undefined' && DB && DB.session && DB.session.role === 'student') {
   initTestDataForPersonalization();
 }
 
 </script>
+
+
+<!-- ==================== VIEW KẾT QUẢ THI (GIỐNG GIAO DIỆN LÀM BÀI) ==================== -->
+<div id="view-result" class="view" style="flex-direction:column">
+  <div class="etopbar">
+    <div class="logo-ico" style="width:26px;height:26px;font-size:12px">🏆</div>
+    <div class="etitle-sm" id="result-et-name">Kết quả thi</div>
+    <div class="etr">
+      <div class="timer-box" style="background:var(--grn-s);color:var(--grn)">
+        <span>🎯</span><span class="tv" id="result-score-display">8.5</span><span class="tlbl">điểm</span>
+      </div>
+      <button class="btn btn-g" onclick="goTo('dashboard')">← Về trang chủ</button>
+    </div>
+  </div>
+
+  <div class="ema">
+    <div class="qpanel">
+      <div class="qsl">📋 Câu hỏi & Đáp án</div>
+      <div class="qnum" id="result-q-label">Câu 1 / 15</div>
+      <div class="qtxt" id="result-q-text"></div>
+      <div id="result-question-image-container" style="margin:10px 0;text-align:center;"></div>
+      <div class="ol" id="result-opts"></div>
+
+      <div style="margin-top:20px;padding:16px;background:var(--bg3);border-radius:10px;border:1px solid var(--bdr)">
+        <div style="font-weight:700;color:var(--grn);margin-bottom:8px">💡 Lời giải chi tiết</div>
+        <div id="result-sol-text" style="line-height:1.6;font-size:13.5px"></div>
+      </div>
+
+      <div class="qnav-bot" style="margin-top:20px">
+        <button class="btn btn-g" onclick="resultPrevQ()">← Câu trước</button>
+        <button class="btn btn-p" onclick="resultNextQ()">Câu sau →</button>
+      </div>
+    </div>
+
+    <div class="navp">
+      <div class="navp-title"><span>Danh sách câu</span><span id="result-nav-answered" style="color:var(--grn)">0/15</span></div>
+      <div class="ngrid" id="result-ngrid"></div>
+      <div class="nleg">
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--grn)"></div>Đúng</div>
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--red)"></div>Sai</div>
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--bgh);border:1px solid var(--bdr)"></div>Bỏ qua</div>
+      </div>
+      <button class="btn btn-g" onclick="goTo('dashboard')" style="width:100%;margin-top:12px">← Về trang chủ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====================== RESULT LOGIC - SẠCH ======================
+// (Biến resultCurrentQ, resultTotalQ, v.v. đã được khai báo ở script block chính)
+
+function buildResultFromExam(exam, answers, isTrial = false) {
+  if (!exam) return;
+  const questions = exam.questionIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
+  
+  let correctCount = 0;
+  const correctArr = [];
+
+  for (let i = 0; i < questions.length; i++) {
+    const isCorrect = gradeQuestion(questions[i], answers[i+1]);
+    correctArr.push(isCorrect);
+    if (isCorrect) correctCount++;
+  }
+
+  const score = (correctCount / questions.length * 10).toFixed(1);
+
+  resultTotalQ = questions.length;
+  resultQuestions = questions;
+  resultUserAnswers = answers;
+  resultCorrectArr = correctArr;
+  resultExam = exam;
+
+  document.getElementById('result-score-display').textContent = score;
+  document.getElementById('result-et-name').textContent = exam.name;
+
+  buildResultQGrid(questions.length, correctArr, answers);
+  resultCurrentQ = 1;
+  loadResultQ(1);
+  goTo('result');
+}
+
+function loadResultQ(n) {
+  resultCurrentQ = n;
+  const q = resultQuestions[n-1];
+  if (!q) return;
+
+  document.getElementById('result-q-label').textContent = `Câu ${n} / ${resultTotalQ}`;
+  renderMarkdownAndLatex(document.getElementById('result-q-text'), q.text);
+
+  const imgContainer = document.getElementById('result-question-image-container');
+  imgContainer.innerHTML = q.img ? `<img src="${q.img}" style="max-width:100%;max-height:250px;border-radius:8px;border:1px solid var(--bdr)">` : '';
+
+  renderResultOptions(q, n);
+  renderMarkdownAndLatex(document.getElementById('result-sol-text'), q.sol_text || 'Chưa có lời giải.');
+  updateResultNGrid();
+}
+
+function renderResultOptions(q, n) {
+  const div = document.getElementById('result-opts');
+  const userAns = resultUserAnswers[n];
+  const letters = ['A','B','C','D'];
+
+  // Chỉ xử lý câu trắc nghiệm 1 đáp án có opts
+  if (!q.opts || !q.opts.length) {
+    // Câu tf4 / tfn / short: hiển thị đơn giản
+    const qtype = q.qtype || 'single';
+    if (qtype === 'tf4' || qtype === 'tfn') {
+      const subqs = q.subqs || [];
+      div.innerHTML = subqs.map((sq, i) => {
+        const userAnsItem = userAns?.[i];
+        const correct = sq.ans;
+        const isCorrect = userAnsItem === correct;
+        const mark = isCorrect ? '✅' : (userAnsItem !== undefined ? '❌' : '–');
+        return `<div class="oi ${isCorrect ? 'sel correct' : (userAnsItem !== undefined ? 'sel wrong' : '')}">
+          <div class="oltr">${letters[i] || (i+1)}</div>
+          <div class="otxt">${sq.text || ''} — Đúng/Sai: <strong>${correct ? 'Đúng' : 'Sai'}</strong></div>
+          ${mark}
+        </div>`;
+      }).join('');
+    } else if (qtype === 'short') {
+      div.innerHTML = `<div class="oi sel correct"><div class="otxt">✏️ Đáp án đúng: <strong>${q.answer || ''} ${q.unit || ''}</strong></div></div>`;
+    } else {
+      div.innerHTML = `<div class="oi"><div class="otxt">Không có đáp án để hiển thị.</div></div>`;
+    }
+    return;
+  }
+
+  let html = q.opts.map((opt, i) => {
+    const letter = letters[i];
+    const isUser = userAns === letter;
+    const isCorrect = i === q.correct;
+    let cls = 'oi';
+    let mark = '';
+    if (isCorrect) { cls += ' sel correct'; mark = '✅'; }
+    else if (isUser) { cls += ' sel wrong'; mark = '❌'; }
+    return `<div class="${cls}"><div class="oltr">${letter}</div><div class="otxt" id="res-opt-${n}-${i}"></div>${mark}</div>`;
+  }).join('');
+
+  div.innerHTML = html;
+
+  q.opts.forEach((opt, i) => {
+    const el = document.getElementById(`res-opt-${n}-${i}`);
+    if (el) renderMarkdownAndLatex(el, opt);
+  });
+}
+
+function buildResultQGrid(total) {
+  const grid = document.getElementById('result-ngrid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= total; i++) {
+    const b = document.createElement('div');
+    b.className = 'nqb';
+    b.id = 'result-nb' + i;
+    b.textContent = i;
+    b.onclick = () => loadResultQ(i);
+    grid.appendChild(b);
+  }
+  updateResultNGrid();
+}
+
+function updateResultNGrid() {
+  for (let i = 1; i <= resultTotalQ; i++) {
+    const b = document.getElementById('result-nb' + i);
+    if (b) b.classList.toggle('cur', i === resultCurrentQ);
+  }
+}
+
+function resultPrevQ() { if (resultCurrentQ > 1) loadResultQ(resultCurrentQ-1); }
+function resultNextQ() { if (resultCurrentQ < resultTotalQ) loadResultQ(resultCurrentQ+1); }
+
+// ====================== GLOBAL EXPORTS (kết quả thi) ======================
+window.dbg = window.dbg || console.log.bind(console);
+
+window.buildResultFromExam = buildResultFromExam;
+window.loadResultQ = loadResultQ;
+window.resultPrevQ = resultPrevQ;
+window.resultNextQ = resultNextQ;
+</script>
+
+
 </body>
 </html>
