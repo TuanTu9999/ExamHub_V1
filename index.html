@@ -277,6 +277,28 @@
 
   /* Legend compact */
   .nleg { flex-wrap: wrap !important; gap: 6px 12px !important; }
+
+  /* Ảnh câu hỏi trên mobile */
+  #question-image-container img,
+  #result-question-image-container img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 10px auto !important;
+    border-radius: 8px !important;
+  }
+
+  /* Đảm bảo đề bài luôn hiển thị trên mobile */
+  .qtxt {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    min-height: 1em !important;
+  }
+  /* Paragraphs sinh ra bởi marked.parse */
+  .qtxt p { margin: 0 0 8px 0; }
+  .qtxt p:last-child { margin-bottom: 0; }
 }
 
 /* Extra small phones */
@@ -1973,12 +1995,14 @@ const resultImgContainer = document.getElementById('result-question-image-contai
 if (resultImgContainer) {
     resultImgContainer.innerHTML = '';
 
-    if (q?.image) {
+    const _resultImgSrc = q?.image || q?.img || null;
+    if (_resultImgSrc) {
         resultImgContainer.innerHTML = `
-            <img src="${q.image}" 
+            <img src="${_resultImgSrc}" 
                  alt="Hình ảnh câu hỏi"
                  style="max-width:100%; height:auto; border-radius:10px; 
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:12px 0; display:block;">
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:12px 0; display:block;"
+                 onerror="this.style.display='none'">
         `;
     } 
     else if (q?.img_latex) {
@@ -2367,7 +2391,7 @@ function importJSON() {
                 source: 'json_import',
                 sol_text: q.sol_text || q.explanation || '',
                 qtype: type,
-                img: imageUrl,                    // lưu ảnh
+                image: imageUrl,                  // lưu ảnh (dùng 'image' để nhất quán với render)
                 score: parseFloat(q.score) || 1.0, // ← LẤY ĐIỂM TỪ JSON (mặc định 1.0)
                 opt_imgs: q.opt_images || []
             };
@@ -2609,7 +2633,10 @@ function renderMarkdownAndLatex(element, text) {
   // 1. Gán text vào element (nên dùng innerHTML nếu có Markdown, textContent nếu chỉ có text)
   // Nếu bạn dùng thư viện marked.js:
   if (typeof marked !== 'undefined') {
-      element.innerHTML = marked.parseInline(text);
+      // Dùng marked.parse để xử lý cả block content (đoạn văn, xuống dòng)
+      // parseInline bỏ qua \n\n khiến đề bài dài bị mất nội dung trên mobile
+      const parseFn = marked.parse || marked.parseInline;
+      element.innerHTML = parseFn.call(marked, text);
   } else {
       element.textContent = text;
   }
@@ -6481,22 +6508,14 @@ const imgContainer = document.getElementById('question-image-container');
 if (imgContainer) {
     imgContainer.innerHTML = '';   // xóa ảnh cũ
 
-    if (q?.image) {
-        // Ưu tiên trường "image" (đây là trường bạn đang dùng trong DB)
+    const _examImgSrc = q?.image || q?.img || null;
+    if (_examImgSrc) {
         imgContainer.innerHTML = `
-            <img src="${q.image}" 
+            <img src="${_examImgSrc}" 
                  alt="Hình ảnh câu hỏi"
                  style="max-width:100%; max-height:420px; border-radius:12px; 
-                        display:block; margin:15px auto;">
-        `;
-    } 
-    else if (q?.img) {
-        // Hỗ trợ thêm trường "img" (nếu có)
-        imgContainer.innerHTML = `
-            <img src="${q.img}" 
-                 alt="Hình ảnh câu hỏi"
-                 style="max-width:100%; max-height:420px; border-radius:12px; 
-                        display:block; margin:15px auto;">
+                        display:block; margin:15px auto;"
+                 onerror="this.style.display='none'">
         `;
     } 
     else if (q?.img_latex) {
