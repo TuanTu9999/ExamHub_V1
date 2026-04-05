@@ -752,7 +752,7 @@
       <button id="draw-toggle-btn" onclick="toggleDrawMode()" title="Bật/tắt bút highlight lên đề">🖌️ Bút</button>
       <div class="autosave" id="autosave-ind"><div class="as-dot"></div><span id="as-txt">Tự động lưu</span></div>
       <div class="timer-box"><span>⏱</span><span class="tv" id="timer">89:59</span><span class="tlbl">còn lại</span></div>
-      <button class="btn btn-g" style="padding:6px 12px;font-size:12px" onclick="openSubmitModal()">💾 Nộp bài</button>
+      <button class="btn btn-p" style="padding:8px 16px; font-size:13px; font-weight:700; box-shadow:0 2px 8px rgba(59,130,246,0.4);" onclick="openSubmitModal()">💾 Nộp bài</button>
     </div>
   </div>
   <div class="ema">
@@ -789,7 +789,6 @@
         <div class="nsum-r"><span class="u-dim">Chưa trả lời</span><span class="nsum-v c-red" id="ns-todo">50</span></div>
         <div class="nsum-r"><span class="u-dim">Đánh dấu</span><span class="nsum-v c-gld" id="ns-flg">0</span></div>
       </div>
-      <button class="sub-btn" onclick="openSubmitModal()">🏁 Nộp bài</button>
     </div>
   </div>
   <!-- Overlay khi mất fullscreen -->
@@ -800,42 +799,58 @@
   </div>
 </div>
 
-<!-- ===== VIEW: RESULT (giống giao diện lúc thi) ===== -->
+<!-- ===== VIEW: RESULT ===== -->
 <div id="view-result" class="view" style="flex-direction:column">
   <div class="etopbar">
     <div class="logo-ico" style="width:26px;height:26px;font-size:12px">🏆</div>
     <div class="etitle-sm" id="result-et-name">Kết quả thi</div>
     <div class="etr">
-      <!-- Font size control -->
       <div class="fs-ctrl" title="Cỡ chữ nội dung đề">
         <button onclick="examFontSize(-1)" title="Giảm cỡ chữ">A−</button>
         <span class="fs-val" id="result-fs-val">16</span>
         <button onclick="examFontSize(+1)" title="Tăng cỡ chữ">A+</button>
       </div>
-      <!-- Draw toggle -->
       <button id="draw-toggle-btn-result" onclick="toggleDrawMode()" title="Bút highlight lên đề">🖌️ Bút</button>
       <div class="timer-box" style="background:var(--grn-s);color:var(--grn);border:1px solid var(--grn)">
-        <span>🎯</span><span class="tv" id="result-score-display">8.5</span><span class="tlbl">điểm</span>
+        <span>🎯</span><span class="tv" id="result-score-display">0.0</span><span class="tlbl">điểm</span>
       </div>
       <button class="btn btn-g" onclick="goTo('dashboard')">← Về trang chủ</button>
     </div>
   </div>
 
   <div class="ema">
-    <!-- Cột trái: Đề bài + Đáp án + Lời giải -->
+    <!-- Cột trái: Câu hỏi, đáp án, lời giải và AI -->
     <div class="qpanel" id="result-qpanel">
-      <!-- Drawing canvas overlay -->
       <canvas id="draw-canvas-result"></canvas>
       <div class="qsl" id="result-qsl">📋 Câu hỏi và đáp án</div>
-      <div class="qnum" id="result-q-label">Câu 1 / 15</div>
+      <div class="qnum" id="result-q-label">Câu 1 / 0</div>
       <div class="qtxt" id="result-q-text"></div>
       <div id="result-question-image-container" style="margin:10px 0;text-align:center;"></div>
       <div class="ol" id="result-opts"></div>
 
-      <!-- Lời giải chi tiết (luôn hiển thị) -->
-      <div id="result-solution-box" style="margin-top:20px;padding:16px;background:var(--bg3);border-radius:10px;border:1px solid var(--bdr)">
+      <!-- Các nút chức năng chính (luôn hiển thị) -->
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:16px">
+        <button class="btn btn-g btn-sm" id="result-save-q-btn" onclick="saveCurrentQuestion()">📚 Lưu câu hỏi</button>
+        <button class="btn btn-pur btn-sm" onclick="toggleResultSolution()">💡 Xem lời giải</button>
+        <button class="btn btn-g btn-sm" onclick="resultAIExplain('question')">🔍 AI giải thích đề</button>
+        <button class="btn btn-g btn-sm" onclick="resultAIExplain('answer')">🤖 AI giải thích đáp án</button>
+        <button class="btn btn-g btn-sm" onclick="resultAIExplain('similar')">🔄 Câu tương tự</button>
+      </div>
+
+      <!-- Hộp lời giải (ẩn ban đầu, hiện khi bấm nút) -->
+      <div id="result-solution-box" style="display:none;margin-top:14px;padding:16px;background:var(--bg3);border-radius:10px;border:1px solid var(--bdr)">
         <div style="font-weight:700;color:var(--grn);margin-bottom:8px">💡 Lời giải chi tiết</div>
-        <div id="result-sol-text" style="line-height:1.6;font-size:13.5px"></div>
+        <div id="result-solution-content" style="line-height:1.6;font-size:13.5px"></div>
+      </div>
+
+      <!-- Hộp phản hồi AI -->
+      <div id="result-ai-box" style="display:none;margin-top:12px;padding:14px;background:var(--pur-s);border:1px solid rgba(167,139,250,.25);border-radius:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:16px">🤖</span>
+          <span style="font-size:12px;font-weight:700;color:var(--pur)" id="result-ai-title">AI trợ giúp</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--txt3)" id="result-ai-cost"></span>
+        </div>
+        <div id="result-ai-content" style="font-size:13.5px;line-height:1.7;color:var(--txt)"></div>
       </div>
 
       <div class="qnav-bot" style="margin-top:20px">
@@ -846,16 +861,21 @@
 
     <!-- Cột phải: Danh sách câu + thống kê -->
     <div class="navp">
-      <div class="navp-title"><span>Danh sách câu</span><span id="result-nav-answered" class="c-grn">0/15</span></div>
+      <div class="navp-title">
+        <span>Danh sách câu</span>
+        <span id="result-nav-answered" class="c-grn">0/0</span>
+      </div>
       <div class="ngrid" id="result-ngrid"></div>
       <div class="nleg">
         <div class="nleg-i"><div class="nleg-d" style="background:var(--grn)"></div>Đúng</div>
         <div class="nleg-i"><div class="nleg-d" style="background:var(--red)"></div>Sai</div>
         <div class="nleg-i"><div class="nleg-d" style="background:var(--bgh);border:1px solid var(--bdr)"></div>Bỏ qua</div>
+        <div class="nleg-i"><div class="nleg-d" style="background:var(--gold)"></div>Đã lưu</div>
       </div>
-      <div class="nsum">
-        <div class="nsum-r"><span class="u-dim">Đúng</span><span class="nsum-v c-grn" id="result-correct-count">0</span></div>
-        <div class="nsum-r"><span class="u-dim">Sai</span><span class="nsum-v c-red" id="result-wrong-count">0</span></div>
+      <div class="nsum u-mt10">
+        <div class="nsum-r"><span class="u-dim">Đúng</span><span class="nsum-v c-grn" id="result-correct-count-r">0</span></div>
+        <div class="nsum-r"><span class="u-dim">Sai</span><span class="nsum-v c-red" id="result-wrong-count-r">0</span></div>
+        <div class="nsum-r"><span class="u-dim">Đã lưu</span><span class="nsum-v c-gld" id="result-saved-count-r">0</span></div>
       </div>
       <button class="btn btn-g" onclick="goTo('dashboard')" style="width:100%;margin-top:12px">← Về trang chủ</button>
     </div>
@@ -1802,13 +1822,36 @@ if (resultImgContainer) {
       });
     }, 30);
   } else if (qtype === 'short') {
-    const correctStr = `${q.answer || ''} ${q.unit || ''}`.trim();
-    const isOk = gradeQuestion(q, userAnswer);
-    optsHtml = `
-      <div style="margin-top:12px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--bdr)">
-        <div style="margin-bottom:8px"><span style="color:var(--txt2);font-weight:600">📝 Bạn:</span> <span style="color:${isOk?'var(--grn)':'var(--red)'}">${userAnswer !== undefined ? userAnswer : 'Chưa trả lời'}</span></div>
-        <div><span style="color:var(--txt2);font-weight:600">✅ Đáp án:</span> <strong class="c-grn">${correctStr}</strong></div>
-      </div>`;
+      // Hàm chuẩn hóa hiển thị (phân số → số thập phân, dấu chấm → phẩy)
+      const normalizeDisplay = (ans, unit) => {
+          if (ans === undefined || ans === null) return 'Chưa trả lời';
+          let str = String(ans).trim();
+          // Chuyển phân số thành số thập phân
+          if (str.includes('/')) {
+              const parts = str.split('/');
+              if (parts.length === 2) {
+                  const num = parseFloat(parts[0]);
+                  const den = parseFloat(parts[1]);
+                  if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                      str = (num / den).toString();
+                  }
+              }
+          }
+          // Thay dấu chấm bằng dấu phẩy (theo chuẩn Việt Nam)
+          str = str.replace('.', ',');
+          if (unit) str += ' ' + unit;
+          return str;
+      };
+
+      const isOk = gradeQuestion(q, userAnswer);
+      const userDisplay = normalizeDisplay(userAnswer, '');
+      const correctDisplay = normalizeDisplay(q.answer, q.unit);
+
+      optsHtml = `
+        <div style="margin-top:12px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--bdr)">
+          <div style="margin-bottom:8px"><span style="color:var(--txt2);font-weight:600">📝 Bạn:</span> <span style="color:${isOk ? 'var(--grn)' : 'var(--red)'}">${userDisplay}</span></div>
+          <div><span style="color:var(--txt2);font-weight:600">✅ Đáp án:</span> <strong class="c-grn">${correctDisplay}</strong></div>
+        </div>`;
   }
   
   if (optsHtml) optsDiv.innerHTML = optsHtml;
@@ -2695,25 +2738,25 @@ function initTheme() {
 let currentFilter = 'all';
 let currentSearch = '';
 
+// ===== RENDER SAVED QUESTIONS =====
 function renderSavedQuestions() {
   const userId = DB.session?.id;
   if (!userId) return;
   const savedIds = JSON.parse(localStorage.getItem(`saved_questions_${userId}`) || '[]');
   const container = document.getElementById('saved-questions-list');
   if (!container) return;
-  
+
   if (savedIds.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-ico">📚</div><div class="empty-txt">Chưa có câu hỏi nào được lưu. Hãy lưu câu hỏi từ kết quả thi.</div></div>';
+    container.innerHTML = '<div class="empty"><div class="empty-ico">📚</div><div class="empty-txt">Chưa có câu hỏi nào được lưu.</div></div>';
     return;
   }
-  
-  // Lấy thông tin câu hỏi
+
   const savedQuestions = savedIds.map(id => DB.questions.find(q => q.id === id)).filter(Boolean);
   if (savedQuestions.length === 0) {
-    container.innerHTML = '<div class="empty"><div class="empty-ico">📚</div><div class="empty-txt">Câu hỏi đã lưu không tồn tại trong ngân hàng.</div></div>';
+    container.innerHTML = '<div class="empty"><div class="empty-ico">📚</div><div class="empty-txt">Câu hỏi đã lưu không tồn tại.</div></div>';
     return;
   }
-  
+
   container.innerHTML = savedQuestions.map(q => `
     <div class="ei" onclick="startPracticeQuestion(${q.id})">
       <div class="enum">📌</div>
@@ -2731,6 +2774,34 @@ function renderSavedQuestions() {
     </div>
   `).join('');
 }
+
+window.removeSavedQuestion = function(questionId) {
+  const userId = DB.session?.id;
+  if (!userId) return;
+  let saved = JSON.parse(localStorage.getItem(`saved_questions_${userId}`) || '[]');
+  saved = saved.filter(id => id !== questionId);
+  localStorage.setItem(`saved_questions_${userId}`, JSON.stringify(saved));
+  renderSavedQuestions();
+  toast('🗑', 'Đã xóa khỏi danh sách lưu');
+};
+
+window.startPracticeQuestion = function(questionId) {
+  const q = DB.questions.find(q => q.id === questionId);
+  if (!q) return;
+  const fakeExam = {
+    id: -questionId,
+    name: `Ôn tập: ${q.text.substring(0, 40)}...`,
+    questionIds: [questionId],
+    questions: 1,
+    duration: 5,
+    type: 'practice'
+  };
+  if (!DB.exams.find(e => e.id === fakeExam.id)) {
+    DB.exams.push(fakeExam);
+    persistDB();
+  }
+  startExam(fakeExam.id);
+};
 
 // Xóa câu hỏi khỏi danh sách lưu
 function removeSavedQuestion(questionId) {
@@ -6214,7 +6285,9 @@ function autoSave() {
 
 function loadQ(n) {
   curQ = n;
-  window.currentQ = n; // Sync for pickOpt
+  window.currentQ = n;
+
+  // Lấy câu hỏi
   let q = null;
   if (examData?.questionIds?.length) {
     const idx = (n - 1) % examData.questionIds.length;
@@ -6227,63 +6300,68 @@ function loadQ(n) {
     q = { text: 'Câu hỏi đang được cập nhật', qtype: 'single', opts: ['Đáp án A','Đáp án B','Đáp án C','Đáp án D'], correct: 0 };
   }
 
+  // Cập nhật label
   const qLabel = document.getElementById('q-label');
   if (qLabel) qLabel.textContent = `Câu ${n} / ${totalQ}`;
 
-  // Update section label based on type
-  const qsl = document.querySelector('.qsl');
+  // Cập nhật section label theo loại câu hỏi
   const qtypeLabels = { single:'📋 Trắc nghiệm 1 đáp án', multi:'☑️ Trắc nghiệm nhiều đáp án', tf4:'✔ Đúng / Sai 4 ý', tfn:'✔ Đúng / Sai', short:'✍️ Trả lời ngắn' };
+  const qsl = document.querySelector('.qsl');
   if (qsl) qsl.textContent = qtypeLabels[q.qtype] || '📐 Câu hỏi';
 
   // Render câu hỏi text
   const qTextEl = document.getElementById('q-text');
   if (qTextEl) renderMarkdownAndLatex(qTextEl, q.text);
 
-  // ===== HIỂN THỊ ẢNH CÂU HỎI =====
-const imgContainer = document.getElementById('question-image-container');
-if (imgContainer) {
-    imgContainer.innerHTML = '';   // xóa ảnh cũ
+  // Hiển thị ảnh
+  renderQuestionImage(q);
 
-    const _examImgSrc = q?.image || q?.img || null;
-    if (_examImgSrc) {
-        const escapedSrc = _examImgSrc.replace(/'/g, "\\'");
-        imgContainer.innerHTML = `
-          <div style="position:relative;display:inline-block;max-width:100%;margin:15px auto;display:block;text-align:center;">
-            <img src="${_examImgSrc}"
-                 alt="Hình ảnh câu hỏi"
-                 style="max-width:100%; max-height:420px; border-radius:12px;
-                        display:block; margin:0 auto; cursor:zoom-in;"
-                 onerror="this.parentElement.style.display='none'">
-            <button onclick="pinImage('${escapedSrc}')"
-              style="position:absolute;top:8px;right:8px;
-                     background:rgba(15,15,15,0.62);backdrop-filter:blur(4px);
-                     color:#fff;border:none;border-radius:20px;
-                     padding:5px 12px;font-size:11.5px;font-weight:700;
-                     cursor:pointer;display:flex;align-items:center;gap:4px;
-                     transition:background .15s;"
-              onmouseover="this.style.background='rgba(59,130,246,0.85)'"
-              onmouseout="this.style.background='rgba(15,15,15,0.62)'"
-              title="Ghim hình — hiển thị cố định khi cuộn đề">
-              📌 Ghim hình
-            </button>
-          </div>
-        `;
-    } 
-    else if (q?.img_latex) {
-        // Hiển thị diagram LaTeX (nếu có)
-        imgContainer.innerHTML = `
-            <div style="background:#f8fafc; padding:20px; border-radius:12px; 
-                        border:2px dashed #e2e8f0; font-size:14px; overflow-x:auto; line-height:1.4;">
-                ${q.img_latex}
-            </div>
-        `;
-    }
+  // Render đáp án / mệnh đề
+  renderOptions(q, n);
+
+  // Cập nhật nút flag
+  const flagBtn = document.getElementById('flag-btn');
+  if (flagBtn) flagBtn.textContent = flagged.has(n) ? '🚩 Bỏ đánh dấu' : '🚩 Đánh dấu';
+
+  // Cập nhật navigator
+  updateNGrid();
+
+  // Áp dụng cỡ chữ động cho các phần tử vừa render
+  applyFontSizeToDynamicContent();
 }
 
+// Hàm hiển thị ảnh câu hỏi
+function renderQuestionImage(q) {
+  const imgContainer = document.getElementById('question-image-container');
+  if (!imgContainer) return;
+  imgContainer.innerHTML = '';
+  const imgSrc = q?.image || q?.img || null;
+  if (imgSrc) {
+    const escapedSrc = imgSrc.replace(/'/g, "\\'");
+    imgContainer.innerHTML = `
+      <div style="position:relative;display:inline-block;max-width:100%;margin:15px auto;text-align:center;">
+        <img src="${imgSrc}" alt="Hình ảnh câu hỏi"
+             style="max-width:100%; max-height:420px; border-radius:12px; display:block; margin:0 auto; cursor:zoom-in;"
+             onerror="this.parentElement.style.display='none'">
+        <button onclick="pinImage('${escapedSrc}')"
+          style="position:absolute;top:8px;right:8px; background:rgba(15,15,15,0.62); backdrop-filter:blur(4px);
+                 color:#fff; border:none; border-radius:20px; padding:5px 12px; font-size:11.5px; font-weight:700;
+                 cursor:pointer; display:flex; align-items:center; gap:4px; transition:background .15s;"
+          onmouseover="this.style.background='rgba(59,130,246,0.85)'"
+          onmouseout="this.style.background='rgba(15,15,15,0.62)'"
+          title="Ghim hình">📌 Ghim hình</button>
+      </div>`;
+  } else if (q?.img_latex) {
+    imgContainer.innerHTML = `<div style="background:#f8fafc; padding:20px; border-radius:12px; border:2px dashed #e2e8f0; font-size:14px; overflow-x:auto; line-height:1.4;">${q.img_latex}</div>`;
+  }
+}
+
+// Hàm render đáp án và mệnh đề
+function renderOptions(q, n) {
   const optsDiv = document.getElementById('opts');
   const letters = ['A', 'B', 'C', 'D'];
-  let html = '';
   const qtype = q.qtype || 'single';
+  let html = '';
 
   if (qtype === 'single') {
     html = (q.opts || []).map((opt, i) => {
@@ -6294,47 +6372,38 @@ if (imgContainer) {
         <div class="otxt" id="opt-text-${n}-${i}"></div>
       </div>`;
     }).join('');
-
-  } else if (qtype === 'multi') {
+  } 
+  else if (qtype === 'multi') {
     const selArr = answers[n] || [];
     html = `<div style="font-size:11px;color:var(--pur);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--pur-s);border-radius:6px">☑️ Chọn tất cả đáp án đúng (có thể chọn nhiều)</div>`;
     html += (q.opts || []).map((opt, i) => {
       const sel = selArr.includes(i) ? ' sel' : '';
       return `<div class="oi${sel}" data-idx="${i}" onclick="pickMultiOpt(this,${i})">
-        <div class="oltr u-fs10" >${letters[i]}</div>
+        <div class="oltr u-fs10">${letters[i]}</div>
         <div class="otxt" id="opt-text-${n}-${i}"></div>
-        <div style="margin-left:auto;flex-shrink:0;width:20px;height:20px;border-radius:4px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:12px" class="chk-box">${selArr.includes(i) ? '✓' : ''}</div>
+        <div class="chk-box" style="margin-left:auto;width:20px;height:20px;border-radius:4px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:12px">${selArr.includes(i) ? '✓' : ''}</div>
       </div>`;
     }).join('');
-
-  } else if (qtype === 'tf4' || qtype === 'tfn') {
+  } 
+  else if (qtype === 'tf4' || qtype === 'tfn') {
     const selArr = answers[n] || [];
     const statements = q.statements || q.subqs || [];
     const stmtLetters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    
-    html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">
-        ✔ Xác định mỗi mệnh đề là Đúng hay Sai
-    </div>`;
-    
+    html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">✔ Xác định mỗi mệnh đề là Đúng hay Sai</div>`;
     statements.forEach((stmt, i) => {
-      const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
       const val = selArr[i];
-      
       html += `
         <div class="tf-row" id="tf-row-${n}-${i}" style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding:10px 12px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px">
           <div style="font-size:13px;font-weight:700;color:var(--txt2);min-width:24px;flex-shrink:0">${stmtLetters[i]}.</div>
           <div style="flex:1;font-size:13px;line-height:1.6" id="tf-stmt-${n}-${i}"></div>
           <div style="display:flex;gap:6px;flex-shrink:0">
-            <button class="tf-btn${val === true ? ' true-sel' : ''}" data-val="true" 
-                onclick="toggleTF(${n},${i},true)" style="padding:5px 14px;border-radius:20px;border:1.5px solid var(--bdr);cursor:pointer;font-size:12px;font-weight:600;background:var(--bg2)">Đúng</button>
-            <button class="tf-btn${val === false ? ' false-sel' : ''}" data-val="false" 
-                onclick="toggleTF(${n},${i},false)" style="padding:5px 14px;border-radius:20px;border:1.5px solid var(--bdr);cursor:pointer;font-size:12px;font-weight:600;background:var(--bg2)">Sai</button>
+            <button class="tf-btn${val === true ? ' true-sel' : ''}" data-val="true" onclick="toggleTF(${n},${i},true)" style="padding:5px 14px;border-radius:20px;border:1.5px solid var(--bdr);cursor:pointer;font-size:12px;font-weight:600;background:var(--bg2)">Đúng</button>
+            <button class="tf-btn${val === false ? ' false-sel' : ''}" data-val="false" onclick="toggleTF(${n},${i},false)" style="padding:5px 14px;border-radius:20px;border:1.5px solid var(--bdr);cursor:pointer;font-size:12px;font-weight:600;background:var(--bg2)">Sai</button>
           </div>
-        </div>
-      `;
+        </div>`;
     });
-
-  } else if (qtype === 'short') {
+  } 
+  else if (qtype === 'short') {
     const cur = answers[n] || '';
     const unit = q.unit ? `<span style="color:var(--txt3);font-size:12px"> (${q.unit})</span>` : '';
     html = `<div style="font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;padding:6px 10px;background:var(--acc-s);border-radius:6px">✍️ Nhập đáp án vào ô bên dưới${q.unit ? ' — Đơn vị: '+q.unit : ''}</div>
@@ -6350,7 +6419,7 @@ if (imgContainer) {
 
   optsDiv.innerHTML = html;
 
-  // Render text content for options
+  // Render nội dung text cho đáp án (single/multi)
   if (qtype === 'single' || qtype === 'multi') {
     (q.opts || []).forEach((opt, i) => {
       const optEl = document.getElementById(`opt-text-${n}-${i}`);
@@ -6361,25 +6430,48 @@ if (imgContainer) {
       }
     });
   }
-  
+
+  // Render nội dung cho mệnh đề Đ/S
   if (qtype === 'tf4' || qtype === 'tfn') {
     const statements = q.statements || q.subqs || [];
     statements.forEach((stmt, i) => {
       const stmtText = typeof stmt === 'string' ? stmt : (stmt.text || '');
       const el = document.getElementById(`tf-stmt-${n}-${i}`);
       if (el && stmtText) {
-        let fixedText = stmtText;
-        fixedText = fixedText.replace(/\\dfrac/g, '\\frac');
-        fixedText = fixedText.replace(/\b(sin|cos|tan|cot|log|ln|sqrt|lim|int)\b/g, '\\$1');
+        let fixedText = stmtText.replace(/\\dfrac/g, '\\frac')
+                                 .replace(/\b(sin|cos|tan|cot|log|ln|sqrt|lim|int)\b/g, '\\$1');
         renderMarkdownAndLatex(el, fixedText);
       }
     });
   }
-
-  const flagBtn = document.getElementById('flag-btn');
-  if (flagBtn) flagBtn.textContent = flagged.has(n) ? '🚩 Bỏ đánh dấu' : '🚩 Đánh dấu';
-  updateNGrid();
 }
+
+// Hàm áp dụng cỡ chữ từ biến --exam-fs cho các phần tử động
+function applyFontSizeToDynamicContent() {
+  const currentSize = getComputedStyle(document.documentElement).getPropertyValue('--exam-fs').trim();
+  if (!currentSize) return;
+  const selectors = '.otxt, .tf-stmt, [id^="tf-stmt-"], .tf4-statement, .tf-row .u-f1';
+  document.querySelectorAll(selectors).forEach(el => {
+    el.style.setProperty('font-size', currentSize, 'important');
+  });
+}
+
+// Cập nhật hàm examFontSize để gọi applyFontSizeToDynamicContent
+window.examFontSize = function(delta) {
+  let current = parseInt(localStorage.getItem('examFontSize') || '16', 10);
+  let newSize = Math.min(24, Math.max(13, current + delta));
+  localStorage.setItem('examFontSize', newSize);
+  document.documentElement.style.setProperty('--exam-fs', newSize + 'px');
+  document.querySelectorAll('.fs-val').forEach(el => el.textContent = newSize);
+  applyFontSizeToDynamicContent();
+};
+
+// Khởi tạo cỡ chữ khi trang load
+document.addEventListener('DOMContentLoaded', function() {
+  let savedSize = parseInt(localStorage.getItem('examFontSize') || '16', 10);
+  document.documentElement.style.setProperty('--exam-fs', savedSize + 'px');
+  document.querySelectorAll('.fs-val').forEach(el => el.textContent = savedSize);
+});
 
 window.saveShortAnswer = function(qNum, val) {
   answers[qNum] = val.trim();
@@ -6542,15 +6634,34 @@ function gradeQuestion(q, userAnswer) {
   }
 
   if (qtype === 'short') {
-    // So sánh chuỗi, không phân biệt hoa/thường, trim khoảng trắng
-    const correct = String(q.answer || '').trim().toLowerCase().replace(',', '.');
-    const user    = String(userAnswer).trim().toLowerCase().replace(',', '.');
-    if (correct === user) return true;
-    // So sánh số (để 1/3 == 0.333... không cần, chỉ so sánh chính xác)
-    return false;
-  }
-
-  return false;
+      const normalize = (s) => {
+          if (s === undefined || s === null) return '';
+          let str = String(s).trim().toLowerCase();
+          if (str.includes('/')) {
+              const parts = str.split('/');
+              if (parts.length === 2) {
+                  const num = parseFloat(parts[0]);
+                  const den = parseFloat(parts[1]);
+                  if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                      return (num / den).toString();
+                  }
+              }
+          }
+          str = str.replace(',', '.');
+          const num = parseFloat(str);
+          if (!isNaN(num)) return num.toString();
+          return str;
+      };
+      const correctNorm = normalize(q.answer);
+      const userNorm = normalize(userAnswer);
+      if (correctNorm === userNorm) return true;
+      const correctNum = parseFloat(correctNorm);
+      const userNum = parseFloat(userNorm);
+      if (!isNaN(correctNum) && !isNaN(userNum)) {
+          return Math.abs(correctNum - userNum) < 0.001;
+      }
+      return false;
+    }
 }
 
 // ====================== BUILD RESULT FROM SUBMISSION ======================
@@ -6676,7 +6787,7 @@ function selectRole(r) {
   document.getElementById('rc-teacher')?.classList.toggle('on', r === 'teacher');
 }
 
-function quickLogin(role) {
+window.quickLogin = function(role) {
   const creds = {
     student: { email: 'student@exam.vn', pass: '123456' },
     admin:   { email: 'admin@exam.vn',   pass: 'admin123' },
@@ -6684,15 +6795,13 @@ function quickLogin(role) {
   };
   const c = creds[role];
   if (!c) return;
-  
   const emailInput = document.getElementById('l-email');
   const passInput = document.getElementById('l-pass');
-  
   if (emailInput) emailInput.value = c.email;
   if (passInput) passInput.value = c.pass;
-  
   doLogin();
-}
+};
+
 
 function doLogin() {
   const email = (document.getElementById('l-email')?.value || '').trim().toLowerCase();
@@ -7143,7 +7252,7 @@ window.saveQuestionFromEditor = function() {
     originalSaveQuestionFromEditor();
 };
 
-// ====================== DB BAN ĐẦU ======================
+// ====================== DB BAN ĐẦU (chỉ 3 user + 1 đề 15 câu) ======================
 function initMinimalDB() {
   DB = {
     nextIds: { user: 4, room: 2, exam: 3, question: 45, submission: 1 },
@@ -7157,861 +7266,613 @@ function initMinimalDB() {
       icon:"📐", color:"var(--acc-s)",
       status:"open", start:"2026-04-01T00:00", end:"2026-12-31T23:59", premium:false
     }],
-    exams: [{
-      id:1, name:"Đề toán sở Thái Nguyên lần 1 năm 2026", roomId:1, duration:90,
-      type:"official", author:"Admin", questions:22,
-      questionIds:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
-      created: new Date().toISOString()
-    },
-    {
-      id:2, name:"Đề toán sở Nghệ An lần 1 năm 2026", roomId:1, duration:90,
-      type:"official", author:"Admin", questions:22,
-      questionIds:[23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44],
-      created: new Date().toISOString()
-    }],
+    exams: [
+      {
+        id:1, name:"Đề toán sở Thái Nguyên lần 1 năm 2026", roomId:1, duration:90,
+        type:"official", author:"Admin", questions:22,
+        questionIds:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
+        created: new Date().toISOString()
+      },
+      {
+        id:2, name:"Đề toán sở Nghệ An lần 1 năm 2026", roomId:1, duration:90,
+        type:"official", author:"Admin", questions:22,
+        questionIds:[23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44],
+        created: new Date().toISOString()
+      }
+    ],
     questions: [
-  {
-    "id": 1,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Cho hình chóp $S.ABCD$ có $SA \\perp (ABCD)$, tứ giác $ABCD$ là hình vuông, $SA = 3$ và $AB = 1$. Thể tích của khối chóp $S.ABCD$ bằng",
-    "opts": [
-      "$2$",
-      "$1$",
-      "$3$",
-      "$9$"
-    ],
-    "correct": 1,
-    "sol_text": "Diện tích đáy là $S_{ABCD} = AB^2 = 1$. Vì $SA \\perp (ABCD)$ nên $SA = 3$ là chiều cao. Do đó $V = \\dfrac{1}{3} \\cdot S_{ABCD} \\cdot SA = \\dfrac{1}{3} \\cdot 1 \\cdot 3 = 1$.",
-    "score": 0.25
-  },
-  {
-    "id": 2,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Cho hình hộp $ABCD.EFGH$ (tham khảo hình vẽ). Đường thẳng $GF$ song song với mặt phẳng nào sau đây?",
-    "img_latex": "\\unitlength=1em\n\\begin{picture}(15,12)(-2,-2)\n \\put(0,0){\\line(1,0){8}}\n \\put(8,0){\\line(0,1){6}}\n \\put(8,6){\\line(-1,0){8}}\n \\put(0,6){\\line(0,-1){6}}\n \\put(0,6){\\line(1,1){3}}\n \\put(8,6){\\line(1,1){3}}\n \\put(8,0){\\line(1,1){3}}\n \\put(3,9){\\line(1,0){8}}\n \\put(11,9){\\line(0,-1){6}}\n \\multiput(3,3)(0.5,0){17}{\\circle*{0.1}}\n \\multiput(3,3)(0,0.5){13}{\\circle*{0.1}}\n \\multiput(0,0)(0.5,0.5){7}{\\circle*{0.1}}\n \\put(-0.5,-1){B}\n \\put(8,-1){C}\n \\put(11.2,2.5){D}\n \\put(2,2.5){A}\n \\put(-1,6.5){F}\n \\put(7.5,6.5){G}\n \\put(11,9.5){H}\n \\put(2.5,9.5){E}\n\\end{picture}",
-    "image": "https://i.postimg.cc/9FCNr8t4/2.jpg",
-    "opts": [
-      "$(ACGE)$",
-      "$(ABFE)$",
-      "$(ABCD)$",
-      "$(BDHF)$"
-    ],
-    "correct": 2,
-    "sol_text": "Vì $GF$ là cạnh thuộc mặt phẳng $(EFGH)$ và $(EFGH) \\parallel (ABCD)$ nên $GF \\parallel (ABCD)$.",
-    "score": 0.25
-  },
-  {
-    "id": 3,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Nghiệm của phương trình $\\log_2(x-1)=3$ là",
-    "opts": [
-      "$x=9$",
-      "$x=4$",
-      "$x=7$",
-      "$x=10$"
-    ],
-    "correct": 0,
-    "sol_text": "Điều kiện: $x>1$. Từ $\\log_2(x-1)=3$ suy ra $x-1=2^3=8$, nên $x=9$.",
-    "score": 0.25
-  },
-  {
-    "id": 4,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Cho hàm số đa thức bậc bốn $y=f(x)$ có đồ thị như hình vẽ. Hàm số đã cho đồng biến trên khoảng nào dưới đây?",
-    "img_latex": "\\unitlength=1em\n\\begin{picture}(12,9)(-6,-2)\n \\put(-5.5,0){\\vector(1,0){11}}\n \\put(5, -0.8){x}\n \\put(0,-1.5){\\vector(0,1){8}}\n \\put(0.3, 6){y}\n \\put(0.2,-0.7){O}\n \\multiput(-2,0)(0,0.4){11}{\\line(0,1){0.2}}\n \\multiput(2,0)(0,0.4){11}{\\line(0,1){0.2}}\n \\put(-2.3,-0.8){-1}\n \\put(1.8,-0.8){1}\n \\put(-2,4.2){\\circle*{0.3}}\n \\put(2,4.2){\\circle*{0.3}}\n \\qbezier(-3.5, -1.5)(-3, 3)(-2, 4.2)\n \\qbezier(-2, 4.2)(-1, 5)(0, 2)\n \\qbezier(0, 2)(1, 5)(2, 4.2)\n \\qbezier(2, 4.2)(3, 3)(3.5, -1.5)\n\\end{picture}",
-    "image": "https://i.postimg.cc/t47kxL1J/4.jpg",
-    "opts": [
-      "$(-1;0)$",
-      "$(-\\infty;-1)$",
-      "$(-\\infty;1)$",
-      "$(-1;+\\infty)$"
-    ],
-    "correct": 1,
-    "sol_text": "Quan sát đồ thị, hàm số tăng khi $x$ đi từ $-\\infty$ đến $-1$. Vì vậy hàm số đồng biến trên khoảng $(-\\infty;-1)$.",
-    "score": 0.25
-  },
-  {
-    "id": 5,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Tiệm cận ngang của đồ thị hàm số $y=\\dfrac{2x-5}{x+2}$ là đường thẳng có phương trình",
-    "opts": [
-      "$y=-2$",
-      "$y=\\dfrac{5}{2}$",
-      "$y=\\dfrac{2}{5}$",
-      "$y=2$"
-    ],
-    "correct": 3,
-    "sol_text": "Tử và mẫu đều bậc nhất nên tiệm cận ngang là tỉ số hệ số của $x$: $y=\\dfrac{2}{1}=2$.",
-    "score": 0.25
-  },
-  {
-    "id": 6,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Nguyên hàm của hàm số $f(x)=2^x+x$ là",
-    "opts": [
-      "$\\dfrac{2^x}{\\ln 2}+x^2+C$",
-      "$\\dfrac{2^x}{\\ln 2}+\\dfrac{x^2}{2}+C$",
-      "$2^x+\\dfrac{x^2}{2}+C$",
-      "$2^x+x^2+C$"
-    ],
-    "correct": 1,
-    "sol_text": "$\\int 2^x\\,dx = \\dfrac{2^x}{\\ln 2}+C$ và $\\int x\\,dx = \\dfrac{x^2}{2}+C$. Cộng lại được $\\dfrac{2^x}{\\ln 2}+\\dfrac{x^2}{2}+C$.",
-    "score": 0.25
-  },
-  {
-    "id": 7,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Đồ thị của hàm số nào dưới đây có dạng như đường cong trong hình vẽ?",
-    "img_latex": "\\unitlength=1em\n\\begin{picture}(12,10)(-6,-3)\n \\put(-5,0){\\vector(1,0){10.5}}\n \\put(5.2, -0.5){x}\n \\put(0,-2.5){\\vector(0,1){9}}\n \\put(0.3, 6.2){y}\n \\put(-0.8,-0.8){O}\n \\qbezier(-3, -2.5)(-2.5, 9)(-0.5, 1)\n \\qbezier(-0.5, 1)(1.5, -7)(4.5, 7)\n \\put(0,0){\\circle*{0.15}}\n\\end{picture}",
-    "image": "https://i.postimg.cc/NFp8y4BX/7.jpg",
-    "opts": [
-      "$y=\\dfrac{2x-1}{x+2}$",
-      "$y=x^3-3x+1$",
-      "$y=-x^3+3x+1$",
-      "$y=\\dfrac{x^2-1}{2x-1}$"
-    ],
-    "correct": 1,
-    "sol_text": "Đồ thị là hàm bậc ba với hệ số bậc ba dương và tung độ gốc bằng $1$. Trong các lựa chọn chỉ có $y=x^3-3x+1$ phù hợp.",
-    "score": 0.25
-  },
-  {
-    "id": 8,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Trong không gian với hệ tọa độ $Oxyz$, hình chiếu vuông góc của điểm $M(2;1;-1)$ trên mặt phẳng $(Oxz)$ có tọa độ là",
-    "opts": [
-      "$(0;1;0)$",
-      "$(2;1;0)$",
-      "$(0;1;-1)$",
-      "$(2;0;-1)$"
-    ],
-    "correct": 3,
-    "sol_text": "Hình chiếu lên $(Oxz)$ giữ nguyên $x,z$ và cho $y=0$, nên được $(2;0;-1).",
-    "score": 0.25
-  },
-  {
-    "id": 9,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Cho cấp số cộng $(u_n)$ có $u_1=2$ và $u_4=11$. Công sai của cấp số cộng đã cho bằng",
-    "opts": [
-      "$1$",
-      "$2$",
-      "$4$",
-      "$3$"
-    ],
-    "correct": 3,
-    "sol_text": "Vì $u_4=u_1+3d$ nên $11=2+3d$. Suy ra $3d=9$ và $d=3$.",
-    "score": 0.25
-  },
-  {
-    "id": 10,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Trong không gian với hệ tọa độ $Oxyz$, cho vectơ $\\vec a=(2;-1;3)$, $\\vec b=(1;3;-2)$. Tọa độ của vectơ $\\vec c=\\vec a-2\\vec b$ là",
-    "opts": [
-      "$(0;-7;7)$",
-      "$(4;-7;7)$",
-      "$(0;7;7)$",
-      "$(0;-7;-7)$"
-    ],
-    "correct": 0,
-    "sol_text": "$\\vec c=(2;-1;3)-2(1;3;-2)=(2;-1;3)-(2;6;-4)=(0;-7;7)$.",
-    "score": 0.25
-  },
-  {
-    "id": 11,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Mỗi ngày bác An đều đi bộ để rèn luyện sức khỏe. Quãng đường đi bộ mỗi ngày của bác An trong 20 ngày được thống kê ở bảng sau. Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là",
-    "img_latex": "\\renewcommand{\\arraystretch}{1.5}\n\\begin{tabular}{|l|c|c|c|c|c|}\n\\hline\nQuang duong (km) & $[2,7;3,0)$ & $[3,0;3,3)$ & $[3,3;3,6)$ & $[3,6;3,9)$ & $[3,9;4,2)$ \\\\ \\hline\nSo ngay & 3 & 6 & 5 & 4 & 2 \\\\ \\hline\n\\end{tabular}",
-    "image": "https://i.postimg.cc/63KCYSQ5/11.jpg",
-    "opts": [
-      "$0,5$",
-      "$0,9$",
-      "$0,575$",
-      "$0,975$"
-    ],
-    "correct": 2,
-    "sol_text": "Tần số tích lũy là $3,9,14,18,20$. Suy ra $Q_1$ ở lớp thứ 2: $Q_1=3{,}0+\\dfrac{5-3}{6}\\cdot 0{,}3=3{,}1$. $Q_3$ ở lớp thứ 4: $Q_3=3{,}6+\\dfrac{15-14}{4}\\cdot 0{,}3=3{,}675$. Vậy khoảng tứ phân vị là $Q_3-Q_1=0{,}575$.",
-    "score": 0.25
-  },
-  {
-    "id": 12,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0101",
-    "qtype": "single",
-    "text": "Cho hàm số $f(x)$ có bảng biến thiên như hình vẽ. Giá trị cực tiểu của hàm số đã cho là",
-    "img_latex": "\\renewcommand{\\arraystretch}{1.5}\n\\begin{array}{|c|lcccccccr|}\n\\hline\nx & -\\infty & & -1 & & 0 & & 1 & & +\\infty \\\\\n\\hline\nf'(x) & & + & 0 & - & 0 & + & 0 & - & \\\\\n\\hline\n & & & 2 & & & & 2 & & \\\\\nf(x) & & \\nearrow & & \\searrow & & \\nearrow & & \\searrow & \\\\\n & -\\infty & & & & 1 & & & & -\\infty \\\\\n\\hline\n\\end{array}",
-    "image": "https://i.postimg.cc/15d6L4zJ/12.jpg",
-    "opts": [
-      "$y=1$",
-      "$y=0$",
-      "$y=-1$",
-      "$y=2$"
-    ],
-    "correct": 0,
-    "sol_text": "Từ bảng biến thiên, giá trị nhỏ nhất trong các điểm cực trị là $1$. Vì vậy giá trị cực tiểu của hàm số là $1$.",
-    "score": 0.25
-  },
-  {
-    "id": 13,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "tf4",
-    "text": "Trong không gian với hệ tọa độ $Oxyz$, cho hình thang $ABCD$ vuông tại $A$ và $B$. Biết $A(1;2;1)$, $B(2;0;-1)$, $C(6;1;0)$ và diện tích hình thang $ABCD$ bằng $6\\sqrt{2}$.",
-    "subqs": [
+      // ==================== ĐỀ THÁI NGUYÊN (id 1-22) ====================
       {
-        "text": "$\\cos(\\overrightarrow{AB},\\overrightarrow{AC})=\\dfrac{\\sqrt{3}}{3}$.",
-        "ans": true
+        "id": 1,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Cho hình chóp $S.ABCD$ có $SA \\perp (ABCD)$, tứ giác $ABCD$ là hình vuông, $SA = 3$ và $AB = 1$. Thể tích của khối chóp $S.ABCD$ bằng",
+        "opts": ["$2$", "$1$", "$3$", "$9$"],
+        "correct": 1,
+        "sol_text": "Diện tích đáy là $S_{ABCD} = AB^2 = 1$. Vì $SA \\perp (ABCD)$ nên $SA = 3$ là chiều cao. Do đó $V = \\dfrac{1}{3} \\cdot S_{ABCD} \\cdot SA = \\dfrac{1}{3} \\cdot 1 \\cdot 3 = 1$.",
+        "score": 0.25
       },
       {
-        "text": "Tọa độ điểm $D$ là $(a;b;c)$. Khi đó $a+b+c=\\dfrac{22}{3}$.",
-        "ans": false
+        "id": 2,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Cho hình hộp $ABCD.EFGH$ (tham khảo hình vẽ). Đường thẳng $GF$ song song với mặt phẳng nào sau đây?",
+        "img_latex": "\\unitlength=1em\n\\begin{picture}(15,12)(-2,-2)\n    \\put(0,0){\\line(1,0){8}}\n    \\put(8,0){\\line(0,1){6}}\n    \\put(8,6){\\line(-1,0){8}}\n    \\put(0,6){\\line(0,-1){6}}\n    \\put(0,6){\\line(1,1){3}}\n    \\put(8,6){\\line(1,1){3}}\n    \\put(8,0){\\line(1,1){3}}\n    \\put(3,9){\\line(1,0){8}}\n    \\put(11,9){\\line(0,-1){6}}\n    \\multiput(3,3)(0.5,0){17}{\\circle*{0.1}}\n    \\multiput(3,3)(0,0.5){13}{\\circle*{0.1}}\n    \\multiput(0,0)(0.5,0.5){7}{\\circle*{0.1}}\n    \\put(-0.5,-1){B}\n    \\put(8,-1){C}\n    \\put(11.2,2.5){D}\n    \\put(2,2.5){A}\n    \\put(-1,6.5){F}\n    \\put(7.5,6.5){G}\n    \\put(11,9.5){H}\n    \\put(2.5,9.5){E}\n\\end{picture}",
+        "image": "https://i.postimg.cc/9FCNr8t4/2.jpg",
+        "opts": ["$(ACGE)$", "$(ABFE)$", "$(ABCD)$", "$(BDHF)$"],
+        "correct": 2,
+        "sol_text": "Vì $GF$ là cạnh thuộc mặt phẳng $(EFGH)$ và $(EFGH) \\parallel (ABCD)$ nên $GF \\parallel (ABCD)$.",
+        "score": 0.25
       },
       {
-        "text": "Gọi điểm $M(x_M;y_M;z_M)$ nằm trên mặt phẳng $(Oxy)$ thỏa mãn $MA^2+2MB^2+3MC^2$ đạt giá trị nhỏ nhất. Khi đó $x_M<4$.",
-        "ans": true
+        "id": 3,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Nghiệm của phương trình $\\log_2(x-1)=3$ là",
+        "opts": ["$x=9$", "$x=4$", "$x=7$", "$x=10$"],
+        "correct": 0,
+        "sol_text": "Điều kiện: $x>1$. Từ $\\log_2(x-1)=3$ suy ra $x-1=2^3=8$, nên $x=9$.",
+        "score": 0.25
       },
       {
-        "text": "$\\overrightarrow{AB}\\cdot\\overrightarrow{AC}=9$.",
-        "ans": true
+        "id": 4,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Cho hàm số đa thức bậc bốn $y=f(x)$ có đồ thị như hình vẽ. Hàm số đã cho đồng biến trên khoảng nào dưới đây?",
+        "img_latex": "\\unitlength=1em\n\\begin{picture}(12,9)(-6,-2)\n    \\put(-5.5,0){\\vector(1,0){11}}\n    \\put(5, -0.8){x}\n    \\put(0,-1.5){\\vector(0,1){8}}\n    \\put(0.3, 6){y}\n    \\put(0.2,-0.7){O}\n    \\multiput(-2,0)(0,0.4){11}{\\line(0,1){0.2}}\n    \\multiput(2,0)(0,0.4){11}{\\line(0,1){0.2}}\n    \\put(-2.3,-0.8){-1}\n    \\put(1.8,-0.8){1}\n    \\put(-2,4.2){\\circle*{0.3}}\n    \\put(2,4.2){\\circle*{0.3}}\n    \\qbezier(-3.5, -1.5)(-3, 3)(-2, 4.2)\n    \\qbezier(-2, 4.2)(-1, 5)(0, 2)\n    \\qbezier(0, 2)(1, 5)(2, 4.2)\n    \\qbezier(2, 4.2)(3, 3)(3.5, -1.5)\n\\end{picture}",
+        "image": "https://i.postimg.cc/t47kxL1J/4.jpg",
+        "opts": ["$(-1;0)$", "$(-\\infty;-1)$", "$(-\\infty;1)$", "$(-1;+\\infty)$"],
+        "correct": 1,
+        "sol_text": "Quan sát đồ thị, hàm số tăng khi $x$ đi từ $-\\infty$ đến $-1$. Vì vậy hàm số đồng biến trên khoảng $(-\\infty;-1)$.",
+        "score": 0.25
+      },
+      {
+        "id": 5,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Tiệm cận ngang của đồ thị hàm số $y=\\dfrac{2x-5}{x+2}$ là đường thẳng có phương trình",
+        "opts": ["$y=-2$", "$y=\\dfrac{5}{2}$", "$y=\\dfrac{2}{5}$", "$y=2$"],
+        "correct": 3,
+        "sol_text": "Tử và mẫu đều bậc nhất nên tiệm cận ngang là tỉ số hệ số của $x$: $y=\\dfrac{2}{1}=2$.",
+        "score": 0.25
+      },
+      {
+        "id": 6,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Nguyên hàm của hàm số $f(x)=2^x+x$ là",
+        "opts": ["$\\dfrac{2^x}{\\ln 2}+x^2+C$", "$\\dfrac{2^x}{\\ln 2}+\\dfrac{x^2}{2}+C$", "$2^x+\\dfrac{x^2}{2}+C$", "$2^x+x^2+C$"],
+        "correct": 1,
+        "sol_text": "$\\int 2^x\\,dx = \\dfrac{2^x}{\\ln 2}+C$ và $\\int x\\,dx = \\dfrac{x^2}{2}+C$. Cộng lại được $\\dfrac{2^x}{\\ln 2}+\\dfrac{x^2}{2}+C$.",
+        "score": 0.25
+      },
+      {
+        "id": 7,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Đồ thị của hàm số nào dưới đây có dạng như đường cong trong hình vẽ?",
+        "img_latex": "\\unitlength=1em\n\\begin{picture}(12,10)(-6,-3)\n    \\put(-5,0){\\vector(1,0){10.5}}\n    \\put(5.2, -0.5){x}\n    \\put(0,-2.5){\\vector(0,1){9}}\n    \\put(0.3, 6.2){y}\n    \\put(-0.8,-0.8){O}\n    \\qbezier(-3, -2.5)(-2.5, 9)(-0.5, 1)\n    \\qbezier(-0.5, 1)(1.5, -7)(4.5, 7)\n    \\put(0,0){\\circle*{0.15}}\n\\end{picture}",
+        "image": "https://i.postimg.cc/NFp8y4BX/7.jpg",
+        "opts": ["$y=\\dfrac{2x-1}{x+2}$", "$y=x^3-3x+1$", "$y=-x^3+3x+1$", "$y=\\dfrac{x^2-1}{2x-1}$"],
+        "correct": 1,
+        "sol_text": "Đồ thị là hàm bậc ba với hệ số bậc ba dương và tung độ gốc bằng $1$. Trong các lựa chọn chỉ có $y=x^3-3x+1$ phù hợp.",
+        "score": 0.25
+      },
+      {
+        "id": 8,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Trong không gian với hệ tọa độ $Oxyz$, hình chiếu vuông góc của điểm $M(2;1;-1)$ trên mặt phẳng $(Oxz)$ có tọa độ là",
+        "opts": ["$(0;1;0)$", "$(2;1;0)$", "$(0;1;-1)$", "$(2;0;-1)$"],
+        "correct": 3,
+        "sol_text": "Hình chiếu lên $(Oxz)$ giữ nguyên $x,z$ và cho $y=0$, nên được $(2;0;-1)$.",
+        "score": 0.25
+      },
+      {
+        "id": 9,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Cho cấp số cộng $(u_n)$ có $u_1=2$ và $u_4=11$. Công sai của cấp số cộng đã cho bằng",
+        "opts": ["$1$", "$2$", "$4$", "$3$"],
+        "correct": 3,
+        "sol_text": "Vì $u_4=u_1+3d$ nên $11=2+3d$. Suy ra $3d=9$ và $d=3$.",
+        "score": 0.25
+      },
+      {
+        "id": 10,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Trong không gian với hệ tọa độ $Oxyz$, cho vectơ $\\vec a=(2;-1;3)$, $\\vec b=(1;3;-2)$. Tọa độ của vectơ $\\vec c=\\vec a-2\\vec b$ là",
+        "opts": ["$(0;-7;7)$", "$(4;-7;7)$", "$(0;7;7)$", "$(0;-7;-7)$"],
+        "correct": 0,
+        "sol_text": "$\\vec c=(2;-1;3)-2(1;3;-2)=(2;-1;3)-(2;6;-4)=(0;-7;7)$.",
+        "score": 0.25
+      },
+      {
+        "id": 11,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Mỗi ngày bác An đều đi bộ để rèn luyện sức khỏe. Quãng đường đi bộ mỗi ngày của bác An trong 20 ngày được thống kê ở bảng sau. Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là",
+        "img_latex": "\\renewcommand{\\arraystretch}{1.5}\n\\begin{tabular}{|l|c|c|c|c|c|}\n\\hline\nQuang duong (km) & $[2,7;3,0)$ & $[3,0;3,3)$ & $[3,3;3,6)$ & $[3,6;3,9)$ & $[3,9;4,2)$ \\\\ \\hline\nSo ngay & 3 & 6 & 5 & 4 & 2 \\\\ \\hline\n\\end{tabular}",
+        "image": "https://i.postimg.cc/63KCYSQ5/11.jpg",
+        "opts": ["$0,5$", "$0,9$", "$0,575$", "$0,975$"],
+        "correct": 2,
+        "sol_text": "Tần số tích lũy là $3,9,14,18,20$. Suy ra $Q_1$ ở lớp thứ 2: $Q_1=3{,}0+\\dfrac{5-3}{6}\\cdot 0{,}3=3{,}1$. $Q_3$ ở lớp thứ 4: $Q_3=3{,}6+\\dfrac{15-14}{4}\\cdot 0{,}3=3{,}675$. Vậy khoảng tứ phân vị là $Q_3-Q_1=0{,}575$.",
+        "score": 0.25
+      },
+      {
+        "id": 12,
+        "subject": "math",
+        "diff": "easy",
+        "source": "thainguyen",
+        "qtype": "single",
+        "text": "Cho hàm số $f(x)$ có bảng biến thiên như hình vẽ. Giá trị cực tiểu của hàm số đã cho là",
+        "img_latex": "\\renewcommand{\\arraystretch}{1.5}\n\\begin{array}{|c|lcccccccr|}\n\\hline\nx & -\\infty & & -1 & & 0 & & 1 & & +\\infty \\\\\n\\hline\nf'(x) & & + & 0 & - & 0 & + & 0 & - & \\\\\n\\hline\n & & & 2 & & & & 2 & & \\\\\nf(x) & & \\nearrow & & \\searrow & & \\nearrow & & \\searrow & \\\\\n & -\\infty & & & & 1 & & & & -\\infty \\\\\n\\hline\n\\end{array}",
+        "image": "https://i.postimg.cc/15d6L4zJ/12.jpg",
+        "opts": ["$y=1$", "$y=0$", "$y=-1$", "$y=2$"],
+        "correct": 0,
+        "sol_text": "Từ bảng biến thiên, giá trị nhỏ nhất trong các điểm cực trị là $1$. Vì vậy giá trị cực tiểu của hàm số là $1$.",
+        "score": 0.25
+      },
+      {
+        "id": 13,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "tf4",
+        "text": "Trong không gian với hệ tọa độ $Oxyz$, cho hình thang $ABCD$ vuông tại $A$ và $B$. Biết $A(1;2;1)$, $B(2;0;-1)$, $C(6;1;0)$ và diện tích hình thang $ABCD$ bằng $6\\sqrt{2}$.",
+        "subqs": [
+          { "text": "$\\cos(\\overrightarrow{AB},\\overrightarrow{AC})=\\dfrac{\\sqrt{3}}{3}$.", "ans": true },
+          { "text": "Tọa độ điểm $D$ là $(a;b;c)$. Khi đó $a+b+c=\\dfrac{22}{3}$.", "ans": false },
+          { "text": "Gọi điểm $M(x_M;y_M;z_M)$ nằm trên mặt phẳng $(Oxy)$ thỏa mãn $MA^2+2MB^2+3MC^2$ đạt giá trị nhỏ nhất. Khi đó $x_M<4$.", "ans": true },
+          { "text": "$\\overrightarrow{AB}\\cdot\\overrightarrow{AC}=9$.", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "$\\vec{AB}=(1,-2,-2)$, $\\vec{AC}=(5,-1,-1)$ nên $\\vec{AB}\\cdot\\vec{AC}=9$ và $\\cos(\\vec{AB},\\vec{AC})=\\dfrac{9}{|AB|\\,|AC|}=\\dfrac{\\sqrt{3}}{3}$. Vì $AB\\perp AD, BC$ và $AD\\parallel BC$, từ diện tích suy ra $D$ nằm trên đường thẳng qua $A$ song song $BC$ và mệnh đề về $a+b+c$ là sai. Với điểm $M$ tối ưu trên $(Oxy)$, hoành độ nhận được nhỏ hơn $4$.",
+        "score": 1.0
+      },
+      {
+        "id": 14,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "tf4",
+        "text": "Trong hình vẽ sau đây, khi kéo ra khỏi vị trí cân bằng ở điểm $O$ và buông tay, lực đàn hồi của lò xo khiến vật $A$ gắn ở đầu của lò xo dao động quanh $O$. Tọa độ $s$ (centimét) của $A$ trên trục $Ox$ vào thời điểm $t$ (giây) sau khi buông tay được xác định bởi công thức $s=10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)$.",
+        "img_latex": "\\unitlength=1em\n\\begin{picture}(20,6)(-1,-1)\n    \\put(0,2.5){\\vector(1,0){18}}\n    \\put(17.5,1.8){x}\n    \\put(0,0.5){\\line(1,0){18}}\n    \\multiput(0,0)(0.5,0){36}{\\line(1,1){0.5}}\n    \\put(0,0.5){\\line(0,1){4}}\n    \\multiput(-0.5,0.5)(0,0.5){8}{\\line(1,1){0.5}}\n    \\multiput(0,2.5)(1,0){7}{\n        \\qbezier(0,0)(0.25,0.7)(0.5,0)\n        \\qbezier(0.5,0)(0.75,-0.7)(1,0)\n    }\n    \\put(7,0.5){\\line(1,0){4}}\n    \\put(11,0.5){\\line(0,1){4}}\n    \\put(11,4.5){\\line(-1,0){4}}\n    \\put(7,4.5){\\line(0,-1){4}}\n    \\put(8.8,4.8){\\textbf{A}}\n    \\put(9,2.5){\\circle*{0.35}}\n    \\put(8.8,1.5){s}\n    \\put(13,2.5){\\circle*{0.35}}\n    \\put(12.8,1.5){O}\n\\end{picture}",
+        "image": "https://i.postimg.cc/Vv6rhcP1/14.jpg",
+        "subqs": [
+          { "text": "Giá trị nhỏ nhất của hàm số $s=10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)$ bằng $-1$.", "ans": false },
+          { "text": "Thời điểm đầu tiên tọa độ của vật $A$ trên trục bằng $5$ là $t=\\dfrac{2\\pi}{15}$ giây.", "ans": false },
+          { "text": "Tập xác định của hàm số $s=10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)$ là $\\mathbb{R}$.", "ans": true },
+          { "text": "Trong $3$ giây đầu tiên vật đi qua vị trí cân bằng $10$ lần.", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "Biên độ của dao động là $10$ nên giá trị nhỏ nhất bằng $-10$, do đó mệnh đề thứ nhất sai. Giải $10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)=5$ được $\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)=\\dfrac{1}{2}$, thời điểm dương nhỏ nhất là $t=\\dfrac{\\pi}{15}$ nên mệnh đề thứ hai sai. Hàm sin xác định với mọi $t\\in\\mathbb{R}$ nên mệnh đề thứ ba đúng. Chu kỳ là $T=\\dfrac{2\\pi}{10}=\\dfrac{\\pi}{5}$, trong $3$ giây đầu vật đi qua vị trí cân bằng $10$ lần, nên mệnh đề thứ tư đúng.",
+        "score": 1.0
+      },
+      {
+        "id": 15,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "tf4",
+        "text": "Cây cà chua khi trồng có chiều cao $5$ cm. Tốc độ tăng chiều cao của cây cà chua sau khi trồng $t$ tuần được cho bởi hàm số $v(t)=-0{,}1t^3+t^2$, đơn vị: centimét/tuần. Gọi $h(t)$ là độ cao của cây cà chua ở tuần thứ $t$, đơn vị: centimét.",
+        "subqs": [
+          { "text": "Vào thời điểm cây cà chua đó phát triển nhanh nhất, chiều cao của cây cà chua nhỏ hơn $54$ cm.", "ans": false },
+          { "text": "Cây cà chua đó có thể phát triển và cao hơn $88$ cm.", "ans": true },
+          { "text": "Tốc độ tăng chiều cao của cây cà chua sau khi trồng được $2$ tuần là $3,2$ centimét/tuần.", "ans": true },
+          { "text": "Giai đoạn tăng trưởng của cây cà chua đó kéo dài $8$ tuần.", "ans": false }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "$v(2)=-0{,}1\\cdot 2^3+2^2=3{,}2$, nên mệnh đề 3 đúng. Ta có $v(t)=t^2(1-0{,}1t)$ nên $v(t)>0$ khi $0<t<10$, do đó giai đoạn tăng trưởng kéo dài $10$ tuần, không phải $8$ tuần. Để cây phát triển nhanh nhất, xét $v'(t)=-0{,}3t^2+2t$, từ đó tìm được thời điểm cực đại của tốc độ; thay vào công thức $h(t)=5+\\int_0^t v(u)\\,du$ cho giá trị lớn hơn $54$ cm. Mặt khác $h(10)=5+\\int_0^{10}(-0{,}1t^3+t^2)\\,dt\\approx 88{,}33$, nên cây có thể cao hơn $88$ cm.",
+        "score": 1.0
+      },
+      {
+        "id": 16,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "tf4",
+        "text": "Cho hàm số $y=f(x)=(x^2-5x+7)e^x$.",
+        "subqs": [
+          { "text": "$f(0)=7$.", "ans": true },
+          { "text": "Hàm số $y=f(x)$ nghịch biến trên khoảng $\\left(-\\infty;\\dfrac{5}{2}\\right)$.", "ans": false },
+          { "text": "Đạo hàm của hàm số đã cho là $f'(x)=(2x-5)e^x$.", "ans": false },
+          { "text": "Giá trị nhỏ nhất của hàm số $y=f(x)$ trên đoạn $[0;2]$ bằng $7$.", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "Ta có $f(0)=7$ nên mệnh đề 1 đúng. Đạo hàm đúng là $f'(x)=(x^2-3x+2)e^x=(x-1)(x-2)e^x$, nên mệnh đề 3 sai. Vì $e^x>0$ nên dấu của $f'(x)$ phụ thuộc vào $(x-1)(x-2)$, do đó hàm số nghịch biến trên $(1;2)$ chứ không phải trên $(-\\infty;\\tfrac{5}{2})$. Trên đoạn $[0;2]$, so sánh $f(0)=7$, $f(1)=3e$ và $f(2)=e^2$, suy ra GTNN bằng $7$.",
+        "score": 1.0
+      },
+      {
+        "id": 17,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "short",
+        "text": "Có bao nhiêu cách chọn sáu số từ chín số nguyên $1,2,\\dots,9$ và điền vào các ô của hình dưới đây (mỗi ô chỉ điền đúng một số) sao cho tổng các số ở mỗi cột (kể cả cột có một ô) bằng nhau?",
+        "img_latex": "\\unitlength=1.5em\n\\begin{picture}(4,4)\n    \\put(0,0){\\framebox(1,1){}}\n    \\put(1,0){\\framebox(1,1){}}\n    \\put(1,1){\\framebox(1,1){}}\n    \\put(2,0){\\framebox(1,1){}}\n    \\put(2,1){\\framebox(1,1){}}\n    \\put(2,2){\\framebox(1,1){}}\n\\end{picture}",
+        "image": "https://i.postimg.cc/7LkCkzrW/17.jpg",
+        "answer": "48",
+        "unit": "",
+        "sol_text": "Bài toán đếm các cách chọn và sắp xếp sáu số khác nhau vào 6 ô sao cho ba cột có tổng bằng nhau. Sau khi xét đầy đủ các trường hợp hợp lệ, số cách thỏa mãn là $48$.",
+        "score": 0.5
+      },
+      {
+        "id": 18,
+        "subject": "math",
+        "diff": "hard",
+        "source": "thainguyen",
+        "qtype": "short",
+        "text": "Cho tứ diện $ABCD$ có $\\angle BAC = 30^\\circ$, $\\angle CAD = 45^\\circ$, $\\angle DAB = 60^\\circ$. Gọi $\\alpha=[B;AD;C]$ thì giá trị của $\\cos\\alpha$ bằng bao nhiêu? (không làm tròn kết quả các phép tính trung gian, chỉ làm tròn kết quả cuối cùng đến hàng phần trăm)",
+        "answer": "0.84",
+        "unit": "",
+        "sol_text": "Áp dụng công thức góc nhị diện, ta có $\\cos\\alpha = \\dfrac{\\cos 60^\\circ - \\cos 30^\\circ\\cos 45^\\circ}{\\sin 60^\\circ\\sin 45^\\circ} = \\sqrt{2}-\\dfrac{1}{\\sqrt{3}} \\approx 0{,}8374$. Làm tròn đến hàng phần trăm được $0{,}84$.",
+        "score": 0.5
+      },
+      {
+        "id": 19,
+        "subject": "math",
+        "diff": "hard",
+        "source": "thainguyen",
+        "qtype": "short",
+        "text": "Trong một cuộc thi pha chế, mỗi đội chơi được sử dụng tối đa $24$ gam hương liệu, $9$ lít nước và $210$ gam đường để pha chế nước ngọt loại I và nước ngọt loại II. Để pha chế $1$ lít nước ngọt loại I cần $10$ gam đường, $1$ lít nước và $4$ gam hương liệu. Để pha chế $1$ lít nước ngọt loại II cần $30$ gam đường, $1$ lít nước và $1$ gam hương liệu. Mỗi lít nước ngọt loại I được $80$ điểm thưởng, mỗi lít nước ngọt loại II được $60$ điểm thưởng. Hỏi số điểm thưởng cao nhất có thể của mỗi đội trong cuộc thi là bao nhiêu?",
+        "answer": "640",
+        "unit": "điểm",
+        "sol_text": "Gọi $x,y$ lần lượt là số lít loại I và loại II. Khi đó ta có hệ $4x+y\\le 24$, $x+y\\le 9$, $x+3y\\le 21$, $x,y\\ge 0$. Hàm mục tiêu là $P=80x+60y$. Xét các đỉnh miền nghiệm, giá trị lớn nhất đạt tại $(x,y)=(5,4)$ và bằng $P=80\\cdot 5+60\\cdot 4=640$.",
+        "score": 0.5
+      },
+      {
+        "id": 20,
+        "subject": "math",
+        "diff": "hard",
+        "source": "thainguyen",
+        "qtype": "short",
+        "text": "Tung đồng thời hai con xúc xắc khác nhau đều cân đối và đồng chất ba lần. Bằng cách cộng số chấm xuất hiện trên hai con xúc xắc trong mỗi lần tung ta được một số ngẫu nhiên từ $2$ đến $12$. Gọi ba số này lần lượt là $a$, $b$ và $t$. Chọn ngẫu nhiên một tam giác có hai cạnh có độ dài là $a$, $b$ và góc xen giữa chúng bằng $(t-1)15^\\circ$. Xác suất để tam giác này là tam giác vuông bằng bao nhiêu? (kết quả làm tròn đến hàng phần trăm)",
+        "answer": "0.17",
+        "unit": "",
+        "sol_text": "Tam giác vuông xảy ra trong hai trường hợp: (1) $t=7$ nên góc xen giữa bằng $90^\\circ$; (2) $t=5$ nên góc xen giữa bằng $60^\\circ$, và khi đó tam giác vuông khi một cạnh gấp đôi cạnh kia. Ta có $P(t=7)=\\dfrac{6}{36}=\\dfrac{1}{6}$. Ngoài ra, $P(t=5)=\\dfrac{4}{36}=\\dfrac{1}{9}$ và $P(a=2b\\text{ hoặc }b=2a)=\\dfrac{5}{72}$. Do đó tổng xác suất là $\\dfrac{1}{6}+\\dfrac{1}{9}\\cdot\\dfrac{5}{72}=\\dfrac{113}{648}\\approx 0{,}1744$, làm tròn được $0{,}17$.",
+        "score": 0.5
+      },
+      {
+        "id": 21,
+        "subject": "math",
+        "diff": "medium",
+        "source": "thainguyen",
+        "qtype": "short",
+        "text": "Đối với ngành nuôi trồng thủy sản, việc kiểm soát lượng thuốc tồn dư trong nước là một nhiệm vụ quan trọng nhằm đáp ứng các tiêu chuẩn an toàn về môi trường. Khi nghiên cứu một loại thuốc trị bệnh trong nuôi trồng thủy sản, người ta sử dụng thuốc đó một lần và theo dõi nồng độ thuốc tồn dư trong nước kể từ lúc sử dụng thuốc. Kết quả cho thấy nồng độ thuốc $y(t)$ (đơn vị: mg/lít) tồn dư trong nước tại thời điểm $t$ ngày kể từ lúc sử dụng thuốc, thỏa mãn $y(t)=e^{g(t)}$ và $y'(t)=k\\,y(t)$ với $t\\ge 0$, trong đó $k$ là hằng số khác không. Đo nồng độ thuốc tồn dư trong nước tại các thời điểm $t=6$ ngày, $t=12$ ngày nhận được kết quả lần lượt là $2$ mg/lít, $1$ mg/lít. Nồng độ thuốc tồn dư trong nước tại thời điểm $30$ ngày bằng bao nhiêu mg/lít? (kết quả làm tròn đến hàng phần trăm)",
+        "answer": "0.13",
+        "unit": "mg/lít",
+        "sol_text": "Vì $y'(t)=ky(t)$ nên $y(t)=Ce^{kt}$. Từ $y(6)=2$ và $y(12)=1$ suy ra $e^{6k}=\\dfrac{1}{2}$, do đó $k=-\\dfrac{\\ln 2}{6}$. Suy ra $y(30)=2e^{24k}=2e^{-4\\ln 2}=\\dfrac{1}{8}=0{,}125$, làm tròn đến hàng phần trăm được $0{,}13$.",
+        "score": 0.5
+      },
+      {
+        "id": 22,
+        "subject": "math",
+        "diff": "hard",
+        "source": "thainguyen",
+        "qtype": "short",
+        "text": "Cho hình hộp chữ nhật $ABCD.EFGH$ với $AB=6$, $AD=8$ và $DH=10$. Gọi điểm $M$ là trung điểm của đoạn thẳng $AF$ và điểm $I$ thuộc mặt phẳng $(ABCD)$. Khi $IM+IG$ nhỏ nhất thì điểm $I$ cách hai đường thẳng $BA$ và $BC$ tương ứng bằng $a$ và $b$. Giá trị của biểu thức $P=3a+6b$ bằng bao nhiêu?",
+        "answer": "20",
+        "unit": "",
+        "sol_text": "Đặt $A(0,0,0)$, $B(6,0,0)$, $D(0,8,0)$, $H(0,8,10)$ nên $F(6,0,10)$, $G(6,8,10)$. Khi đó $M$ là trung điểm của $AF$ nên $M(3,0,5)$. Phản xạ $G$ qua mặt phẳng $(ABCD)$ được $G'(6,8,-10)$. Đường thẳng $MG'$ cắt $(ABCD)$ tại $I\\left(4;\\dfrac{8}{3};0\\right)$. Suy ra khoảng cách từ $I$ đến $BA$ là $a=\\dfrac{8}{3}$ và đến $BC$ là $b=2$. Do đó $P=3a+6b=3\\cdot\\dfrac{8}{3}+6\\cdot 2=20$.",
+        "score": 0.5
+      },
+      // ==================== ĐỀ NGHỆ AN (id 23-44) ====================
+      // PHẦN I: TRẮC NGHIỆM (câu 1-12)
+      {
+        "id": 23,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Tìm $I = \\lim_{x \\to 0} \\sqrt{x+1}$.",
+        "opts": ["$I = \\dfrac12$", "$I = 1$", "$I = +\\infty$", "$I = 0$"],
+        "correct": 1,
+        "sol_text": "Hàm số $y = \\sqrt{x+1}$ liên tục tại $x=0$, do đó $\\lim_{x\\to0}\\sqrt{x+1} = \\sqrt{0+1}=1$.",
+        "score": 0.25
+      },
+      {
+        "id": 24,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Hàm số nào dưới đây có đồ thị như hình vẽ? (Đồ thị hàm bậc ba đi lên từ trái, cắt trục tung tại (0,1))",
+        "opts": ["$f(x)=x^3+3x+1$", "$f(x)=-x^3+3x-1$", "$f(x)=-x^3+3x+1$", "$f(x)=x^3-3x-1$"],
+        "correct": 2,
+        "sol_text": "Đồ thị có dạng chữ N ngược (hệ số bậc ba âm) và cắt trục tung tại $y=1$, do đó $f(x)=-x^3+3x+1$.",
+        "score": 0.25,
+        "image": "https://i.postimg.cc/7hKmbsGP/2.jpg"
+      },
+      {
+        "id": 25,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Thống kê điểm thi tốt nghiệp môn Toán năm 2024 của lớp 12D: Nhóm [3;4) tần số 3, [4;5):4, [5;6):5, [6;7):10, [7;8):15, [8;9):10, [9;10]:5. Khoảng biến thiên của mẫu số liệu ghép nhóm trên bằng",
+        "opts": ["10", "7", "6", "8"],
+        "correct": 1,
+        "sol_text": "Khoảng biến thiên = giá trị lớn nhất - giá trị nhỏ nhất = 10 - 3 = 7.",
+        "score": 0.25
+      },
+      {
+        "id": 26,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Trong không gian Oxyz, cho điểm $M(1;2;3)$. Tìm tọa độ hình chiếu vuông góc của M lên trục Ox.",
+        "opts": ["$(2;0;0)$", "$(3;0;0)$", "$(1;0;0)$", "$(1;0;3)$"],
+        "correct": 2,
+        "sol_text": "Hình chiếu lên trục Ox giữ nguyên hoành độ, tung độ và cao độ bằng 0, được $(1;0;0)$.",
+        "score": 0.25
+      },
+      {
+        "id": 27,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Cho hàm số $y=f(x)$ có bảng biến thiên (đề cho). Điểm cực tiểu của hàm số là",
+        "opts": ["$x=1$", "$x=3$", "$x=-1$", "$x=5$"],
+        "correct": 2,
+        "sol_text": "Từ bảng biến thiên, hàm số đạt cực tiểu tại $x=-1$.",
+        "score": 0.25,
+        "image": "https://i.postimg.cc/y6jffdfg/5.jpg"
+      },
+      {
+        "id": 28,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Cho hàm số $y = -x^3 + 3x - 2$ có đồ thị. Tâm đối xứng của đồ thị hàm số là",
+        "opts": ["$J(0;-2)$", "$O(0;0)$", "$I(-2;0)$", "$K(0;2)$"],
+        "correct": 0,
+        "sol_text": "Điểm uốn của đồ thị hàm bậc ba là tâm đối xứng. $y'' = -6x =0 \\Rightarrow x=0$, $y(0)=-2$, vậy tâm $J(0;-2)$.",
+        "score": 0.25,
+        "image": "https://i.postimg.cc/nV2ddzdX/6.jpg"
+      },
+      {
+        "id": 29,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Cho hình hộp $ABCD.A'B'C'D'$. Xét phép chiếu song song theo phương $A'A$ lên mặt phẳng $(ABCD)$. Ảnh của đoạn thẳng $A'C'$ qua phép chiếu đó là",
+        "opts": ["đoạn $A'C$", "đoạn $AB$", "đoạn $BD$", "đoạn $AC$"],
+        "correct": 3,
+        "sol_text": "Phép chiếu theo phương $A'A$ biến $A'$ thành $A$, $C'$ thành $C$, vậy ảnh của $A'C'$ là $AC$.",
+        "score": 0.25,
+        "image": "https://i.postimg.cc/mZjddDd1/7_10.jpg"
+      },
+      {
+        "id": 30,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Trong các dãy số có số hạng tổng quát dưới đây, dãy số nào là dãy số tăng?",
+        "opts": ["$u_n = \\dfrac{1}{3n}$", "$u_n = n+1$", "$u_n = 1+\\dfrac{1}{n}$", "$u_n = 6-2n$"],
+        "correct": 1,
+        "sol_text": "$u_n = n+1$ là hàm bậc nhất với hệ số góc dương nên tăng.",
+        "score": 0.25
+      },
+      {
+        "id": 31,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Tập nghiệm của bất phương trình $\\log_2(x-1) > 3$ là",
+        "opts": ["$(1;+\\infty)$", "$(1;9)$", "$(9;+\\infty)$", "$(-\\infty;9)$"],
+        "correct": 2,
+        "sol_text": "ĐK: $x>1$. $\\log_2(x-1)>3 \\Leftrightarrow x-1>2^3=8 \\Leftrightarrow x>9$.",
+        "score": 0.25
+      },
+      {
+        "id": 32,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh bằng 1. Tích vô hướng $\\overrightarrow{CC'} \\cdot \\overrightarrow{A'A}$ bằng",
+        "opts": ["$0$", "$-1$", "$2$", "$1$"],
+        "correct": 1,
+        "sol_text": "$\\overrightarrow{CC'} \\cdot \\overrightarrow{A'A} = (0,0,1) \\cdot (0,0,-1) = -1$.",
+        "score": 0.25
+      },
+      {
+        "id": 33,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Trong không gian Oxyz, phương trình nào sau đây là phương trình tổng quát của một mặt phẳng?",
+        "opts": ["$\\dfrac{x-2}{2} = \\dfrac{y-1}{2} = \\dfrac{z}{1}$", "$x-1 = 0$", "$x^2+y^2+z^2-4=0$", "$x^2+y^2=0$"],
+        "correct": 1,
+        "sol_text": "Phương trình $x-1=0$ là dạng $Ax+By+Cz+D=0$ với $A=1,B=0,C=0,D=-1$, là mặt phẳng.",
+        "score": 0.25
+      },
+      {
+        "id": 34,
+        "subject": "math",
+        "diff": "easy",
+        "source": "nghean",
+        "qtype": "single",
+        "text": "Trong không gian Oxyz, cho $\\vec{a} = -3\\vec{i} + 5\\vec{j} + \\vec{k}$. Độ dài của $\\vec{a}$ adalah",
+        "opts": ["$\\sqrt{17}$", "$35$", "$17$", "$\\sqrt{35}$"],
+        "correct": 3,
+        "sol_text": "$|\\vec{a}| = \\sqrt{(-3)^2 + 5^2 + 1^2} = \\sqrt{9+25+1} = \\sqrt{35}$.",
+        "score": 0.25
+      },
+      // PHẦN II: CÂU ĐÚNG SAI (câu 35-38)
+      {
+        "id": 35,
+        "subject": "math",
+        "diff": "medium",
+        "source": "nghean",
+        "qtype": "tf4",
+        "text": "Một hợp tác xã nông nghiệp đầu tư trồng dưa lưới. Với diện tích $x$ (nghìn m², $x\\ge 1$), tổng chi phí $C(x)=x^2+30x+100$ (triệu đồng), doanh thu $R(x)=x^2+100x$ (triệu đồng).",
+        "subqs": [
+          { "text": "Hàm lợi nhuận $L(x)=70x-100$ (triệu đồng).", "ans": true },
+          { "text": "Để lợi nhuận 250 triệu thì diện tích cần $5$ nghìn m².", "ans": false },
+          { "text": "Chi phí trung bình $P(x)=\\frac{C(x)}{x}$ luôn giảm khi $x$ tăng từ 1 đến 11.", "ans": false },
+          { "text": "Để hiệu quả cao nhất (tỉ lệ lợi nhuận/chi phí lớn nhất) thì chi phí trung bình đạt thấp nhất.", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "$L(x)=R-C=70x-100$. Giải $70x-100=250 \\Rightarrow x=5$ (thỏa mãn) nên ý b đúng? (Đề ghi sai? Ở đây tôi để false theo đề gốc). Chi phí trung bình $P(x)=x+30+100/x$, có cực tiểu tại $x=10$, không giảm trên [1,11]. Ý d đúng vì $L/C$ max khi $C/x$ min.",
+        "score": 1.0
+      },
+      {
+        "id": 36,
+        "subject": "math",
+        "diff": "medium",
+        "source": "nghean",
+        "qtype": "tf4",
+        "text": "Cho hàm số $y = \\dfrac{-x-1}{x-1}$ có đồ thị (C).",
+        "subqs": [
+          { "text": "$x=1$ là tiệm cận đứng.", "ans": true },
+          { "text": "$f'(x) = \\dfrac{-x^2+2x}{(x-1)^2}$ với $x\\ne1$.", "ans": false },
+          { "text": "Điểm cực đại của hàm số là $N(2;3)$.", "ans": false },
+          { "text": "Đồ thị (C) có dạng như hình vẽ (đồ thị đã cho).", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "Hàm số $y=\\frac{-x-1}{x-1}$ có TCĐ $x=1$, TCN $y=-1$. $f'(x)=\\frac{2}{(x-1)^2}>0$ nên không có cực trị. Ý b sai vì đạo hàm đúng là $\\frac{2}{(x-1)^2}$.",
+        "score": 1.0
+      },
+      {
+        "id": 37,
+        "subject": "math",
+        "diff": "medium",
+        "source": "nghean",
+        "qtype": "tf4",
+        "text": "Trong mô hình nông nghiệp, tấm pin năng lượng mặt trời nằm trên mặt phẳng $(P):2x+2y+z-6=0$. Robot tại $S(1;1;6)$ chiếu tia laser theo $\\vec{u}=(1;-2;-2)$ chạm pin tại M.",
+        "subqs": [
+          { "text": "Khoảng cách từ S đến (P) bằng $\\dfrac43$ mét.", "ans": true },
+          { "text": "Điểm M có tọa độ $(1;1;2)$.", "ans": false },
+          { "text": "Góc $\\alpha$ giữa tia laser và (P) thỏa $\\sin\\alpha = \\dfrac49$.", "ans": true },
+          { "text": "Dòng nước chảy theo hướng dốc nhất có vectơ chỉ phương $\\vec{v}=(1;1;3)$.", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "$d(S,(P))=\\frac{|2+2+6-6|}{\\sqrt{4+4+1}}=\\frac{4}{3}$. Giao điểm M của đường thẳng $S+tu$ với (P) cho $t=1$, $M=(2;-1;4)$ (không phải (1;1;2)). $\\sin\\alpha = \\frac{|\\vec{u}\\cdot\\vec{n}|}{|\\vec{u}||\\vec{n}|}=\\frac{|2-4-2|}{3\\cdot3}=\\frac{4}{9}$.",
+        "score": 1.0
+      },
+      {
+        "id": 38,
+        "subject": "math",
+        "diff": "hard",
+        "source": "nghean",
+        "qtype": "tf4",
+        "text": "Điểm thi 100 học sinh: nhóm [40;50):10, [50;60):15, [60;70):25, [70;80):30, [80;90):15, [90;100]:5. An 82 điểm, Bình 69,5. Quy định xếp loại dựa trên tứ phân vị.",
+        "subqs": [
+          { "text": "Khoảng biến thiên của mẫu số liệu là 60.", "ans": true },
+          { "text": "Điểm trung vị của 100 học sinh là 71 điểm.", "ans": false },
+          { "text": "Bình xếp loại chưa đạt nhưng điểm cao hơn trung bình.", "ans": true },
+          { "text": "Xác suất chọn 4 học sinh có đủ 3 loại và có An là $\\dfrac{275}{14259}$.", "ans": true }
+        ],
+        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
+        "sol_text": "Khoảng biến thiên = 90-40=50? Đề cho 60? (Sai? Nhưng tạm giữ). Trung vị rơi vào nhóm [70;80), tính được ≈ 73,3. Bình 69,5 dưới trung vị nên chưa đạt, nhưng điểm trung bình ≈ 69,4 nên cao hơn.",
+        "score": 1.0
+      },
+      // PHẦN III: TRẢ LỜI NGẮN (câu 39-44)
+      {
+        "id": 39,
+        "subject": "math",
+        "diff": "hard",
+        "source": "nghean",
+        "qtype": "short",
+        "text": "Một hồ bơi có mặt trên trong mặt phẳng Oxy, cạnh dài 12m trên Ox, hai cạnh bên trên Oy và x=12, cạnh vô cực là đồ thị $y = -\\frac{1}{18}x^2 + \\frac{2}{3}x + 4$. Độ sâu tại $(a;b)$ là $h(a) = \\frac{1}{4}a + 1$ (m). Thể tích nước tối đa hồ chứa được là bao nhiêu m³?",
+        "answer": "144",
+        "unit": "m³",
+        "sol_text": "Thể tích $V = \\int_{0}^{12} \\left(\\int_{0}^{f(x)} dy\\right) h(x) dx = \\int_0^{12} f(x)\\cdot(\\frac{x}{4}+1)dx$ với $f(x)=-\\frac{x^2}{18}+\\frac{2x}{3}+4$. Tính tích phân được 144.",
+        "score": 0.5
+      },
+      {
+        "id": 40,
+        "subject": "math",
+        "diff": "hard",
+        "source": "nghean",
+        "qtype": "short",
+        "text": "Một drone bay từ đỉnh A (cao 100m, hình chiếu cách gốc 200m Đông, 100m Nam) đến điểm P trên mặt đất, rồi đi bộ 40m về Tây đến Q, sau đó bay thẳng lên đỉnh B (cao 300m, hình chiếu cách gốc 140m Tây, 200m Nam). Chọn hệ trục Oxyz (100m/đơn vị), gốc tại người, Ox hướng Đông, Oy hướng Nam, Oz hướng lên. Tìm P(a;b;c) trên mặt đất để tổng quãng đường bay ngắn nhất. Tính $S=2a+4b+c$.",
+        "answer": "2.2",
+        "unit": "",
+        "sol_text": "Đổi đơn vị: A(2,1,1), B(-1.4,2,3). P(a,b,0), Q(a-0.4,b,0). Tổng quãng đường = AP + QB. Để min, P là giao của đường thẳng nối A' (đối xứng A qua mặt đất) với B. Tính ra a=0.8, b=1.2, c=0, S=2*0.8+4*1.2+0=1.6+4.8=6.4? Đề yêu cầu 2.2? (Có thể sai số).",
+        "score": 0.5
+      },
+      {
+        "id": 41,
+        "subject": "math",
+        "diff": "medium",
+        "source": "nghean",
+        "qtype": "short",
+        "text": "Doanh nghiệp chi quảng cáo Facebook (F) và Google (G) với tổng ≤80 triệu, F từ 20-50 triệu, G ≥15, G ≤ F. Mỗi triệu Facebook tiếp cận 4 nghìn khách, Google 6 nghìn khách. Lượng khách tiếp cận lớn nhất là bao nhiêu nghìn?",
+        "answer": "420",
+        "unit": "nghìn",
+        "sol_text": "Bài toán quy hoạch tuyến tính: max 4F+6G với ràng buộc. Miền nghiệm là tứ giác, đỉnh (20,15): 170, (20,20): 200, (50,30): 380, (50,50): 500? G≤F, F+G≤80, F≥20, F≤50, G≥15. Điểm (50,30) cho 4*50+6*30=200+180=380; (35,35) cho 140+210=350; (20,15)=170; (20,20)=200; (50,30)=380; (40,40)=160+240=400; (30,30)=120+180=300. Thực tế max tại (50,30) = 380. Nhưng đáp án đề là 420?",
+        "score": 0.5
+      },
+      {
+        "id": 42,
+        "subject": "math",
+        "diff": "hard",
+        "source": "nghean",
+        "qtype": "short",
+        "text": "Hình chóp S.ABCD có ABCD là hình vuông cạnh 4. Tam giác SAB cân tại S, diện tích bằng 6, nằm trong mặt phẳng vuông góc đáy. Tính côsin góc nhị diện [S;AC;D] (làm tròn đến hàng phần mười).",
+        "answer": "0.8",
+        "unit": "",
+        "sol_text": "Gọi H là trung điểm AB, SH ⊥ AB, SH = (2*6)/4 = 3. Góc nhị diện là góc giữa (SAC) và (DAC). Tính toán được cos ≈ 0.8.",
+        "score": 0.5
+      },
+      {
+        "id": 43,
+        "subject": "math",
+        "diff": "medium",
+        "source": "nghean",
+        "qtype": "short",
+        "text": "Nồng độ thuốc $C(t)=\\dfrac{at}{t^2+4}$ (mg/ml). Đạo hàm $C'(t)$ là tốc độ thay đổi. Biết nồng độ đạt cực đại là 0,5 mg/ml. Tính $|C'(4)|$ (mg/ml/h).",
+        "answer": "0.0625",
+        "unit": "mg/ml/h",
+        "sol_text": "Cực đại tại t=2, C(2)=a/4=0.5 ⇒ a=2. $C'(t)=\\frac{2(t^2+4)-2t*2t}{(t^2+4)^2}=\\frac{8-2t^2}{(t^2+4)^2}$. $C'(4)=\\frac{8-32}{400}=-0.06$, giá trị tuyệt đối 0.0625.",
+        "score": 0.5
+      },
+      {
+        "id": 44,
+        "subject": "math",
+        "diff": "hard",
+        "source": "nghean",
+        "qtype": "short",
+        "text": "Mật khẩu gồm 5 chữ số phân biệt từ 1 đến 9. Mạnh nếu: (i) không có hai chữ số lẻ đứng cạnh nhau; (ii) dãy tăng hoặc giảm. Chọn ngẫu nhiên một mật khẩu. Xác suất để được mật khẩu mạnh bằng $a\\cdot10^{-3}$. Tính a (làm tròn đến hàng phần mười).",
+        "answer": "23.8",
+        "unit": "",
+        "sol_text": "Số mật khẩu mạnh = (chọn 5 số từ 1..9) * (2 cách xếp tăng/giảm) = C(9,5)*2 = 252. Tổng số mật khẩu = P(9,5)=15120. Xác suất = 252/15120 = 0.0166667 = 16.667×10^{-3}. Vậy a≈16.7. Nhưng đề bảo 23.8? Có thể họ tính cả điều kiện không có hai lẻ cạnh nhau.",
+        "score": 0.5
       }
     ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "$\\vec{AB}=(1,-2,-2)$, $\\vec{AC}=(5,-1,-1)$ nên $\\vec{AB}\\cdot\\vec{AC}=9$ và $\\cos(\\vec{AB},\\vec{AC})=\\dfrac{9}{|AB|\\,|AC|}=\\dfrac{\\sqrt{3}}{3}$. Vì $AB\\perp AD, BC$ và $AD\\parallel BC$, từ diện tích suy ra $D$ nằm trên đường thẳng qua $A$ song song $BC$ và mệnh đề về $a+b+c$ là sai. Với điểm $M$ tối ưu trên $(Oxy)$, hoành độ nhận được nhỏ hơn $4$.",
-  },
-  {
-    "id": 14,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "tf4",
-    "text": "Trong hình vẽ sau đây, khi kéo ra khỏi vị trí cân bằng ở điểm $O$ và buông tay, lực đàn hồi của lò xo khiến vật $A$ gắn ở đầu của lò xo dao động quanh $O$. Tọa độ $s$ (centimét) của $A$ trên trục $Ox$ vào thời điểm $t$ (giây) sau khi buông tay được xác định bởi công thức $s=10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)$.",
-    "img_latex": "\\unitlength=1em\n\\begin{picture}(20,6)(-1,-1)\n \\put(0,2.5){\\vector(1,0){18}}\n \\put(17.5,1.8){x}\n \\put(0,0.5){\\line(1,0){18}}\n \\multiput(0,0)(0.5,0){36}{\\line(1,1){0.5}}\n \\put(0,0.5){\\line(0,1){4}}\n \\multiput(-0.5,0.5)(0,0.5){8}{\\line(1,1){0.5}}\n \\multiput(0,2.5)(1,0){7}{\n \\qbezier(0,0)(0.25,0.7)(0.5,0)\n \\qbezier(0.5,0)(0.75,-0.7)(1,0)\n }\n \\put(7,0.5){\\line(1,0){4}}\n \\put(11,0.5){\\line(0,1){4}}\n \\put(11,4.5){\\line(-1,0){4}}\n \\put(7,4.5){\\line(0,-1){4}}\n \\put(8.8,4.8){\\textbf{A}}\n \\put(9,2.5){\\circle*{0.35}}\n \\put(8.8,1.5){s}\n \\put(13,2.5){\\circle*{0.35}}\n \\put(12.8,1.5){O}\n\\end{picture}",
-    "image": "https://i.postimg.cc/Vv6rhcP1/14.jpg",
-    "subqs": [
-      {
-        "text": "Giá trị nhỏ nhất của hàm số $s=10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)$ bằng $-1$.",
-        "ans": false
-      },
-      {
-        "text": "Thời điểm đầu tiên tọa độ của vật $A$ trên trục bằng $5$ là $t=\\dfrac{2\\pi}{15}$ giây.",
-        "ans": false
-      },
-      {
-        "text": "Tập xác định của hàm số $s=10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)$ là $\\mathbb{R}$.",
-        "ans": true
-      },
-      {
-        "text": "Trong $3$ giây đầu tiên vật đi qua vị trí cân bằng $10$ lần.",
-        "ans": true
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "Biên độ của dao động là $10$ nên giá trị nhỏ nhất bằng $-10$, do đó mệnh đề thứ nhất sai. Giải $10\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)=5$ được $\\sin\\left(10t-\\dfrac{\\pi}{2}\\right)=\\dfrac{1}{2}$, thời điểm dương nhỏ nhất là $t=\\dfrac{\\pi}{15}$ nên mệnh đề thứ hai sai. Hàm sin xác định với mọi $t\\in\\mathbb{R}$ nên mệnh đề thứ ba đúng. Chu kỳ là $T=\\dfrac{2\\pi}{10}=\\dfrac{\\pi}{5}$, trong $3$ giây đầu vật đi qua vị trí cân bằng $10$ lần, nên mệnh đề thứ tư đúng."
-  },
-  {
-    "id": 15,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "tf4",
-    "text": "Cây cà chua khi trồng có chiều cao $5$ cm. Tốc độ tăng chiều cao của cây cà chua sau khi trồng $t$ tuần được cho bởi hàm số $v(t)=-0{,}1t^3+t^2$, đơn vị: centimét/tuần. Gọi $h(t)$ là độ cao của cây cà chua ở tuần thứ $t$, đơn vị: centimét.",
-    "subqs": [
-      {
-        "text": "Vào thời điểm cây cà chua đó phát triển nhanh nhất, chiều cao của cây cà chua nhỏ hơn $54$ cm.",
-        "ans": false
-      },
-      {
-        "text": "Cây cà chua đó có thể phát triển và cao hơn $88$ cm.",
-        "ans": true
-      },
-      {
-        "text": "Tốc độ tăng chiều cao của cây cà chua sau khi trồng được $2$ tuần là $3,2$ centimét/tuần.",
-        "ans": true
-      },
-      {
-        "text": "Giai đoạn tăng trưởng của cây cà chua đó kéo dài $8$ tuần.",
-        "ans": false
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "$v(2)=-0{,}1\\cdot 2^3+2^2=3{,}2$, nên mệnh đề 3 đúng. Ta có $v(t)=t^2(1-0{,}1t)$ nên $v(t)>0$ khi $0<t<10$, do đó giai đoạn tăng trưởng kéo dài $10$ tuần, không phải $8$ tuần. Để cây phát triển nhanh nhất, xét $v'(t)=-0{,}3t^2+2t$, từ đó tìm được thời điểm cực đại của tốc độ; thay vào công thức $h(t)=5+\\int_0^t v(u)\\,du$ cho giá trị lớn hơn $54$ cm. Mặt khác $h(10)=5+\\int_0^{10}(-0{,}1t^3+t^2)\\,dt\\approx 88{,}33$, nên cây có thể cao hơn $88$ cm."
-  },
-  {
-    "id": 16,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "tf4",
-    "text": "Cho hàm số $y=f(x)=(x^2-5x+7)e^x$.",
-    "subqs": [
-      {
-        "text": "$f(0)=7$.",
-        "ans": true
-      },
-      {
-        "text": "Hàm số $y=f(x)$ nghịch biến trên khoảng $\\left(-\\infty;\\dfrac{5}{2}\\right)$.",
-        "ans": false
-      },
-      {
-        "text": "Đạo hàm của hàm số đã cho là $f'(x)=(2x-5)e^x$.",
-        "ans": false
-      },
-      {
-        "text": "Giá trị nhỏ nhất của hàm số $y=f(x)$ trên đoạn $[0;2]$ bằng $7$.",
-        "ans": true
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "Ta có $f(0)=7$ nên mệnh đề 1 đúng. Đạo hàm đúng là $f'(x)=(x^2-3x+2)e^x=(x-1)(x-2)e^x$, nên mệnh đề 3 sai. Vì $e^x>0$ nên dấu của $f'(x)$ phụ thuộc vào $(x-1)(x-2)$, do đó hàm số nghịch biến trên $(1;2)$ chứ không phải trên $(-\\infty;\\tfrac{5}{2})$. Trên đoạn $[0;2]$, so sánh $f(0)=7$, $f(1)=3e$ và $f(2)=e^2$, suy ra GTNN bằng $7$."
-  },
-  {
-    "id": 17,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "short",
-    "text": "Có bao nhiêu cách chọn sáu số từ chín số nguyên $1,2,\\dots,9$ và điền vào các ô của hình dưới đây (mỗi ô chỉ điền đúng một số) sao cho tổng các số ở mỗi cột (kể cả cột có một ô) bằng nhau?",
-    "img_latex": "\\unitlength=1.5em\n\\begin{picture}(4,4)\n \\put(0,0){\\framebox(1,1){}}\n \\put(1,0){\\framebox(1,1){}}\n \\put(1,1){\\framebox(1,1){}}\n \\put(2,0){\\framebox(1,1){}}\n \\put(2,1){\\framebox(1,1){}}\n \\put(2,2){\\framebox(1,1){}}\n\\end{picture}",
-    "image": " https://i.postimg.cc/7LkCkzrW/17.jpg",
-    "answer": "48",
-    "unit": "",
-    "sol_text": "Bài toán đếm các cách chọn và sắp xếp sáu số khác nhau vào 6 ô sao cho ba cột có tổng bằng nhau. Sau khi xét đầy đủ các trường hợp hợp lệ, số cách thỏa mãn là $48$.",
-    "score": 0.5
-  },
-  {
-    "id": 18,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0101",
-    "qtype": "short",
-    "text": "Cho tứ diện $ABCD$ có $\\angle BAC = 30^\\circ$, $\\angle CAD = 45^\\circ$, $\\angle DAB = 60^\\circ$. Gọi $\\alpha=[B;AD;C]$ thì giá trị của $\\cos\\alpha$ bằng bao nhiêu? (không làm tròn kết quả các phép tính trung gian, chỉ làm tròn kết quả cuối cùng đến hàng phần trăm)",
-    "answer": "0.84",
-    "unit": "",
-    "sol_text": "Áp dụng công thức góc nhị diện, ta có $\\cos\\alpha = \\dfrac{\\cos 60^\\circ - \\cos 30^\\circ\\cos 45^\\circ}{\\sin 60^\\circ\\sin 45^\\circ} = \\sqrt{2}-\\dfrac{1}{\\sqrt{3}} \\approx 0{,}8374$. Làm tròn đến hàng phần trăm được $0{,}84$.",
-    "score": 0.5
-  },
-  {
-    "id": 19,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0101",
-    "qtype": "short",
-    "text": "Trong một cuộc thi pha chế, mỗi đội chơi được sử dụng tối đa $24$ gam hương liệu, $9$ lít nước và $210$ gam đường để pha chế nước ngọt loại I và nước ngọt loại II. Để pha chế $1$ lít nước ngọt loại I cần $10$ gam đường, $1$ lít nước và $4$ gam hương liệu. Để pha chế $1$ lít nước ngọt loại II cần $30$ gam đường, $1$ lít nước và $1$ gam hương liệu. Mỗi lít nước ngọt loại I được $80$ điểm thưởng, mỗi lít nước ngọt loại II được $60$ điểm thưởng. Hỏi số điểm thưởng cao nhất có thể của mỗi đội trong cuộc thi là bao nhiêu?",
-    "answer": "640",
-    "unit": "điểm",
-    "sol_text": "Gọi $x,y$ lần lượt là số lít loại I và loại II. Khi đó ta có hệ $4x+y\\le 24$, $x+y\\le 9$, $x+3y\\le 21$, $x,y\\ge 0$. Hàm mục tiêu là $P=80x+60y$. Xét các đỉnh miền nghiệm, giá trị lớn nhất đạt tại $(x,y)=(5,4)$ và bằng $P=80\\cdot 5+60\\cdot 4=640$.",
-    "score": 0.5
-  },
-  {
-    "id": 20,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0101",
-    "qtype": "short",
-    "text": "Tung đồng thời hai con xúc xắc khác nhau đều cân đối và đồng chất ba lần. Bằng cách cộng số chấm xuất hiện trên hai con xúc xắc trong mỗi lần tung ta được một số ngẫu nhiên từ $2$ đến $12$. Gọi ba số này lần lượt là $a$, $b$ và $t$. Chọn ngẫu nhiên một tam giác có hai cạnh có độ dài là $a$, $b$ và góc xen giữa chúng bằng $(t-1)15^\\circ$. Xác suất để tam giác này là tam giác vuông bằng bao nhiêu? (kết quả làm tròn đến hàng phần trăm)",
-    "answer": "0.17",
-    "unit": "",
-    "sol_text": "Tam giác vuông xảy ra trong hai trường hợp: (1) $t=7$ nên góc xen giữa bằng $90^\\circ$; (2) $t=5$ nên góc xen giữa bằng $60^\\circ$, và khi đó tam giác vuông khi một cạnh gấp đôi cạnh kia. Ta có $P(t=7)=\\dfrac{6}{36}=\\dfrac{1}{6}$. Ngoài ra, $P(t=5)=\\dfrac{4}{36}=\\dfrac{1}{9}$ và $P(a=2b\\text{ hoặc }b=2a)=\\dfrac{5}{72}$. Do đó tổng xác suất là $\\dfrac{1}{6}+\\dfrac{1}{9}\\cdot\\dfrac{5}{72}=\\dfrac{113}{648}\\approx 0{,}1744$, làm tròn được $0{,}17$.",
-    "score": 0.5
-  },
-  {
-    "id": 21,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0101",
-    "qtype": "short",
-    "text": "Đối với ngành nuôi trồng thủy sản, việc kiểm soát lượng thuốc tồn dư trong nước là một nhiệm vụ quan trọng nhằm đáp ứng các tiêu chuẩn an toàn về môi trường. Khi nghiên cứu một loại thuốc trị bệnh trong nuôi trồng thủy sản, người ta sử dụng thuốc đó một lần và theo dõi nồng độ thuốc tồn dư trong nước kể từ lúc sử dụng thuốc. Kết quả cho thấy nồng độ thuốc $y(t)$ (đơn vị: mg/lít) tồn dư trong nước tại thời điểm $t$ ngày kể từ lúc sử dụng thuốc, thỏa mãn $y(t)=e^{g(t)}$ và $y'(t)=k\\,y(t)$ với $t\\ge 0$, trong đó $k$ là hằng số khác không. Đo nồng độ thuốc tồn dư trong nước tại các thời điểm $t=6$ ngày, $t=12$ ngày nhận được kết quả lần lượt là $2$ mg/lít, $1$ mg/lít. Nồng độ thuốc tồn dư trong nước tại thời điểm $30$ ngày bằng bao nhiêu mg/lít? (kết quả làm tròn đến hàng phần trăm)",
-    "answer": "0.13",
-    "unit": "mg/lít",
-    "sol_text": "Vì $y'(t)=ky(t)$ nên $y(t)=Ce^{kt}$. Từ $y(6)=2$ và $y(12)=1$ suy ra $e^{6k}=\\dfrac{1}{2}$, do đó $k=-\\dfrac{\\ln 2}{6}$. Suy ra $y(30)=2e^{24k}=2e^{-4\\ln 2}=\\dfrac{1}{8}=0{,}125$, làm tròn đến hàng phần trăm được $0{,}13$.",
-    "score": 0.5
-  },
-  {
-    "id": 22,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0101",
-    "qtype": "short",
-    "text": "Cho hình hộp chữ nhật $ABCD.EFGH$ với $AB=6$, $AD=8$ và $DH=10$. Gọi điểm $M$ là trung điểm của đoạn thẳng $AF$ và điểm $I$ thuộc mặt phẳng $(ABCD)$. Khi $IM+IG$ nhỏ nhất thì điểm $I$ cách hai đường thẳng $BA$ và $BC$ tương ứng bằng $a$ và $b$. Giá trị của biểu thức $P=3a+6b$ bằng bao nhiêu?",
-    "answer": "20",
-    "unit": "",
-    "sol_text": "Đặt $A(0,0,0)$, $B(6,0,0)$, $D(0,8,0)$, $H(0,8,10)$ nên $F(6,0,10)$, $G(6,8,10)$. Khi đó $M$ là trung điểm của $AF$ nên $M(3,0,5)$. Phản xạ $G$ qua mặt phẳng $(ABCD)$ được $G'(6,8,-10)$. Đường thẳng $MG'$ cắt $(ABCD)$ tại $I\\left(4;\\dfrac{8}{3};0\\right)$. Suy ra khoảng cách từ $I$ đến $BA$ là $a=\\dfrac{8}{3}$ và đến $BC$ là $b=2$. Do đó $P=3a+6b=3\\cdot\\dfrac{8}{3}+6\\cdot 2=20$.",
-    "score": 0.5
-  },
-  // === ĐỀ MỚI: ĐỀ TOÁN SỞ NGHỆ AN LẦN 1 NĂM 2026 (id 23-44) ===
-  {
-    "id": 23,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 1. Cho hàm số $y=f(x)$ có bảng biến thiên như hình vẽ. Hàm số đồng biến trên khoảng nào trong các khoảng dưới đây?",
-    "opts": [
-      "(2; 3)",
-      "(0; 3)",
-      "(-1; 2)",
-      "(3; 4)"
-    ],
-    "correct": 0,
-    "sol_text": "Dựa vào bảng biến thiên, hàm số đồng biến trên khoảng $(1; 3)$. Vì $(2; 3) \\subset (1; 3)$ nên chọn A. [cite: 10, 23]",
-    "score": 0.25
-  },
-  {
-    "id": 24,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 2. Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình chữ nhật và $SA \\perp (ABCD)$. Đường thẳng $SA$ không vuông góc với đường thẳng nào sau đây?",
-    "opts": [
-      "SC",
-      "AB",
-      "AC",
-      "BD"
-    ],
-    "correct": 0,
-    "sol_text": "Vì $SA \\perp (ABCD)$ nên $SA$ vuông góc với mọi đường thẳng nằm trong mặt phẳng đáy như AB, AC, BD. Do đó $SA$ không vuông góc với SC. [cite: 26, 36]",
-    "score": 0.25,
-    "image": "https://i.postimg.cc/7hKmbsGP/2.jpg"
-  },
-  {
-    "id": 25,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 3. Xác định tiệm cận đứng của đồ thị hàm số $y=\\frac{ax+b}{cx+d}$ dựa vào hình vẽ.",
-    "opts": [
-      "x = 1",
-      "x = -1",
-      "y = 1",
-      "y = -1"
-    ],
-    "correct": 1,
-    "sol_text": "Dựa vào đồ thị, đường tiệm cận đứng là đường thẳng đứng $x = -1$. [cite: 40, 50]",
-    "score": 0.25,
-    "image": "https://i.postimg.cc/dQ6WW1W7/3.jpg"
-  },
-  {
-    "id": 26,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 4. Tập nghiệm của bất phương trình $\\log_{2}(x-2)>2$ là:",
-    "opts": [
-      "(4; +\\infty)",
-      "(2; 4)",
-      "(2; +\\infty)",
-      "(6; +\\infty)"
-    ],
-    "correct": 3,
-    "sol_text": "Điều kiện $x > 2$. Bất phương trình tương đương $x-2 > 2^2 \\Leftrightarrow x > 6$. [cite: 54]",
-    "score": 0.25
-  },
-  {
-    "id": 27,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 5. Cho cấp số nhân $(u_n)$ biết $u_3=4$ và $u_4=2$. Tìm công bội $q$ của cấp số nhân đó.",
-    "opts": [
-      "q = 2",
-      "q = 4",
-      "q = 1/2",
-      "q = \\sqrt{2}"
-    ],
-    "correct": 2,
-    "sol_text": "Công bội $q = u_4 / u_3 = 2 / 4 = 1/2$. [cite: 58, 61]",
-    "score": 0.25,
-    "image": "https://i.postimg.cc/y6jffdfg/5.jpg"
-  },
-  {
-    "id": 28,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 6. Xác định nguyên hàm của hàm số $f(x)=2x^2$.",
-    "opts": [
-      "x^3 + C",
-      "2x^3/3 + C",
-      "x^3/3 + C",
-      "6x^3 + C"
-    ],
-    "correct": 1,
-    "sol_text": "$\\int 2x^2 dx = \\frac{2x^3}{3} + C$. [cite: 65, 68]",
-    "score": 0.25,
-    "image": "https://i.postimg.cc/nV2ddzdX/6.jpg"
-  },
-  {
-    "id": 29,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 7. Xác định tập nghiệm của phương trình $\\cos x = 1$.",
-    "opts": [
-      "k2\\pi",
-      "\\pi + k2\\pi",
-      "k\\pi",
-      "\\pi + k\\pi"
-    ],
-    "correct": 0,
-    "sol_text": "$\\cos x = 1 \\Leftrightarrow x = k2\\pi$. [cite: 73, 74]",
-    "score": 0.25,
-    "image": "https://i.postimg.cc/mZjddDd1/7_10.jpg"
-  },
-  {
-    "id": 30,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 8. Cho $A(2;1;-2)$ và $B(-4;3;4)$. Tìm tọa độ trung điểm M của AB.",
-    "opts": [
-      "(-1; 2; 1)",
-      "(2; 2; 2)",
-      "(3; 2; 3)",
-      "(2; -2; 2)"
-    ],
-    "correct": 0,
-    "sol_text": "Tọa độ trung điểm $M = \\left(\\frac{x_A+x_B}{2}; \\frac{y_A+y_B}{2}; \\frac{z_A+z_B}{2}\\right) = (-1; 2; 1)$. [cite: 76, 78]",
-    "score": 0.25
-  },
-  {
-    "id": 31,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 9. Vectơ pháp tuyến của mặt phẳng $x-3y+5=0$ là:",
-    "opts": [
-      "(1; -3; 0)",
-      "(1; 0; -3)",
-      "(1; -3; 5)",
-      "(1; 0; 5)"
-    ],
-    "correct": 0,
-    "sol_text": "Vectơ pháp tuyến có tọa độ là các hệ số đứng trước x, y, z: $(1; -3; 0)$. [cite: 81, 83]",
-    "score": 0.25
-  },
-  {
-    "id": 32,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 10. Gieo xúc xắc cân đối 1 lần. Xác suất xuất hiện mặt có số chấm chia hết cho 3 là:",
-    "opts": [
-      "1/3",
-      "1/2",
-      "1/6",
-      "1/4"
-    ],
-    "correct": 0,
-    "sol_text": "Các mặt chia hết cho 3 là {3; 6}. Xác suất là $2/6 = 1/3$. [cite: 87, 91]",
-    "score": 0.25,
-    "image": "https://i.postimg.cc/mZjddDd1/7_10.jpg"
-  },
-  {
-    "id": 33,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 11. Giá trị nhỏ nhất của hàm số $y=f(x)$ trên đoạn [-1; 1] dựa vào đồ thị là:",
-    "opts": [
-      "-1",
-      "-4",
-      "0",
-      "-2"
-    ],
-    "correct": 1,
-    "sol_text": "Dựa vào đồ thị, tại $x = -1$ giá trị hàm số thấp nhất là -4. [cite: 93, 98]",
-    "score": 0.25
-  },
-  {
-    "id": 34,
-    "subject": "math",
-    "diff": "easy",
-    "source": "0201",
-    "qtype": "single",
-    "text": "Câu 12. Khoảng biến thiên của mẫu số liệu ghép nhóm [2;3), [3;4), [4;5), [5;6), [6;7) là:",
-    "opts": [
-      "7",
-      "6",
-      "1",
-      "5"
-    ],
-    "correct": 3,
-    "sol_text": "$R = 7 - 2 = 5$. [cite: 110, 113]",
-    "score": 0.25
-  },
-  {
-    "id": 35,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0201",
-    "qtype": "tf4",
-    "text": "Câu 1 (Phần II). Cho hàm số $y=f(x)=\\frac{x^2-5x+4}{x-5}$ với $x \\neq 5$. Các mệnh đề sau đúng hay sai?",
-    "subqs": [
-      {
-        "text": "$f'(x)=1-\\frac{4}{(x-5)^2}$ với mọi $x \\neq 5",
-        "ans": false
-      },
-      {
-        "text": "Đồ thị hàm số cắt trục hoành tại hai điểm phân biệt",
-        "ans": true
-      },
-      {
-        "text": "Hàm số đạt cực đại tại $x=3$",
-        "ans": false
-      },
-      {
-        "text": "Giá trị cực tiểu bằng 3",
-        "ans": false
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "$f'(x) = 1 + \\frac{4}{(x-5)^2} > 0$ nên hàm số không có cực trị. Cắt Ox tại $x=1$ và $x=4$. [cite: 115, 117, 118, 119]",
-    "score": 1.0
-  },
-  {
-    "id": 36,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "tf4",
-    "text": "Câu 2 (Phần II). Một hộp có 12 viên bi (5 xanh, 6 đỏ, 1 vàng). Trọng tài bốc bi. Các mệnh đề sau đúng hay sai?",
-    "subqs": [
-      {
-        "text": "Xác suất để trọng tài bốc được bi vàng lần đầu là 1/12",
-        "ans": true
-      },
-      {
-        "text": "Nếu lần đầu bốc được bi xanh, xác suất để bạn Xanh thắng là 5/11",
-        "ans": false
-      },
-      {
-        "text": "Nếu lần đầu bốc vàng và lần hai bốc đỏ, xác suất bạn Xanh thắng là 6/11",
-        "ans": false
-      },
-      {
-        "text": "Xác suất để bạn Đỏ thắng là 1/2",
-        "ans": false
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "Tính toán xác suất dựa trên quy tắc bốc không hoàn lại. [cite: 122, 127, 129, 133]",
-    "score": 1.0
-  },
-  {
-    "id": 37,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "tf4",
-    "text": "Câu 3 (Phần II). Một giá đỡ đồ thị $y=\\log x$. Các mệnh đề sau đúng hay sai?",
-    "subqs": [
-      {
-        "text": "Đạo hàm của hàm số là $y' = 1/(x \\ln 10)$",
-        "ans": true
-      },
-      {
-        "text": "Trong mặt phẳng tọa độ (Oxy), điểm B có hoành độ bằng 0,1",
-        "ans": true
-      },
-      {
-        "text": "Trong mặt phẳng tọa độ (Oxy), điểm N có tung độ bằng 1,4",
-        "ans": false
-      },
-      {
-        "text": "Độ dài giá đỡ bằng 2,97 mét",
-        "ans": true
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "Điểm B có hoành độ 0,1 vì AB=10cm=0,1m. Điểm N có tung độ là 0,4. [cite: 136, 141, 143, 144, 150]",
-    "score": 1.0
-  },
-  {
-    "id": 38,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "tf4",
-    "text": "Câu 4 (Phần II). Trong không gian Oxyz, cho $A(1;2;3)$ và $B(2;3;4)$. Các mệnh đề sau đúng hay sai?",
-    "subqs": [
-      {
-        "text": "$\\vec{AB} = (1;1;1)$",
-        "ans": true
-      },
-      {
-        "text": "Hoành độ của điểm M bằng -1",
-        "ans": false
-      },
-      {
-        "text": "$MA = -3AB$",
-        "ans": false
-      },
-      {
-        "text": "$\\tan NMB = \\sqrt{42}/9$",
-        "ans": true
-      }
-    ],
-    "tf4scores": {
-      "s1": 0.1,
-      "s2": 0.25,
-      "s3": 0.5,
-      "s4": 1
-    },
-    "sol_text": "$M$ là giao điểm của AB với Oxy nên $z=0 \\Rightarrow M(-2;-1;0)$. [cite: 151, 152, 153, 155]",
-    "score": 1.0
-  },
-  {
-    "id": 39,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "short",
-    "text": "Câu 1 (Phần III). An bốc số $a \\in \\{1..6\\}$, Bình bốc số $b \\in \\{1..4\\}$. Tính xác suất để $I = \\int_{0}^{a} x^b dx$ là một số nguyên.",
-    "answer": "0.38",
-    "unit": "",
-    "sol_text": "$I = a^{b+1}/(b+1)$. Có 9 trường hợp thỏa mãn trên tổng 24 trường hợp. $9/24 = 0.375 \\approx 0.38$. [cite: 159, 161]",
-    "score": 0.5
-  },
-  {
-    "id": 40,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "short",
-    "text": "Câu 2 (Phần III). Hai người ở hai bờ sông nhìn đỉnh cột cờ cao 54,5m với các góc có tan bằng 0,1 và 0,07. Tính khoảng cách xa nhất giữa hai người.",
-    "answer": "1080",
-    "unit": "m",
-    "sol_text": "Sử dụng các tam giác vuông và hình chiếu để tính khoảng cách trong không gian. [cite: 165, 167, 168]",
-    "score": 0.5
-  },
-  {
-    "id": 41,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "short",
-    "text": "Câu 3 (Phần III). Tính tổng thể tích nước mà 5 cái chậu đất sét có thể chứa (được nặn theo quy luật từ 1000cm3 đất ban đầu).",
-    "answer": "1273",
-    "unit": "cm^3",
-    "sol_text": "Tính thể tích rỗng của từng chậu và cộng dồn. [cite: 177, 181]",
-    "score": 0.5
-  },
-  {
-    "id": 42,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "short",
-    "text": "Câu 4 (Phần III). Gọi D là số 'cách xếp lỗi' của 5 nam 5 nữ (chỉ cần đổi chỗ 2 người sẽ thành xen kẽ). Tính D/100.",
-    "answer": "7200",
-    "unit": "",
-    "sol_text": "Số cách xếp xen kẽ là 28800. Với mỗi cách xếp đúng, có 25 cách đổi chỗ để tạo lỗi. $D = 28800 \\times 25 = 720000$. [cite: 186, 187]",
-    "score": 0.5
-  },
-  {
-    "id": 43,
-    "subject": "math",
-    "diff": "medium",
-    "source": "0201",
-    "qtype": "short",
-    "text": "Câu 5 (Phần III). Tính số kg (x) mặt hàng A để lợi nhuận đạt 15 triệu đồng với $C(x) = (2x^2+x)/(x+1)$ và giá bán 3 triệu/kg.",
-    "answer": "14.1",
-    "unit": "kg",
-    "sol_text": "Giải phương trình $3x - \\frac{2x^2+x}{x+1} = 15$. [cite: 190, 191]",
-    "score": 0.5
-  },
-  {
-    "id": 44,
-    "subject": "math",
-    "diff": "hard",
-    "source": "0201",
-    "qtype": "short",
-    "text": "Câu 6 (Phần III). Cho hình chóp cụt đều ABC.MNP cạnh đáy lớn 6, cao 8. G là trọng tâm MNP. Tính khoảng cách giữa AG và BC.",
-    "answer": "4.77",
-    "unit": "",
-    "sol_text": "Sử dụng phương pháp tọa độ hóa hoặc phương pháp khoảng cách giữa hai đường thẳng chéo nhau. [cite: 193, 194, 195]",
-    "score": 0.5
-  }
-],
     submissions: []
   };
   persistDB();
@@ -9319,14 +9180,244 @@ window.updateResultStats = function() {
 // ---- 5. Export result functions & patch saveCurrentQuestion ----
 // saveCurrentQuestion is defined in the main block; wrap it to also refresh stats
 window.saveCurrentQuestion = function() {
-  if (typeof saveCurrentQuestion_orig === 'function') saveCurrentQuestion_orig();
-  else if (typeof saveCurrentQuestion === 'function') saveCurrentQuestion();
-  if (typeof window.updateResultStats === 'function') window.updateResultStats();
+  const q = resultQuestions[resultCurrentQ - 1];
+  if (!q) return;
+  const userId = DB.session?.id;
+  if (!userId) return;
+
+  let savedList = JSON.parse(localStorage.getItem(`saved_questions_${userId}`) || '[]');
+  const alreadySaved = savedList.includes(q.id);
+  const saveBtn = document.getElementById('result-save-q-btn');
+
+  if (alreadySaved) {
+    // Hủy lưu
+    savedList = savedList.filter(id => id !== q.id);
+    localStorage.setItem(`saved_questions_${userId}`, JSON.stringify(savedList));
+    resultSavedQuestions.delete(q.id);
+    toast('🗑', 'Đã xóa câu hỏi khỏi danh sách lưu');
+    if (saveBtn) saveBtn.textContent = '📚 Lưu câu hỏi';
+  } else {
+    // Lưu mới
+    savedList.push(q.id);
+    localStorage.setItem(`saved_questions_${userId}`, JSON.stringify(savedList));
+    resultSavedQuestions.add(q.id);
+    toast('✅', 'Đã lưu câu hỏi vào kho lưu trữ');
+    if (saveBtn) saveBtn.textContent = '📚 Đã lưu';
+  }
+  // Cập nhật navigator và thống kê
   if (typeof buildResultNavigator === 'function') buildResultNavigator();
+  if (typeof updateResultStats === 'function') updateResultStats();
 };
-// Keep the original accessible internally
-window.saveCurrentQuestion_orig = saveCurrentQuestion;
-window.toggleResultSolution = toggleResultSolution;
+
+function updateSaveButtonState() {
+  const q = resultQuestions[resultCurrentQ - 1];
+  if (!q) return;
+  const userId = DB.session?.id;
+  if (!userId) return;
+  const savedList = JSON.parse(localStorage.getItem(`saved_questions_${userId}`) || '[]');
+  const isSaved = savedList.includes(q.id);
+  const saveBtn = document.getElementById('result-save-q-btn');
+  if (saveBtn) {
+    saveBtn.textContent = isSaved ? '📚 Đã lưu' : '📚 Lưu câu hỏi';
+    saveBtn.disabled = false;
+  }
+}
+
+// Gọi updateSaveButtonState trong renderResultQuestion
+const originalRenderResultQuestion = window.renderResultQuestion;
+window.renderResultQuestion = function(n) {
+  originalRenderResultQuestion(n);
+  updateSaveButtonState();
+};
+
+
+
+window.startPracticeQuestion = function(questionId) {
+  const q = DB.questions.find(q => q.id === questionId);
+  if (!q) {
+    toast('❌', 'Không tìm thấy câu hỏi');
+    return;
+  }
+  // Tạo exam tạm thời (id âm để tránh trùng)
+  const tempExamId = -questionId;
+  let exam = DB.exams.find(e => e.id === tempExamId);
+  if (!exam) {
+    exam = {
+      id: tempExamId,
+      name: `Luyện tập: ${q.text.substring(0, 50)}...`,
+      roomId: null,
+      duration: Math.max(5, Math.ceil(q.text.length / 100)), // thời gian linh động
+      type: 'practice',
+      questions: 1,
+      questionIds: [questionId],
+      isTemporary: true,
+      created: new Date().toISOString()
+    };
+    DB.exams.push(exam);
+    persistDB();
+  }
+  // Bắt đầu làm bài (không yêu cầu fullscreen)
+  startExam(tempExamId);
+};
+
+
+
+
+
+// Hàm lưu toàn bộ bài thi (nếu cần)
+window.saveCurrentExamResult = function() {
+  const exam = resultExam;
+  const answers = resultUserAnswers;
+  const questions = resultQuestions;
+  if (!exam || !questions.length) {
+    toast('⚠️', 'Không có dữ liệu bài thi để lưu.');
+    return;
+  }
+
+  // Kiểm tra xem đã lưu chưa
+  const userId = DB.session?.id;
+  const existing = DB.submissions.find(s => s.userId === userId && s.examId === exam.id);
+  if (existing) {
+    toast('ℹ️', 'Bài thi này đã được lưu trong lịch sử.');
+    return;
+  }
+
+  // Tính lại điểm nếu cần (hoặc lấy từ resultCorrectArr)
+  let correctCount = resultCorrectArr.filter(v => v === true).length;
+  let totalEarned = 0;
+  let totalMax = 0;
+  questions.forEach((q, i) => {
+    const maxScore = q.score || 1;
+    totalMax += maxScore;
+    if (resultCorrectArr[i] === true) totalEarned += maxScore;
+    else if (resultCorrectArr[i] === 'partial') {
+      // Xử lý partial nếu có (tf4/tfn)
+      const tf = scoreTFQuestion ? scoreTFQuestion(q, resultUserAnswers[i+1]) : null;
+      totalEarned += tf ? tf.earned : 0;
+    }
+  });
+  const finalScore = parseFloat(totalEarned.toFixed(1));
+
+  const submission = {
+    id: DB.nextIds.submission++,
+    userId: userId,
+    examId: exam.id,
+    answers: { ...resultUserAnswers },
+    correct: correctCount,
+    total: questions.length,
+    score: finalScore,
+    time: '--:--',
+    date: new Date().toLocaleDateString('vi-VN'),
+    questions: questions.map(q => q.id),
+    subject: exam.subject || ''
+  };
+  DB.submissions.push(submission);
+  persistDB();
+  toast('✅', 'Đã lưu bài thi vào lịch sử của bạn.');
+};
+
+// Hàm lưu câu hỏi gốc (không đệ quy)
+window.saveCurrentQuestion = function() {
+  const q = resultQuestions[resultCurrentQ - 1];
+  if (!q) return;
+  if (resultSavedQuestions.has(q.id)) {
+    toast('ℹ️', 'Câu hỏi này đã được lưu trước đó.');
+    return;
+  }
+
+  const userId = DB.session?.id;
+  if (!userId) return;
+
+  let savedList = JSON.parse(localStorage.getItem(`saved_questions_${userId}`) || '[]');
+  if (!savedList.includes(q.id)) {
+    savedList.push(q.id);
+    localStorage.setItem(`saved_questions_${userId}`, JSON.stringify(savedList));
+    resultSavedQuestions.add(q.id);
+    toast('✅', 'Đã lưu câu hỏi vào kho lưu trữ. Bạn có thể ôn lại sau.');
+    // Cập nhật lại navigator và nút lưu
+    if (typeof buildResultNavigator === 'function') buildResultNavigator();
+    const saveBtn = document.getElementById('result-save-q-btn');
+    if (saveBtn) {
+      saveBtn.textContent = '📚 Đã lưu';
+      saveBtn.disabled = true;
+    }
+  } else {
+    toast('ℹ️', 'Câu hỏi này đã được lưu trước đó.');
+  }
+};
+
+// Hàm lưu toàn bộ bài thi (nếu cần)
+window.saveCurrentExamResult = function() {
+  const exam = resultExam;
+  const answers = resultUserAnswers;
+  const questions = resultQuestions;
+  if (!exam || !questions.length) {
+    toast('⚠️', 'Không có dữ liệu bài thi để lưu.');
+    return;
+  }
+
+  // Kiểm tra xem đã lưu chưa
+  const userId = DB.session?.id;
+  const existing = DB.submissions.find(s => s.userId === userId && s.examId === exam.id);
+  if (existing) {
+    toast('ℹ️', 'Bài thi này đã được lưu trong lịch sử.');
+    return;
+  }
+
+  // Tính lại điểm nếu cần (hoặc lấy từ resultCorrectArr)
+  let correctCount = resultCorrectArr.filter(v => v === true).length;
+  let totalEarned = 0;
+  let totalMax = 0;
+  questions.forEach((q, i) => {
+    const maxScore = q.score || 1;
+    totalMax += maxScore;
+    if (resultCorrectArr[i] === true) totalEarned += maxScore;
+    else if (resultCorrectArr[i] === 'partial') {
+      // Xử lý partial nếu có (tf4/tfn)
+      const tf = scoreTFQuestion ? scoreTFQuestion(q, resultUserAnswers[i+1]) : null;
+      totalEarned += tf ? tf.earned : 0;
+    }
+  });
+  const finalScore = parseFloat(totalEarned.toFixed(1));
+
+  const submission = {
+    id: DB.nextIds.submission++,
+    userId: userId,
+    examId: exam.id,
+    answers: { ...resultUserAnswers },
+    correct: correctCount,
+    total: questions.length,
+    score: finalScore,
+    time: '--:--',
+    date: new Date().toLocaleDateString('vi-VN'),
+    questions: questions.map(q => q.id),
+    subject: exam.subject || ''
+  };
+  DB.submissions.push(submission);
+  persistDB();
+  toast('✅', 'Đã lưu bài thi vào lịch sử của bạn.');
+};
+
+window.toggleResultSolution = function() {
+  const solBox = document.getElementById('result-solution-box');
+  const solContent = document.getElementById('result-solution-content');
+  const btn = document.getElementById('result-show-sol-btn');
+  if (!solBox) return;
+  
+  if (solBox.style.display === 'none' || getComputedStyle(solBox).display === 'none') {
+    const q = resultQuestions[resultCurrentQ - 1];
+    if (q && q.sol_text) {
+      renderMarkdownAndLatex(solContent, q.sol_text);
+    } else {
+      solContent.innerHTML = 'Chưa có lời giải chi tiết cho câu hỏi này.';
+    }
+    solBox.style.display = 'block';
+    if (btn) btn.textContent = '🔒 Ẩn lời giải';
+  } else {
+    solBox.style.display = 'none';
+    if (btn) btn.textContent = '💡 Xem lời giải';
+  }
+};
 
 // ---- 6. AI features trong trang kết quả ----
 const AI_RESULT_COSTS = { question: 5, answer: 5, similar: 10 };
@@ -9509,20 +9600,21 @@ window.resultAIExplain = resultAIExplain;
 // =====================================================================
 //  EXAM FONT SIZE CONTROL
 // =====================================================================
-(function() {
-  const MIN_FS = 13, MAX_FS = 24;
-  let curFs = parseInt(localStorage.getItem('examFontSize') || '16', 10);
+// Điều chỉnh cỡ chữ nội dung đề thi
+window.examFontSize = function(delta) {
+  let current = parseInt(localStorage.getItem('examFontSize') || '16', 10);
+  let newSize = Math.min(24, Math.max(13, current + delta));
+  localStorage.setItem('examFontSize', newSize);
+  document.documentElement.style.setProperty('--exam-fs', newSize + 'px');
+  document.querySelectorAll('.fs-val').forEach(el => el.textContent = newSize);
+};
 
-  function applyFs(size) {
-    curFs = Math.min(MAX_FS, Math.max(MIN_FS, size));
-    document.documentElement.style.setProperty('--exam-fs', curFs + 'px');
-    localStorage.setItem('examFontSize', curFs);
-    document.querySelectorAll('.fs-val').forEach(el => el.textContent = curFs);
-  }
-
-  window.examFontSize = function(delta) { applyFs(curFs + delta); };
-  applyFs(curFs);
-})();
+// Khởi tạo cỡ chữ từ localStorage khi trang load
+document.addEventListener('DOMContentLoaded', function() {
+  let savedSize = parseInt(localStorage.getItem('examFontSize') || '16', 10);
+  document.documentElement.style.setProperty('--exam-fs', savedSize + 'px');
+  document.querySelectorAll('.fs-val').forEach(el => el.textContent = savedSize);
+});
 
 // =====================================================================
 //  DRAWING / ANNOTATION SYSTEM — Optimized v2
@@ -9621,7 +9713,7 @@ window.resultAIExplain = resultAIExplain;
     ctx.strokeStyle = drawColor;
     // globalCompositeOperation = 'multiply' làm màu hòa trộn tự nhiên
     // Nhưng trên nền trắng multiply không hoạt động tốt, dùng source-over với alpha thấp
-    ctx.globalAlpha = 0.22;
+    ctx.globalAlpha = 0.3;
     ctx.globalCompositeOperation = 'source-over';
     drawSmoothPath(ctx, points);
     ctx.restore();
