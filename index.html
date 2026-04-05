@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js"></script>
 <link rel="stylesheet" href="css/style.css">
 <style>
 /* Utility: spacers */
@@ -277,6 +277,14 @@
 
   /* Legend compact */
   .nleg { flex-wrap: wrap !important; gap: 6px 12px !important; }
+
+  /* Pinned image panel — mobile: đặt ở góc dưới phải */
+  #pinned-image-panel {
+    top: auto !important;
+    bottom: 80px !important;
+    right: 8px !important;
+    width: min(200px, 48vw) !important;
+  }
 
   /* Ảnh câu hỏi trên mobile */
   #question-image-container img,
@@ -1043,7 +1051,7 @@
         <button onclick="examFontSize(+1)" title="Tăng cỡ chữ">A+</button>
       </div>
       <!-- Draw toggle -->
-      <button id="draw-toggle-btn" onclick="toggleDrawMode()" title="Bật/tắt bút viết lên đề">✏️ Vẽ</button>
+      <button id="draw-toggle-btn" onclick="toggleDrawMode()" title="Bật/tắt bút highlight lên đề">🖌️ Bút</button>
       <div class="autosave" id="autosave-ind"><div class="as-dot"></div><span id="as-txt">Tự động lưu</span></div>
       <div class="timer-box"><span>⏱</span><span class="tv" id="timer">89:59</span><span class="tlbl">còn lại</span></div>
       <button class="btn btn-g" style="padding:6px 12px;font-size:12px" onclick="openSubmitModal()">💾 Nộp bài</button>
@@ -1107,7 +1115,7 @@
         <button onclick="examFontSize(+1)" title="Tăng cỡ chữ">A+</button>
       </div>
       <!-- Draw toggle -->
-      <button id="draw-toggle-btn-result" onclick="toggleDrawMode()" title="Bút viết lên đề">✏️ Vẽ</button>
+      <button id="draw-toggle-btn-result" onclick="toggleDrawMode()" title="Bút highlight lên đề">🖌️ Bút</button>
       <div class="timer-box" style="background:var(--grn-s);color:var(--grn);border:1px solid var(--grn)">
         <span>🎯</span><span class="tv" id="result-score-display">8.5</span><span class="tlbl">điểm</span>
       </div>
@@ -1997,12 +2005,26 @@ if (resultImgContainer) {
 
     const _resultImgSrc = q?.image || q?.img || null;
     if (_resultImgSrc) {
+        const escapedSrc = _resultImgSrc.replace(/'/g, "\\'");
         resultImgContainer.innerHTML = `
-            <img src="${_resultImgSrc}" 
+          <div style="position:relative;display:block;text-align:center;margin:12px 0;">
+            <img src="${_resultImgSrc}"
                  alt="Hình ảnh câu hỏi"
-                 style="max-width:100%; height:auto; border-radius:10px; 
-                        box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:12px 0; display:block;"
-                 onerror="this.style.display='none'">
+                 style="max-width:100%; height:auto; border-radius:10px;
+                        box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:0 auto; cursor:zoom-in;"
+                 onerror="this.parentElement.style.display='none'">
+            <button onclick="pinImage('${escapedSrc}')"
+              style="position:absolute;top:8px;right:8px;
+                     background:rgba(15,15,15,0.62);backdrop-filter:blur(4px);
+                     color:#fff;border:none;border-radius:20px;
+                     padding:5px 12px;font-size:11.5px;font-weight:700;
+                     cursor:pointer;transition:background .15s;"
+              onmouseover="this.style.background='rgba(59,130,246,0.85)'"
+              onmouseout="this.style.background='rgba(15,15,15,0.62)'"
+              title="Ghim hình để xem trong khi đọc lời giải">
+              📌 Ghim hình
+            </button>
+          </div>
         `;
     } 
     else if (q?.img_latex) {
@@ -2628,32 +2650,59 @@ function closeModal(id) {
 }
 
 function renderMarkdownAndLatex(element, text) {
-  if (!element || !text) return;
+  if (!element) return;
+  if (text === null || text === undefined) { element.innerHTML = ''; return; }
+  const str = String(text).trim();
+  if (!str) { element.innerHTML = ''; return; }
 
-  // 1. Gán text vào element (nên dùng innerHTML nếu có Markdown, textContent nếu chỉ có text)
-  // Nếu bạn dùng thư viện marked.js:
-  if (typeof marked !== 'undefined') {
-      // Dùng marked.parse để xử lý cả block content (đoạn văn, xuống dòng)
-      // parseInline bỏ qua \n\n khiến đề bài dài bị mất nội dung trên mobile
-      const parseFn = marked.parse || marked.parseInline;
-      element.innerHTML = parseFn.call(marked, text);
-  } else {
-      element.textContent = text;
+  // Helper: áp dụng KaTeX sau khi đã có HTML
+  function applyKatex(el) {
+    if (typeof renderMathInElement === 'function') {
+      try {
+        renderMathInElement(el, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false,
+          strict: false
+        });
+      } catch(e) {}
+    }
   }
 
-  // 2. Để KaTeX tự quét các cặp $...$ trong element đó
-  if (typeof renderMathInElement === 'function') {
-    renderMathInElement(element, {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$', right: '$', display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ],
-      // throwOnError: false giúp bỏ qua các lỗi gõ sai như \lem mà không làm hỏng giao diện
-      throwOnError: false, 
-      strict: false
-    });
+  // Helper: render fallback (không có marked)
+  function renderFallback(el, s) {
+    // Escape HTML cơ bản, giữ xuống dòng
+    el.innerHTML = s
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\n/g,'<br>');
+    applyKatex(el);
+  }
+
+  if (typeof marked !== 'undefined') {
+    // Dùng marked.parse để xử lý block content (xuống dòng, danh sách, in đậm...)
+    try {
+      const parseFn = marked.parse || marked.parseInline;
+      element.innerHTML = parseFn.call(marked, str);
+    } catch(e) {
+      renderFallback(element, str);
+    }
+    applyKatex(element);
+  } else {
+    // marked chưa load (mạng chậm trên mobile) — fallback ngay, retry sau
+    renderFallback(element, str);
+    setTimeout(() => {
+      if (typeof marked !== 'undefined') {
+        try {
+          const parseFn = marked.parse || marked.parseInline;
+          element.innerHTML = parseFn.call(marked, str);
+          applyKatex(element);
+        } catch(e) {}
+      }
+    }, 600);
   }
 }
 
@@ -6393,6 +6442,8 @@ function startExamAfterFullscreen(examId) {
   totalQ = ex.questions || (ex.questionIds?.length || 50);
   buildNGrid(totalQ);
   loadQ(1);
+  // Retry sau 700ms — đề phòng CDN script chưa load xong trên mobile
+  setTimeout(() => { try { loadQ(curQ); } catch(e) {} }, 700);
   goTo('exam');
   
   const banner = document.getElementById('trial-banner');
@@ -6510,12 +6561,27 @@ if (imgContainer) {
 
     const _examImgSrc = q?.image || q?.img || null;
     if (_examImgSrc) {
+        const escapedSrc = _examImgSrc.replace(/'/g, "\\'");
         imgContainer.innerHTML = `
-            <img src="${_examImgSrc}" 
+          <div style="position:relative;display:inline-block;max-width:100%;margin:15px auto;display:block;text-align:center;">
+            <img src="${_examImgSrc}"
                  alt="Hình ảnh câu hỏi"
-                 style="max-width:100%; max-height:420px; border-radius:12px; 
-                        display:block; margin:15px auto;"
-                 onerror="this.style.display='none'">
+                 style="max-width:100%; max-height:420px; border-radius:12px;
+                        display:block; margin:0 auto; cursor:zoom-in;"
+                 onerror="this.parentElement.style.display='none'">
+            <button onclick="pinImage('${escapedSrc}')"
+              style="position:absolute;top:8px;right:8px;
+                     background:rgba(15,15,15,0.62);backdrop-filter:blur(4px);
+                     color:#fff;border:none;border-radius:20px;
+                     padding:5px 12px;font-size:11.5px;font-weight:700;
+                     cursor:pointer;display:flex;align-items:center;gap:4px;
+                     transition:background .15s;"
+              onmouseover="this.style.background='rgba(59,130,246,0.85)'"
+              onmouseout="this.style.background='rgba(15,15,15,0.62)'"
+              title="Ghim hình — hiển thị cố định khi cuộn đề">
+              📌 Ghim hình
+            </button>
+          </div>
         `;
     } 
     else if (q?.img_latex) {
@@ -9275,25 +9341,54 @@ window.buildResultFromExam = buildResultFromExam;
 window.resultAIExplain = resultAIExplain;
 </script>
 
+<!-- ===== PINNED IMAGE PANEL (floating, ghim hình câu hỏi) ===== -->
+<div id="pinned-image-panel" style="
+  display:none; position:fixed; top:62px; right:10px; z-index:800;
+  width:min(270px, 44vw); background:var(--bg2);
+  border:1.5px solid var(--bdr); border-radius:14px;
+  box-shadow:0 10px 40px rgba(0,0,0,.22); overflow:hidden;
+  user-select:none;">
+  <!-- Header drag handle -->
+  <div id="pinned-img-header" style="
+    display:flex; align-items:center; justify-content:space-between;
+    padding:7px 10px; background:var(--bg3); border-bottom:1px solid var(--bdr);
+    cursor:grab; gap:6px;">
+    <span style="font-size:11px;font-weight:700;color:var(--acc)">📌 Hình đã ghim</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button onclick="togglePinnedSize()" title="Thu/phóng"
+        style="background:none;border:none;cursor:pointer;color:var(--txt3);font-size:13px;padding:2px 4px;border-radius:4px;line-height:1"
+        id="pinned-size-btn">⊡</button>
+      <button onclick="unpinImage()" title="Bỏ ghim"
+        style="background:none;border:none;cursor:pointer;color:var(--txt3);font-size:14px;padding:2px 4px;border-radius:4px;line-height:1">✕</button>
+    </div>
+  </div>
+  <!-- Image -->
+  <div id="pinned-img-body" style="padding:8px; max-height:55vh; overflow-y:auto; overflow-x:hidden;">
+    <img id="pinned-image-img" src="" alt="Hình ghim"
+      style="width:100%;border-radius:8px;display:block;cursor:pointer"
+      onclick="togglePinnedSize()">
+  </div>
+</div>
+
 <!-- ===== DRAWING TOOLBAR (floating, shared for exam + result) ===== -->
 <div id="draw-toolbar">
   <!-- Pen tool -->
-  <button class="dt-btn active" id="dt-pen-btn" onclick="setDrawTool('pen')">✏️ Bút</button>
-  <!-- Highlighter -->
-  <button class="dt-btn" id="dt-hl-btn" onclick="setDrawTool('highlight')">🖊️ Tô màu</button>
+  <button class="dt-btn" id="dt-pen-btn" onclick="setDrawTool('pen')">✏️ Bút chì</button>
+  <!-- Highlighter — mặc định active -->
+  <button class="dt-btn active" id="dt-hl-btn" onclick="setDrawTool('highlight')">🖌️ Highlight</button>
   <!-- Eraser -->
   <button class="dt-btn" id="dt-erase-btn" onclick="setDrawTool('eraser')">🧹 Tẩy</button>
 
   <div class="dt-sep"></div>
 
-  <!-- Color swatches -->
+  <!-- Highlight color swatches — màu pastel phù hợp bút tô -->
   <div style="display:flex;gap:5px;align-items:center">
-    <div class="dt-color sel" data-color="#1d1d1d" style="background:#1d1d1d" onclick="setDrawColor(this)"></div>
-    <div class="dt-color" data-color="#ef4444" style="background:#ef4444" onclick="setDrawColor(this)"></div>
-    <div class="dt-color" data-color="#3b82f6" style="background:#3b82f6" onclick="setDrawColor(this)"></div>
-    <div class="dt-color" data-color="#22c55e" style="background:#22c55e" onclick="setDrawColor(this)"></div>
-    <div class="dt-color" data-color="#f59e0b" style="background:#f59e0b" onclick="setDrawColor(this)"></div>
-    <div class="dt-color" data-color="#a855f7" style="background:#a855f7" onclick="setDrawColor(this)"></div>
+    <div class="dt-color sel" data-color="#facc15" style="background:#facc15" onclick="setDrawColor(this)" title="Vàng"></div>
+    <div class="dt-color" data-color="#86efac" style="background:#86efac" onclick="setDrawColor(this)" title="Xanh lá"></div>
+    <div class="dt-color" data-color="#7dd3fc" style="background:#7dd3fc" onclick="setDrawColor(this)" title="Xanh dương"></div>
+    <div class="dt-color" data-color="#f9a8d4" style="background:#f9a8d4" onclick="setDrawColor(this)" title="Hồng"></div>
+    <div class="dt-color" data-color="#c4b5fd" style="background:#c4b5fd" onclick="setDrawColor(this)" title="Tím"></div>
+    <div class="dt-color" data-color="#fdba74" style="background:#fdba74" onclick="setDrawColor(this)" title="Cam"></div>
   </div>
 
   <div class="dt-sep"></div>
@@ -9336,8 +9431,8 @@ window.resultAIExplain = resultAIExplain;
 // =====================================================================
 (function() {
   let drawMode   = false;
-  let activeTool = 'pen';       // pen | highlight | eraser
-  let drawColor  = '#1d1d1d';
+  let activeTool = 'highlight'; // pen | highlight | eraser  — highlight là mặc định
+  let drawColor  = '#facc15';   // vàng highlight mặc định
   let drawSize   = 2;
   let isDrawing  = false;
   let lastX = 0, lastY = 0;
@@ -9503,7 +9598,7 @@ window.resultAIExplain = resultAIExplain;
     document.querySelectorAll('.dt-color').forEach(c => c.classList.remove('sel'));
     el.classList.add('sel');
     drawColor = el.dataset.color;
-    if (activeTool === 'eraser') setDrawTool('pen');
+    if (activeTool === 'eraser') setDrawTool('highlight');
   };
 
   window.setDrawSize = function(el) {
@@ -9570,6 +9665,93 @@ window.resultAIExplain = resultAIExplain;
     if (v === 'result') activePage = 'result';
     if (drawMode && v !== 'exam' && v !== 'result') toggleDrawMode();
     if (drawMode && (v === 'exam' || v === 'result')) setTimeout(syncCanvasSize, 120);
+  };
+})();
+</script>
+
+<script>
+// =====================================================================
+//  PINNED IMAGE PANEL — ghim hình câu hỏi, hiển thị cố định khi cuộn
+// =====================================================================
+(function() {
+  let isPinnedExpanded = false;
+
+  window.pinImage = function(src) {
+    const panel = document.getElementById('pinned-image-panel');
+    const img   = document.getElementById('pinned-image-img');
+    if (!panel || !img) return;
+    img.src = src;
+    panel.style.display = 'block';
+    isPinnedExpanded = false;
+    // Reset kích thước về nhỏ
+    panel.style.width = 'min(270px, 44vw)';
+    document.getElementById('pinned-size-btn').textContent = '⊡';
+  };
+
+  window.unpinImage = function() {
+    const panel = document.getElementById('pinned-image-panel');
+    if (panel) panel.style.display = 'none';
+  };
+
+  window.togglePinnedSize = function() {
+    const panel = document.getElementById('pinned-image-panel');
+    const btn   = document.getElementById('pinned-size-btn');
+    if (!panel) return;
+    isPinnedExpanded = !isPinnedExpanded;
+    if (isPinnedExpanded) {
+      panel.style.width = 'min(480px, 90vw)';
+      btn.textContent = '⊠';
+    } else {
+      panel.style.width = 'min(270px, 44vw)';
+      btn.textContent = '⊡';
+    }
+  };
+
+  // ── Drag to move the panel ────────────────────────────────────────
+  const panel  = document.getElementById('pinned-image-panel');
+  const header = document.getElementById('pinned-img-header');
+  if (panel && header) {
+    let dragX = 0, dragY = 0, startL = 0, startT = 0, dragging = false;
+
+    function startDrag(clientX, clientY) {
+      dragging = true;
+      dragX = clientX; dragY = clientY;
+      const rect = panel.getBoundingClientRect();
+      startL = rect.left; startT = rect.top;
+      panel.style.right  = 'auto';
+      panel.style.left   = startL + 'px';
+      panel.style.top    = startT + 'px';
+      header.style.cursor = 'grabbing';
+    }
+    function moveDrag(clientX, clientY) {
+      if (!dragging) return;
+      const dx = clientX - dragX, dy = clientY - dragY;
+      const newL = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  startL + dx));
+      const newT = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, startT + dy));
+      panel.style.left = newL + 'px';
+      panel.style.top  = newT + 'px';
+    }
+    function endDrag() { dragging = false; header.style.cursor = 'grab'; }
+
+    header.addEventListener('mousedown',  e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+    document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+    document.addEventListener('mouseup',   endDrag);
+
+    header.addEventListener('touchstart', e => {
+      const t = e.touches[0]; startDrag(t.clientX, t.clientY); e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchmove', e => {
+      if (!dragging) return;
+      const t = e.touches[0]; moveDrag(t.clientX, t.clientY); e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchend', endDrag);
+  }
+
+  // Ẩn panel khi chuyển sang view khác (không phải exam/result)
+  const _origGoToPin = window.goTo;
+  window.goTo = function(v, param) {
+    if (typeof _origGoToPin === 'function') _origGoToPin(v, param);
+    if (v !== 'exam' && v !== 'result') unpinImage();
   };
 })();
 </script>
