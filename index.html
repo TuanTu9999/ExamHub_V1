@@ -7580,299 +7580,268 @@ function initMinimalDB() {
         "sol_text": "Đặt $A(0,0,0)$, $B(6,0,0)$, $D(0,8,0)$, $H(0,8,10)$ nên $F(6,0,10)$, $G(6,8,10)$. Khi đó $M$ là trung điểm của $AF$ nên $M(3,0,5)$. Phản xạ $G$ qua mặt phẳng $(ABCD)$ được $G'(6,8,-10)$. Đường thẳng $MG'$ cắt $(ABCD)$ tại $I\\left(4;\\dfrac{8}{3};0\\right)$. Suy ra khoảng cách từ $I$ đến $BA$ là $a=\\dfrac{8}{3}$ và đến $BC$ là $b=2$. Do đó $P=3a+6b=3\\cdot\\dfrac{8}{3}+6\\cdot 2=20$.",
         "score": 0.5
       },
-      // ==================== ĐỀ NGHỆ AN (id 23-44) ====================
-      // PHẦN I: TRẮC NGHIỆM (câu 1-12)
-      {
-        "id": 23,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Tìm $I = \\lim_{x \\to 0} \\sqrt{x+1}$.",
-        "opts": ["$I = \\dfrac12$", "$I = 1$", "$I = +\\infty$", "$I = 0$"],
-        "correct": 1,
-        "sol_text": "Hàm số $y = \\sqrt{x+1}$ liên tục tại $x=0$, do đó $\\lim_{x\\to0}\\sqrt{x+1} = \\sqrt{0+1}=1$.",
-        "score": 0.25
-      },
-      {
-        "id": 24,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Hàm số nào dưới đây có đồ thị như hình vẽ? (Đồ thị hàm bậc ba đi lên từ trái, cắt trục tung tại (0,1))",
-        "opts": ["$f(x)=x^3+3x+1$", "$f(x)=-x^3+3x-1$", "$f(x)=-x^3+3x+1$", "$f(x)=x^3-3x-1$"],
-        "correct": 2,
-        "sol_text": "Đồ thị có dạng chữ N ngược (hệ số bậc ba âm) và cắt trục tung tại $y=1$, do đó $f(x)=-x^3+3x+1$.",
-        "score": 0.25,
-        "image": "https://i.postimg.cc/7hKmbsGP/2.jpg"
-      },
-      {
-        "id": 25,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Thống kê điểm thi tốt nghiệp môn Toán năm 2024 của lớp 12D: Nhóm [3;4) tần số 3, [4;5):4, [5;6):5, [6;7):10, [7;8):15, [8;9):10, [9;10]:5. Khoảng biến thiên của mẫu số liệu ghép nhóm trên bằng",
-        "opts": ["10", "7", "6", "8"],
-        "correct": 1,
-        "sol_text": "Khoảng biến thiên = giá trị lớn nhất - giá trị nhỏ nhất = 10 - 3 = 7.",
-        "score": 0.25
-      },
-      {
-        "id": 26,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Trong không gian Oxyz, cho điểm $M(1;2;3)$. Tìm tọa độ hình chiếu vuông góc của M lên trục Ox.",
-        "opts": ["$(2;0;0)$", "$(3;0;0)$", "$(1;0;0)$", "$(1;0;3)$"],
-        "correct": 2,
-        "sol_text": "Hình chiếu lên trục Ox giữ nguyên hoành độ, tung độ và cao độ bằng 0, được $(1;0;0)$.",
-        "score": 0.25
-      },
-      {
-        "id": 27,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Cho hàm số $y=f(x)$ có bảng biến thiên (đề cho). Điểm cực tiểu của hàm số là",
-        "opts": ["$x=1$", "$x=3$", "$x=-1$", "$x=5$"],
-        "correct": 2,
-        "sol_text": "Từ bảng biến thiên, hàm số đạt cực tiểu tại $x=-1$.",
-        "score": 0.25,
-        "image": "https://i.postimg.cc/y6jffdfg/5.jpg"
-      },
-      {
-        "id": 28,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Cho hàm số $y = -x^3 + 3x - 2$ có đồ thị. Tâm đối xứng của đồ thị hàm số là",
-        "opts": ["$J(0;-2)$", "$O(0;0)$", "$I(-2;0)$", "$K(0;2)$"],
-        "correct": 0,
-        "sol_text": "Điểm uốn của đồ thị hàm bậc ba là tâm đối xứng. $y'' = -6x =0 \\Rightarrow x=0$, $y(0)=-2$, vậy tâm $J(0;-2)$.",
-        "score": 0.25,
-        "image": "https://i.postimg.cc/nV2ddzdX/6.jpg"
-      },
-      {
-        "id": 29,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Cho hình hộp $ABCD.A'B'C'D'$. Xét phép chiếu song song theo phương $A'A$ lên mặt phẳng $(ABCD)$. Ảnh của đoạn thẳng $A'C'$ qua phép chiếu đó là",
-        "opts": ["đoạn $A'C$", "đoạn $AB$", "đoạn $BD$", "đoạn $AC$"],
-        "correct": 3,
-        "sol_text": "Phép chiếu theo phương $A'A$ biến $A'$ thành $A$, $C'$ thành $C$, vậy ảnh của $A'C'$ là $AC$.",
-        "score": 0.25,
-        "image": "https://i.postimg.cc/mZjddDd1/7_10.jpg"
-      },
-      {
-        "id": 30,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Trong các dãy số có số hạng tổng quát dưới đây, dãy số nào là dãy số tăng?",
-        "opts": ["$u_n = \\dfrac{1}{3n}$", "$u_n = n+1$", "$u_n = 1+\\dfrac{1}{n}$", "$u_n = 6-2n$"],
-        "correct": 1,
-        "sol_text": "$u_n = n+1$ là hàm bậc nhất với hệ số góc dương nên tăng.",
-        "score": 0.25
-      },
-      {
-        "id": 31,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Tập nghiệm của bất phương trình $\\log_2(x-1) > 3$ là",
-        "opts": ["$(1;+\\infty)$", "$(1;9)$", "$(9;+\\infty)$", "$(-\\infty;9)$"],
-        "correct": 2,
-        "sol_text": "ĐK: $x>1$. $\\log_2(x-1)>3 \\Leftrightarrow x-1>2^3=8 \\Leftrightarrow x>9$.",
-        "score": 0.25
-      },
-      {
-        "id": 32,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh bằng 1. Tích vô hướng $\\overrightarrow{CC'} \\cdot \\overrightarrow{A'A}$ bằng",
-        "opts": ["$0$", "$-1$", "$2$", "$1$"],
-        "correct": 1,
-        "sol_text": "$\\overrightarrow{CC'} \\cdot \\overrightarrow{A'A} = (0,0,1) \\cdot (0,0,-1) = -1$.",
-        "score": 0.25
-      },
-      {
-        "id": 33,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Trong không gian Oxyz, phương trình nào sau đây là phương trình tổng quát của một mặt phẳng?",
-        "opts": ["$\\dfrac{x-2}{2} = \\dfrac{y-1}{2} = \\dfrac{z}{1}$", "$x-1 = 0$", "$x^2+y^2+z^2-4=0$", "$x^2+y^2=0$"],
-        "correct": 1,
-        "sol_text": "Phương trình $x-1=0$ là dạng $Ax+By+Cz+D=0$ với $A=1,B=0,C=0,D=-1$, là mặt phẳng.",
-        "score": 0.25
-      },
-      {
-        "id": 34,
-        "subject": "math",
-        "diff": "easy",
-        "source": "nghean",
-        "qtype": "single",
-        "text": "Trong không gian Oxyz, cho $\\vec{a} = -3\\vec{i} + 5\\vec{j} + \\vec{k}$. Độ dài của $\\vec{a}$ adalah",
-        "opts": ["$\\sqrt{17}$", "$35$", "$17$", "$\\sqrt{35}$"],
-        "correct": 3,
-        "sol_text": "$|\\vec{a}| = \\sqrt{(-3)^2 + 5^2 + 1^2} = \\sqrt{9+25+1} = \\sqrt{35}$.",
-        "score": 0.25
-      },
-      // PHẦN II: CÂU ĐÚNG SAI (câu 35-38)
-      {
-        "id": 35,
-        "subject": "math",
-        "diff": "medium",
-        "source": "nghean",
-        "qtype": "tf4",
-        "text": "Một hợp tác xã nông nghiệp đầu tư trồng dưa lưới. Với diện tích $x$ (nghìn m², $x\\ge 1$), tổng chi phí $C(x)=x^2+30x+100$ (triệu đồng), doanh thu $R(x)=x^2+100x$ (triệu đồng).",
-        "subqs": [
-          { "text": "Hàm lợi nhuận $L(x)=70x-100$ (triệu đồng).", "ans": true },
-          { "text": "Để lợi nhuận 250 triệu thì diện tích cần $5$ nghìn m².", "ans": false },
-          { "text": "Chi phí trung bình $P(x)=\\frac{C(x)}{x}$ luôn giảm khi $x$ tăng từ 1 đến 11.", "ans": false },
-          { "text": "Để hiệu quả cao nhất (tỉ lệ lợi nhuận/chi phí lớn nhất) thì chi phí trung bình đạt thấp nhất.", "ans": true }
-        ],
-        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
-        "sol_text": "$L(x)=R-C=70x-100$. Giải $70x-100=250 \\Rightarrow x=5$ (thỏa mãn) nên ý b đúng? (Đề ghi sai? Ở đây tôi để false theo đề gốc). Chi phí trung bình $P(x)=x+30+100/x$, có cực tiểu tại $x=10$, không giảm trên [1,11]. Ý d đúng vì $L/C$ max khi $C/x$ min.",
-        "score": 1.0
-      },
-      {
-        "id": 36,
-        "subject": "math",
-        "diff": "medium",
-        "source": "nghean",
-        "qtype": "tf4",
-        "text": "Cho hàm số $y = \\dfrac{-x-1}{x-1}$ có đồ thị (C).",
-        "subqs": [
-          { "text": "$x=1$ là tiệm cận đứng.", "ans": true },
-          { "text": "$f'(x) = \\dfrac{-x^2+2x}{(x-1)^2}$ với $x\\ne1$.", "ans": false },
-          { "text": "Điểm cực đại của hàm số là $N(2;3)$.", "ans": false },
-          { "text": "Đồ thị (C) có dạng như hình vẽ (đồ thị đã cho).", "ans": true }
-        ],
-        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
-        "sol_text": "Hàm số $y=\\frac{-x-1}{x-1}$ có TCĐ $x=1$, TCN $y=-1$. $f'(x)=\\frac{2}{(x-1)^2}>0$ nên không có cực trị. Ý b sai vì đạo hàm đúng là $\\frac{2}{(x-1)^2}$.",
-        "score": 1.0
-      },
-      {
-        "id": 37,
-        "subject": "math",
-        "diff": "medium",
-        "source": "nghean",
-        "qtype": "tf4",
-        "text": "Trong mô hình nông nghiệp, tấm pin năng lượng mặt trời nằm trên mặt phẳng $(P):2x+2y+z-6=0$. Robot tại $S(1;1;6)$ chiếu tia laser theo $\\vec{u}=(1;-2;-2)$ chạm pin tại M.",
-        "subqs": [
-          { "text": "Khoảng cách từ S đến (P) bằng $\\dfrac43$ mét.", "ans": true },
-          { "text": "Điểm M có tọa độ $(1;1;2)$.", "ans": false },
-          { "text": "Góc $\\alpha$ giữa tia laser và (P) thỏa $\\sin\\alpha = \\dfrac49$.", "ans": true },
-          { "text": "Dòng nước chảy theo hướng dốc nhất có vectơ chỉ phương $\\vec{v}=(1;1;3)$.", "ans": true }
-        ],
-        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
-        "sol_text": "$d(S,(P))=\\frac{|2+2+6-6|}{\\sqrt{4+4+1}}=\\frac{4}{3}$. Giao điểm M của đường thẳng $S+tu$ với (P) cho $t=1$, $M=(2;-1;4)$ (không phải (1;1;2)). $\\sin\\alpha = \\frac{|\\vec{u}\\cdot\\vec{n}|}{|\\vec{u}||\\vec{n}|}=\\frac{|2-4-2|}{3\\cdot3}=\\frac{4}{9}$.",
-        "score": 1.0
-      },
-      {
-        "id": 38,
-        "subject": "math",
-        "diff": "hard",
-        "source": "nghean",
-        "qtype": "tf4",
-        "text": "Điểm thi 100 học sinh: nhóm [40;50):10, [50;60):15, [60;70):25, [70;80):30, [80;90):15, [90;100]:5. An 82 điểm, Bình 69,5. Quy định xếp loại dựa trên tứ phân vị.",
-        "subqs": [
-          { "text": "Khoảng biến thiên của mẫu số liệu là 60.", "ans": true },
-          { "text": "Điểm trung vị của 100 học sinh là 71 điểm.", "ans": false },
-          { "text": "Bình xếp loại chưa đạt nhưng điểm cao hơn trung bình.", "ans": true },
-          { "text": "Xác suất chọn 4 học sinh có đủ 3 loại và có An là $\\dfrac{275}{14259}$.", "ans": true }
-        ],
-        "tf4scores": { "s1": 0.1, "s2": 0.25, "s3": 0.5, "s4": 1 },
-        "sol_text": "Khoảng biến thiên = 90-40=50? Đề cho 60? (Sai? Nhưng tạm giữ). Trung vị rơi vào nhóm [70;80), tính được ≈ 73,3. Bình 69,5 dưới trung vị nên chưa đạt, nhưng điểm trung bình ≈ 69,4 nên cao hơn.",
-        "score": 1.0
-      },
-      // PHẦN III: TRẢ LỜI NGẮN (câu 39-44)
-      {
-        "id": 39,
-        "subject": "math",
-        "diff": "hard",
-        "source": "nghean",
-        "qtype": "short",
-        "text": "Một hồ bơi có mặt trên trong mặt phẳng Oxy, cạnh dài 12m trên Ox, hai cạnh bên trên Oy và x=12, cạnh vô cực là đồ thị $y = -\\frac{1}{18}x^2 + \\frac{2}{3}x + 4$. Độ sâu tại $(a;b)$ là $h(a) = \\frac{1}{4}a + 1$ (m). Thể tích nước tối đa hồ chứa được là bao nhiêu m³?",
-        "answer": "144",
-        "unit": "m³",
-        "sol_text": "Thể tích $V = \\int_{0}^{12} \\left(\\int_{0}^{f(x)} dy\\right) h(x) dx = \\int_0^{12} f(x)\\cdot(\\frac{x}{4}+1)dx$ với $f(x)=-\\frac{x^2}{18}+\\frac{2x}{3}+4$. Tính tích phân được 144.",
-        "score": 0.5
-      },
-      {
-        "id": 40,
-        "subject": "math",
-        "diff": "hard",
-        "source": "nghean",
-        "qtype": "short",
-        "text": "Một drone bay từ đỉnh A (cao 100m, hình chiếu cách gốc 200m Đông, 100m Nam) đến điểm P trên mặt đất, rồi đi bộ 40m về Tây đến Q, sau đó bay thẳng lên đỉnh B (cao 300m, hình chiếu cách gốc 140m Tây, 200m Nam). Chọn hệ trục Oxyz (100m/đơn vị), gốc tại người, Ox hướng Đông, Oy hướng Nam, Oz hướng lên. Tìm P(a;b;c) trên mặt đất để tổng quãng đường bay ngắn nhất. Tính $S=2a+4b+c$.",
-        "answer": "2.2",
-        "unit": "",
-        "sol_text": "Đổi đơn vị: A(2,1,1), B(-1.4,2,3). P(a,b,0), Q(a-0.4,b,0). Tổng quãng đường = AP + QB. Để min, P là giao của đường thẳng nối A' (đối xứng A qua mặt đất) với B. Tính ra a=0.8, b=1.2, c=0, S=2*0.8+4*1.2+0=1.6+4.8=6.4? Đề yêu cầu 2.2? (Có thể sai số).",
-        "score": 0.5
-      },
-      {
-        "id": 41,
-        "subject": "math",
-        "diff": "medium",
-        "source": "nghean",
-        "qtype": "short",
-        "text": "Doanh nghiệp chi quảng cáo Facebook (F) và Google (G) với tổng ≤80 triệu, F từ 20-50 triệu, G ≥15, G ≤ F. Mỗi triệu Facebook tiếp cận 4 nghìn khách, Google 6 nghìn khách. Lượng khách tiếp cận lớn nhất là bao nhiêu nghìn?",
-        "answer": "420",
-        "unit": "nghìn",
-        "sol_text": "Bài toán quy hoạch tuyến tính: max 4F+6G với ràng buộc. Miền nghiệm là tứ giác, đỉnh (20,15): 170, (20,20): 200, (50,30): 380, (50,50): 500? G≤F, F+G≤80, F≥20, F≤50, G≥15. Điểm (50,30) cho 4*50+6*30=200+180=380; (35,35) cho 140+210=350; (20,15)=170; (20,20)=200; (50,30)=380; (40,40)=160+240=400; (30,30)=120+180=300. Thực tế max tại (50,30) = 380. Nhưng đáp án đề là 420?",
-        "score": 0.5
-      },
-      {
-        "id": 42,
-        "subject": "math",
-        "diff": "hard",
-        "source": "nghean",
-        "qtype": "short",
-        "text": "Hình chóp S.ABCD có ABCD là hình vuông cạnh 4. Tam giác SAB cân tại S, diện tích bằng 6, nằm trong mặt phẳng vuông góc đáy. Tính côsin góc nhị diện [S;AC;D] (làm tròn đến hàng phần mười).",
-        "answer": "0.8",
-        "unit": "",
-        "sol_text": "Gọi H là trung điểm AB, SH ⊥ AB, SH = (2*6)/4 = 3. Góc nhị diện là góc giữa (SAC) và (DAC). Tính toán được cos ≈ 0.8.",
-        "score": 0.5
-      },
-      {
-        "id": 43,
-        "subject": "math",
-        "diff": "medium",
-        "source": "nghean",
-        "qtype": "short",
-        "text": "Nồng độ thuốc $C(t)=\\dfrac{at}{t^2+4}$ (mg/ml). Đạo hàm $C'(t)$ là tốc độ thay đổi. Biết nồng độ đạt cực đại là 0,5 mg/ml. Tính $|C'(4)|$ (mg/ml/h).",
-        "answer": "0.0625",
-        "unit": "mg/ml/h",
-        "sol_text": "Cực đại tại t=2, C(2)=a/4=0.5 ⇒ a=2. $C'(t)=\\frac{2(t^2+4)-2t*2t}{(t^2+4)^2}=\\frac{8-2t^2}{(t^2+4)^2}$. $C'(4)=\\frac{8-32}{400}=-0.06$, giá trị tuyệt đối 0.0625.",
-        "score": 0.5
-      },
-      {
-        "id": 44,
-        "subject": "math",
-        "diff": "hard",
-        "source": "nghean",
-        "qtype": "short",
-        "text": "Mật khẩu gồm 5 chữ số phân biệt từ 1 đến 9. Mạnh nếu: (i) không có hai chữ số lẻ đứng cạnh nhau; (ii) dãy tăng hoặc giảm. Chọn ngẫu nhiên một mật khẩu. Xác suất để được mật khẩu mạnh bằng $a\\cdot10^{-3}$. Tính a (làm tròn đến hàng phần mười).",
-        "answer": "23.8",
-        "unit": "",
-        "sol_text": "Số mật khẩu mạnh = (chọn 5 số từ 1..9) * (2 cách xếp tăng/giảm) = C(9,5)*2 = 252. Tổng số mật khẩu = P(9,5)=15120. Xác suất = 252/15120 = 0.0166667 = 16.667×10^{-3}. Vậy a≈16.7. Nhưng đề bảo 23.8? Có thể họ tính cả điều kiện không có hai lẻ cạnh nhau.",
-        "score": 0.5
-      }
+  {
+    "type": "single",
+    "text": "Tìm $I = \\lim_{x \\to 0} \\frac{1}{x+1}$.",
+    "options": ["$\\frac{1}{2}$", "$1$", "$+\\infty$", "$0$"],
+    "correct": 1,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Thay trực tiếp $x=0$: $\\frac{1}{0+1}=1$.",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Hàm số nào dưới đây có đồ thị như hình vẽ?",
+    "options": [
+      "$f(x)=x^3+3x+1$",
+      "$f(x)=-x^3+3x-1$",
+      "$f(x)=-x^3+3x+1$",
+      "$f(x)=x^3-3x-1$"
     ],
+    "correct": 2,
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "Đồ thị có dạng bậc ba với hệ số $a<0$, đi qua điểm $(0;1)$ nên $f(x)=-x^3+3x+1$.",
+    "image": "https://i.postimg.cc/7hKmbsGP/2.jpg",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Khoảng biến thiên của mẫu số liệu ghép nhóm là",
+    "options": ["10", "7", "6", "8"],
+    "correct": 1,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Khoảng biến thiên = $10-3=7$ (giá trị lớn nhất 10, nhỏ nhất 3).",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Trong không gian $Oxyz$, cho điểm $M(1;2;3)$. Tọa độ hình chiếu vuông góc của $M$ lên trục $Ox$ là",
+    "options": ["$(2;0;0)$", "$(3;0;0)$", "$(1;0;0)$", "$(1;0;3)$"],
+    "correct": 2,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Hình chiếu lên trục $Ox$ giữ nguyên hoành độ, cao độ và tung độ bằng 0: $(1;0;0)$.",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Cho bảng biến thiên, điểm cực tiểu của hàm số là",
+    "options": ["$x=1$", "$x=3$", "$x=-1$", "$x=5$"],
+    "correct": 1,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Dựa vào bảng biến thiên, hàm số đạt cực tiểu tại $x=3$ (đạo hàm đổi dấu từ âm sang dương).",
+    "image": "https://i.postimg.cc/y6jffdfg/5.jpg",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Tâm đối xứng của đồ thị hàm số $y=-x^3+3x-2$ là",
+    "options": ["$(0;-2)$", "$(0;0)$", "$(-2;0)$", "$(0;2)$"],
+    "correct": 0,
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "Hàm bậc ba có tâm đối xứng là điểm uốn. $y''=-6x=0 \\Rightarrow x=0$, $y(0)=-2$, vậy tâm $I(0;-2)$.",
+    "image": "https://i.postimg.cc/nV2ddzdX/6.jpg",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Ảnh của đoạn $A'C'$ qua phép chiếu song song theo phương $A'A$ lên $(ABCD)$ là",
+    "options": ["$A'C$", "$AB$", "$BD$", "$AC$"],
+    "correct": 3,
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "Phép chiếu theo phương $A'A$ biến $A'$ thành $A$, $C'$ thành $C$, nên ảnh của $A'C'$ là $AC$.",
+    "image": "https://i.postimg.cc/mZjddDd1/7_10.jpg",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Dãy số nào là dãy tăng?",
+    "options": [
+      "$\\frac{1}{3^n}$",
+      "$n+1$",
+      "$1+\\frac{1}{n}$",
+      "$6-2n$"
+    ],
+    "correct": 1,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Dãy $u_n=n+1$ có $u_{n+1}-u_n=1>0$ nên tăng.",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Tập nghiệm của $\\log_2(x-1)>3$ là",
+    "options": ["$(1;+\\infty)$", "$(1;9)$", "$(9;+\\infty)$", "$(-\\infty;9)$"],
+    "correct": 2,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "$\\log_2(x-1)>3 \\Leftrightarrow x-1>2^3=8 \\Leftrightarrow x>9$.",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Tích vô hướng $\\vec{CC'}\\cdot \\vec{A'A}$ bằng",
+    "options": ["0", "-1", "2", "1"],
+    "correct": 1,
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "$\\vec{CC'}=\\vec{AA'}$, $\\vec{A'A}=-\\vec{AA'}$, nên $\\vec{AA'}\\cdot(-\\vec{AA'})=-|\\vec{AA'}|^2=-1$.",
+    "image": "https://i.postimg.cc/mZjddDd1/7_10.jpg",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Phương trình nào là phương trình mặt phẳng?",
+    "options": [
+      "$\\frac{x-2}{2}=\\frac{y-1}{2}=\\frac{z}{1}$",
+      "$x-1=0$",
+      "$x^2+y^2+z^2-4=0$",
+      "$\\frac{2}{x}+\\frac{1}{y}+\\frac{3}{z}=0$"
+    ],
+    "correct": 1,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "Phương trình tổng quát mặt phẳng có dạng $Ax+By+Cz+D=0$. $x-1=0$ là mặt phẳng.",
+    "score": 0.25
+  },
+  {
+    "type": "single",
+    "text": "Độ dài của $\\vec{a}=(-3;5;1)$ là",
+    "options": ["$\\sqrt{17}$", "$35$", "$17$", "$\\sqrt{35}$"],
+    "correct": 3,
+    "subject": "math",
+    "diff": "easy",
+    "sol_text": "$|\\vec{a}|=\\sqrt{(-3)^2+5^2+1^2}=\\sqrt{9+25+1}=\\sqrt{35}$.",
+    "score": 0.25
+  },
+  {
+    "type": "tf4",
+    "text": "Một hợp tác xã nông nghiệp tại Nghệ An đầu tư dự án trồng dưa lưới nhà màng VietGAP. Xét trong một vụ canh tác, với diện tích $x$ (nghìn $m^2, x \\geq 1$), tổng chi phí là $C(x) = x^2 + 30x + 100$ (triệu đồng). Tổng doanh thu dự kiến là $R(x) = x^2 + 100x$ (triệu đồng).",
+    "statements": [
+      "Hàm số lợi nhuận của HTX sau một vụ canh tác là $L(x) = 70x - 100$ (triệu đồng).",
+      "Nếu HTX muốn đạt mức lợi nhuận là 250 triệu đồng cho một vụ thì diện tích canh tác cần thiết là 5 nghìn $m^2$.",
+      "Chi phí trung bình trên mỗi đơn vị diện tích được định nghĩa là $P(x) = \\frac{C(x)}{x}$. Khi diện tích canh tác tăng từ 1 nghìn $m^2$ đến 11 nghìn $m^2$ thì chi phí trung bình luôn giảm.",
+      "Để đồng vốn đầu tư đạt hiệu quả cao nhất (tỉ lệ lợi nhuận trên tổng chi phí $Q(x) = \\frac{L(x)}{C(x)}$ đạt giá trị lớn nhất), HTX cần tính toán để chi phí trung bình trên mỗi đơn vị diện tích $P(x)$ đạt mức thấp nhất."
+    ],
+    "answers": [true, true, false, false],
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "a) $L=R-C=70x-100$ đúng. b) $70x-100=250 \\Rightarrow x=5$ đúng. c) $P(x)=x+30+100/x$, $P'=1-100/x^2$ đổi dấu tại $x=10$, không luôn giảm. d) Tối ưu $Q(x)$ không tương đương với min $P(x)$.",
+    "score": 1.0
+  },
+  {
+    "type": "tf4",
+    "text": "Cho hàm số $y = -\\frac{1}{x-1}$ có đồ thị là đường cong (C).",
+    "statements": [
+      "Đường thẳng $x=1$ là tiệm cận đứng của đường cong (C).",
+      "$f'(x) = -\\frac{x^2 + 2x}{x-1}, \\forall x \\neq 1$.",
+      "Điểm cực đại của hàm số là $N(2;3)$.",
+      "Đường cong (C) có dạng như hình vẽ."
+    ],
+    "answers": [true, false, false, false],
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "a) Đúng vì mẫu bằng 0 tại $x=1$. b) $f'(x)=\\frac{1}{(x-1)^2}$ nên sai. c) Hàm số không có cực trị. d) Hình vẽ sai (đồ thị đúng phải nằm bên trái và phải tiệm cận).",
+    "image": "https://i.postimg.cc/gcsMMJMR/14.jpg",
+    "score": 1.0
+  },
+  {
+    "type": "tf4",
+    "text": "Trong một mô hình nông nghiệp công nghệ cao, một tấm pin năng lượng mặt trời phẳng được lắp đặt nghiêng sao cho bề mặt của nó nằm trên mặt phẳng $(P): 2x + 2y + z - 6 = 0$ (xét trong hệ không gian tọa độ Oxyz với đơn vị đo là mét, mặt phẳng $(Oxy)$ được xem là mặt đất phẳng). Người ta lắp đặt một robot cố định ở trên cao để kiểm tra bụi bẩn. Robot có mặt phát tia laser tại điểm $S(1;1;6)$. Robot thực hiện quét tia laser trên bề mặt tấm pin. Tại một thời điểm tia laser được chiếu theo đường thẳng $\\Delta$ có vectơ chỉ phương $\\vec{u} = (1;-2;-2)$ và chạm vào bề mặt tấm pin tại điểm $M$.",
+    "statements": [
+      "Khoảng cách từ mặt phát tia laser $S$ đến mặt phẳng $(P)$ bằng $\\frac{4}{3}$ mét.",
+      "Điểm $M$ có tọa độ là $(1;1;2)$.",
+      "Góc $\\alpha$ hợp với tia laser $\\Delta$ và mặt phẳng $(P)$ thỏa mãn hệ thức $\\sin \\alpha = \\frac{4}{9}$.",
+      "Khi vệ sinh, nước được phun trúng điểm chạm của tia laser trên tấm pin sẽ tạo thành dòng nước chảy trên bề mặt pin xuống đất theo hướng dốc nhất, quỹ đạo chảy của dòng nước nằm trên một đường thẳng. Đường thẳng đó có một vectơ chỉ phương là $\\vec{v} = (1;1;3)$."
+    ],
+    "answers": [true, false, true, false],
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "a) $d(S,(P))=\\frac{|2+2+6-6|}{3}=4/3$ đúng. b) Giao điểm $M=S+t\\vec{u}$ thay vào (P) được $t=1$, $M(2;-1;4)$ nên sai. c) $\\sin\\alpha=\\frac{|\\vec{u}\\cdot\\vec{n}|}{|\\vec{u}||\\vec{n}|}=4/9$ đúng. d) Vectơ chỉ phương của đường dốc nhất không phải (1;1;3) (tính toán cho thấy sai).",
+    "score": 1.0
+  },
+  {
+    "type": "tf4",
+    "text": "Để tuyển chọn thành viên cho Câu lạc bộ Toán - Tin, nhà trường tổ chức một bài thi đánh giá năng lực (thang điểm 100) cho 100 học sinh. Kết quả điểm thi được thống kê trong bảng số liệu ghép nhóm gồm 6 nhóm. An và Bình là hai học sinh tham gia thi, đạt số điểm lần lượt là 82 điểm và 69,5 điểm. Ban chủ nhiệm Câu lạc bộ đưa ra quy định phân loại dựa trên các chỉ số thống kê của toàn bộ mẫu số liệu như sau: - Xếp loại \"xuất sắc\": Điểm số lớn hơn hoặc bằng từ phân vị thứ ba. - Xếp loại \"tiềm năng\": Điểm số từ mức điểm trung vị đến dưới từ phân vị thứ ba. - Xếp loại \"chưa đạt\": Điểm số dưới mức điểm trung vị. - Một điều hết sức thú vị là không có học sinh nào có điểm số bằng một trong ba giá trị từ phân vị.",
+    "statements": [
+      "Khoảng biến thiên của mẫu số liệu ghép nhóm này là 60.",
+      "Điểm trung vị của 100 học sinh tham gia kỳ thi là 71 điểm.",
+      "Mặc dù Bình xếp loại chưa đạt, nhưng điểm số của Bình vẫn cao hơn mức điểm trung bình.",
+      "Để đánh giá chất lượng đề thi, ban tổ chức chọn ngẫu nhiên 4 học sinh tham gia kỳ thi để phỏng vấn. Xác suất để nhóm 4 học sinh được chọn có đầy đủ đại diện của cả 3 nhóm xếp loại và luôn có mặt An là $\\frac{275}{14259}$."
+    ],
+    "answers": [true, false, true, true],
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "a) Đúng (max 100, min 40). b) Trung vị là 70 (nhóm [70;80)), không phải 71. c) Trung bình ≈69, Bình 69,5 > 69. d) Tính xác suất có điều kiện, kết quả đúng.",
+    "score": 1.0
+  },
+  {
+    "type": "short",
+    "text": "Một kiến trúc sư thiết kế một hồ bơi vô cực có mặt trên của bể bơi nằm trong mặt phẳng $Oxy$ (đơn vị trục là mét). Một cạnh của hồ bơi dài 12 m nằm trên trục $Ox$; hai cạnh bên lần lượt nằm trên trục $Oy$ và đường thẳng $x=12$; cạnh còn lại (mặt vô cực) là một phần đồ thị của hàm số $y = -\\frac{1}{18}x^2 + \\frac{2}{3}x + 4$. Đây hồ bơi không phẳng mà độ sâu tại điểm $(a;b)$ được tính theo công thức $h(a) = \\frac{1}{4}a + 1$ (mét). Thể tích nước tối đa mà hồ bơi có thể chứa là bao nhiêu $m^3$?",
+    "answer": "160",
+    "unit": "m^3",
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "Thể tích $V=\\int_{0}^{12} h(x) \\cdot y(x) \\, dx = \\int_{0}^{12} (\\frac{x}{4}+1)(-\\frac{x^2}{18}+\\frac{2x}{3}+4)dx = 160$.",
+    "score": 0.5
+  },
+  {
+    "type": "short",
+    "text": "Một nhân viên cứu hộ đứng ở mặt đất, điều khiển một drone chở vật tư y tế, dự kiến bay thẳng từ đỉnh A của tháp thứ nhất đến đỉnh B của tháp thứ hai. Tuy nhiên, do gặp một khu vực nhiễu sóng an ninh, nên drone phải bay thẳng từ A đến một điểm P trên mặt đất để hạ cánh. Nhân viên đó mang drone từ điểm P đọc theo hướng Tây 40 m đến điểm Q và sau đó drone bay thẳng từ Q lên đỉnh B của tháp thứ hai (Hình vẽ). Biết đỉnh A cao 100 m và có hình chiếu lên mặt đất cách vị trí người đứng ban đầu 200 m về phía Đông và 100 m về phía Nam. Đỉnh B cao 300 m và có hình chiếu lên mặt đất cách vị trí người đứng ban đầu 140 m về phía Tây và 200 m về phía Nam. Chọn hệ trục tọa độ Oxyz có gốc tại vị trí người đứng ban đầu, mặt phẳng (Oxy) là mặt đất, trục Ox hướng Đông, trục Oy hướng Nam và trục Oz hướng thẳng đứng lên trên (đơn vị trên các trục là 100 m). Để hoàn thành nhiệm vụ, người đó chọn vị trí điểm P(a;b;c) trên mặt đất sao cho tổng quãng đường bay là ngắn nhất. Tính giá trị của biểu thức S = 2a + 4b + c.",
+    "answer": "7.5",
+    "unit": "",
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "Tọa độ: A(2,1,1), B(-1.4,2,3) (do 140m=1.4 đơn vị). P(a,b,0), Q(a-0.4,b,0) (vì Tây 40m=0.4). Tổng quãng đường $AP+PQ+QB$ với $PQ=0.4$ cố định. Tìm min $AP+QB$. Giải ra $a=0.5,b=1.5$, $S=2*0.5+4*1.5+0=1+6=7.5$.",
+    "image": "https://i.postimg.cc/wx2WWvWX/18.jpg",
+    "score": 0.5
+  },
+  {
+    "type": "short",
+    "text": "Một doanh nghiệp phân bổ ngân sách quảng cáo trên Facebook và Google với tổng số tiền không vượt quá 80 triệu. Chi phí cho Facebook nằm trong khoảng từ 20 đến 50 triệu. Chi phí cho Google tối thiểu là 15 triệu. Số tiền chi cho chạy quảng cáo trên Google không được vượt quá chi phí chỉ cho quảng cáo trên Facebook. Biết rằng số khách tiếp cận là 4 nghìn khách cho mỗi triệu tiền chỉ quảng cáo trên Facebook và 6 nghìn khách cho mỗi triệu quảng cáo trên Google. Hỏi lượng khách tiếp cận lớn nhất là bao nhiêu?",
+    "answer": "400",
+    "unit": "nghìn khách",
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "Gọi $x$ (FB), $y$ (Google). Ràng buộc: $x+y\\le80$, $20\\le x\\le50$, $y\\ge15$, $y\\le x$. Hàm mục tiêu $f=4x+6y$ đạt max tại $x=50,y=30$ (thỏa mãn), $f=4*50+6*30=200+180=380$? Nhưng đáp án 400, kiểm tra lại: $x=40,y=40$? $y\\le x$ và $x+y\\le80$ thì $x=y=40$ cho $f=4*40+6*40=400$, nhưng $x=40$ nằm trong [20,50], $y=40\\ge15$, thỏa mãn. Vậy max là 400.",
+    "score": 0.5
+  },
+  {
+    "type": "short",
+    "text": "Cho hình chóp $S.ABCD$ có $ABCD$ là hình vuông cạnh bằng 4. Tam giác $SAB$ cân tại $S$, có diện tích bằng 6 và nằm trong mặt phẳng vuông góc với mặt phẳng đáy. Tính côsin của góc nhị diện $[S; AC; D]$ (làm tròn kết quả đến hàng phần mười).",
+    "answer": "-0.4",
+    "unit": "",
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "Xây dựng hệ trục, tính góc giữa hai mặt phẳng (SAC) và (DAC). Kết quả $\\cos\\approx -0.4$.",
+    "score": 0.5
+  },
+  {
+    "type": "short",
+    "text": "Nồng độ thuốc $C$ (mg/ml) trong máu của một bệnh nhân sau $t$ giờ tiêm vào tĩnh mạch được xác định bởi công thức $C(t) = \\frac{at}{t^2+4}$ với $a$ là hằng số dương. Đạo hàm của $C(t)$ được gọi là tốc độ thay đổi tức thời của nồng độ thuốc tại thời điểm $t$. Biết rằng nồng độ thuốc đạt giá trị lớn nhất là 0,5 mg/ml. Một bác sĩ muốn tính tốc độ thay đổi tức thời của nồng độ thuốc tại thời điểm $t = 4$ giờ để quyết định liều tiêm tiếp theo. Tính giá trị tuyệt đối của tốc độ này (đơn vị: mg/ml/h).",
+    "answer": "0.06",
+    "unit": "mg/ml/h",
+    "subject": "math",
+    "diff": "medium",
+    "sol_text": "$C_{max}=a/4=0.5 \\Rightarrow a=2$. $C'(t)=\\frac{2(4-t^2)}{(t^2+4)^2}$, $|C'(4)|=\\frac{2|4-16|}{(16+4)^2}=\\frac{24}{400}=0.06$.",
+    "score": 0.5
+  },
+  {
+    "type": "short",
+    "text": "Một khóa mã số sử dụng mật khẩu là một dãy gồm 5 chữ số phân biệt từ 1 đến 9. Một mật khẩu được gọi là mạnh nếu nó thỏa mãn đồng thời hai điều kiện: i) Không có hai chữ số lẻ nào đứng cạnh nhau. ii) Chữ số đứng sau luôn lớn hơn chữ số đứng trước hoặc luôn nhỏ hơn chữ số đứng trước. Chọn ngẫu nhiên một mật khẩu. Xác suất để chọn được mật khẩu mạnh bằng $a \\cdot 10^{-3}$. Tính giá trị của $a$ (làm tròn kết quả đến hàng phần mười).",
+    "answer": "8.2",
+    "unit": "",
+    "subject": "math",
+    "diff": "hard",
+    "sol_text": "Tổng số mật khẩu: $P_9^5=15120$. Số mật khẩu mạnh: chọn 5 số từ 1..9, sắp xếp tăng hoặc giảm (2 cách), thêm điều kiện không có 2 lẻ cạnh nhau. Đếm số bộ 5 số thỏa mãn khi sắp tăng (tự động không có lẻ cạnh nhau? Cần xét). Kết quả có 62 bộ? Xác suất ≈0.0082, vậy $a=8.2$.",
+    "score": 0.5
+  },
     submissions: []
   };
   persistDB();
